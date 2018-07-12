@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<menu>
+  <item>
+    <path>civicrm/civimobile/auth</path>
+    <page_callback>CRM_CiviMobileAPI_Page_Auth</page_callback>
+    <title>Core</title>
+    <access_callback>1</access_callback>
+  </item>
+</menu>
