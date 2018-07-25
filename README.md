@@ -36,3 +36,13 @@ mkdir sites/all/modules/civicrm/ext
 cd sites/default/files/civicrm/ext
 git clone https://github.com/agiliway/com.agiliway.civimobileapi com.agiliway.civimobileapi
 ```
+
+1. Install it within the CiviCRM Extensions tab of the administration panel: 
+ * go to Administer -> System Settings -> Extensions
+ * Click on Install button for CiviMobileAPI extension
+2. Clear the cache: 
+ * Administer -> System Settings -> Cleanup Caches and Update Paths
+3. Install CiviMobile app into your smartphone from App Store or Google Play Market
+4. Open the app on your device and enter the same login information you use for a web version (username and password) and your CiviCRM website URL – a URL you enter to access your CiviCRM system
+
+
