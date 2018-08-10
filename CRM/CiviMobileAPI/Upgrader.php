@@ -12,21 +12,12 @@ class CRM_CiviMobileAPI_Upgrader extends CRM_CiviMobileAPI_Upgrader_Base {
   public function uninstall() {
     CRM_CiviMobileAPI_PushNotification_Helper::deleteGroup();
   }
+  
+  public function upgrade_0001() {
+    $this->ctx->log->info('Applying update 0001');
+    CRM_CiviMobileAPI_PushNotification_Helper::deleteGroup();
 
-  /**
-   * Example: Run a simple query when a module is enabled.
-   */
-  public function enable() {
-    CRM_CiviMobileAPI_PushNotification_Helper::setActive(1);
-    CRM_CiviMobileAPI_PushNotification_Helper::setActiveGroup(1);
-  }
-
-  /**
-   * Example: Run a simple query when a module is disabled.
-   */
-  public function disable() {
-    CRM_CiviMobileAPI_PushNotification_Helper::setActive(0);
-    CRM_CiviMobileAPI_PushNotification_Helper::setActiveGroup(0);
+    return TRUE;
   }
 
 }
