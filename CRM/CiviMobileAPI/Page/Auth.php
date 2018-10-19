@@ -26,48 +26,53 @@ class CRM_CiviMobileAPI_Page_Auth extends CRM_Core_Page
     public function run()
     {
         civimobileapi_secret_validation();
-       
+
         $nullObject = CRM_Utils_Hook::$_nullObject;
         CRM_Utils_Hook::singleton()->commonInvoke(0, $nullObject, $nullObject, $nullObject, $nullObject, $nullObject, $nullObject, 'civimobile_auth_pre', '');
 
         if (!CmsUser::getInstance()->validateCMS())
-            $this->sendErrorResponse(ts('Sorry, but CiviMobile are not supporting your system yet.'));
+            JsonResponse::sendErrorResponse(ts('Sorry, but CiviMobile are not supporting your system yet.'));
 
         if (!$this->validateAttempts())
-            $this->sendErrorResponse(ts('You are blocked for a %1 min. Please try again later', [1 => self::BLOCK_MINUTES]));
+            JsonResponse::sendErrorResponse(ts('You are blocked for a %1 min. Please try again later', [1 => self::BLOCK_MINUTES]));
 
-        //$email = 'vadym';
-        $email = Request::getInstance()->post('email', 'String');
-        if (!$email)
-            $this->sendErrorResponse(ts('Required field'), 'email');
-        
-        // $password = 'password';
-        $password = Request::getInstance()->post('password', 'String');
-        if (!$password)
-            $this->sendErrorResponse(ts('Required field'), 'password');
-            
-        $cmsUserId = CmsUser::getInstance()->validateUser($email, $password);
-        if ($cmsUserId === FALSE)
-            $this->sendErrorResponse(ts('Wrong email or password'));
+       $email = Request::getInstance()->post('email', 'String');
+         if (!$email){
+             JsonResponse::sendErrorResponse(ts('Required field'), 'email');
+         }
+
+       $password = Request::getInstance()->post('password', 'String');
+       if (!$password){
+           JsonResponse::sendErrorResponse(ts('Required field'), 'password');
+       }
+
+        $cmsUserId = CmsUser::getInstance()->validateAccount($email, $password);
+
+        if ($cmsUserId === FALSE){
+            JsonResponse::sendErrorResponse(ts('Wrong email or password'));
+        }
 
         $contact = $this->findContact($cmsUserId);
-        if (!$contact)
-            $this->sendErrorResponse(ts('There are no such contact in CiviCRM'));
-        
+        if (!$contact){
+            JsonResponse::sendErrorResponse(ts('There are no such contact in CiviCRM'));
+        }
+
         $api_key = $contact->api_key ? $contact->api_key : $this->setApiKey($contact->id);
-        if (!$api_key)
-            $this->sendErrorResponse(ts('Something went wrong, we can not create the API KEY'));
+        if (!$api_key){
+            JsonResponse::sendErrorResponse(ts('Something went wrong, we can not create the API KEY'));
+        }
 
         $data['values'] = [
             'api_key' => $api_key,
             'key' => $this->getSiteKey(),
             'id' => $contact->id,
             'display_name' => $contact->display_name,
+            'cms' => CRM_CiviMobileAPI_Utils_CmsUser::getInstance()->getSystem(),
         ];
 
         CRM_Utils_Hook::singleton()->commonInvoke(4, $data, $email, $password, $contact->id, $nullObject, $nullObject, 'civimobile_auth_success', '');
 
-        $this->sendSuccessResponse($data);
+        JsonResponse::sendSuccessResponse($data);
     }
 
     /**
@@ -138,32 +143,5 @@ class CRM_CiviMobileAPI_Page_Auth extends CRM_Core_Page
             $api_key = FALSE;
         }
         return $api_key;
-    }
-
-    /**
-     * Prepares success JSON response
-     * @param $data
-     */
-    private function sendSuccessResponse($data)
-    {
-        $data['is_error'] = 0;
-        JsonResponse::sendResponse(200, $data);
-    }
-
-    /**
-     * Prepares wrong JSON response
-     * @param $message
-     * @param null $field
-     */
-    private function sendErrorResponse($message, $field = NULL)
-    {
-        $data = [
-            'is_error' => 1,
-            'error_message' => $message
-        ];
-        if ($field)
-            $data['error_field'] = $field;
-
-        JsonResponse::sendResponse(404, $data);
     }
 }

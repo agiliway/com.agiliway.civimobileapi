@@ -1,6 +1,6 @@
 <?php
 
-class CRM_CiviMobileAPI_ApiWrapper_Activity implements API_Wrapper {
+class CRM_CiviMobileAPI_ApiWrapper_Activity_GetSingle implements API_Wrapper {
 
   public function fromApiInput($apiRequest) {
     return $apiRequest;
@@ -37,11 +37,19 @@ class CRM_CiviMobileAPI_ApiWrapper_Activity implements API_Wrapper {
         $case->id = $result['source_record_id'];
         if ($case->find(TRUE)) {
           $result['source_record_title'] = $case->subject;
+
+          $caseType = new CRM_Case_DAO_CaseType();
+          $caseType->id = $case->case_type_id;
+          if ($caseType->find(TRUE)) {
+            $result['case_type_is_active'] = $caseType->is_active;
+          }
         }
       } elseif(isset($result['source_record_id'])) {
         $result['source_record_type'] = 'event';
       }
     }
+
     return $result;
   }
+
 }

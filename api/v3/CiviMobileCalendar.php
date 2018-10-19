@@ -4,18 +4,13 @@
  * Gets events, cases and activities for calendar
  *
  * @param array $params array or parameters
+ *
+ * @return array
  */
 function civicrm_api3_civi_mobile_calendar_get($params) {
-  $calendarParams = [
-    'hidePastEvents' => $params['hidePastEvents'],
-    'startDate' => $params["start"],
-    'endDate' => $params["end"],
-    'type' => $params['type']
-  ];
+  $calendarManager = new CRM_CiviMobileAPI_Utils_Calendar($params);
+  $events = $calendarManager->getEvents();
 
-  $eventsHandler = new CRM_CiviMobileAPI_Calendar_Handler($params['contact_id'], $calendarParams);
-  $events = $eventsHandler->getAll();
-  $events = _civicrm_api3_civi_mobile_calendar_get_formatResult($params, $events);
   return civicrm_api3_create_success($events, $params);
 }
 

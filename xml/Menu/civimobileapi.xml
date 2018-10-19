@@ -6,4 +6,10 @@
     <title>Core</title>
     <access_callback>1</access_callback>
   </item>
+  <item>
+    <path>civicrm/civimobile/disable_push_token</path>
+    <page_callback>CRM_CiviMobileAPI_Page_DisablePushToken</page_callback>
+    <title>Core</title>
+    <access_callback>1</access_callback>
+  </item>
 </menu>

@@ -3,124 +3,195 @@
  * Gives you the ability to work with CMS accounts
  */
 
-class CRM_CiviMobileAPI_Utils_CmsUser
-{
-    /**
-     * Drupal 7 CMS
-     */
-    const CMS_DRUPAL7 = 'Drupal';
+class CRM_CiviMobileAPI_Utils_CmsUser {
 
-    /**
-     * Drupal 6 CMS
-     */
-    const CMS_DRUPAL6 = 'Drupal6';
+  /**
+   * Drupal 7 CMS
+   */
+  const CMS_DRUPAL7 = 'Drupal';
 
-    /**
-     * WordPress CMS
-     */
-    const CMS_WORDPRESS = 'WordPress';
+  /**
+   * Drupal 6 CMS
+   */
+  const CMS_DRUPAL6 = 'Drupal6';
 
-    /**
-     * Joomla CMS
-     */
-    const CMS_JOOMLA = 'Joomla';
+  /**
+   * WordPress CMS
+   */
+  const CMS_WORDPRESS = 'WordPress';
 
-    /**
-     * Backdrop CMS
-     */
-    const CMS_BACKDROP = 'Backdrop';
+  /**
+   * Joomla CMS
+   */
+  const CMS_JOOMLA = 'Joomla';
 
-    /**
-     * Singleton pattern
-     */
-    private static $instance;
+  /**
+   * Backdrop CMS
+   */
+  const CMS_BACKDROP = 'Backdrop';
 
-    /**
-     * Current CMS system
-     */
-    private $system;
+  /**
+   * Singleton pattern
+   */
+  private static $instance;
 
-    private function __construct()
-    {
-        $this->system = defined('CIVICRM_UF') ? CIVICRM_UF : '';
+  /**
+   * Current CMS system
+   */
+  private $system;
+
+  private function __construct() {
+    $this->system = defined('CIVICRM_UF') ? CIVICRM_UF : '';
+  }
+
+  private function __clone() {
+  }
+
+  public static function getInstance() {
+    if (self::$instance === NULL) {
+      self::$instance = new self;
     }
 
-    private function __clone()
-    {
+    return self::$instance;
+  }
+
+  /**
+   * Gets drupal user
+   *
+   * @param $name
+   *
+   * @return bool|mixed
+   */
+  public function getDrupalAccount($name) {
+    $user = user_load_by_name($name);
+    if (!$user) {
+      $user = user_load_by_mail($name);
     }
 
-    public static function getInstance()
-    {
-        if (self::$instance === null) {
-            self::$instance = new self;
+    return $user;
+  }
+
+  /**
+   * Gets WordPress user
+   *
+   * @param $name
+   *
+   * @return bool|mixed
+   */
+  public function getWordPressAccount($name) {
+    $user = get_user_by('login', $name);
+    if (!$user) {
+      $user = get_user_by('email', $name);
+    }
+
+    return $user;
+  }
+
+  /**
+   * Gets Joomla user
+   *
+   * @param $name
+   *
+   * @return bool|mixed
+   */
+  public function getJoomlaAccount($name) {
+    $userId = JUserHelper::getUserId($name);
+
+    if (!isset($userId) || empty($userId)) {
+      $db = JFactory::getDbo();
+      $query = $db->getQuery(TRUE)
+        ->select($db->quoteName('id'))
+        ->from($db->quoteName('#__users'))
+        ->where($db->quoteName('email') . ' = ' . $db->quote($name));
+      $db->setQuery($query, 0, 1);
+
+      $userId = $db->loadResult();
+    }
+
+    $user = NULL;
+    if(isset($userId) && !empty($userId)){
+      $user = JFactory::getUser($userId);
+    }
+
+    return $user;
+  }
+
+  private function validateJoomlaUser($username, $password) {
+    $app = JFactory::getApplication();
+    $credentials = [
+      'username' => $username,
+      'password' => $password,
+    ];
+    $result = $app->login($credentials);
+
+    return $result;
+  }
+
+  /**
+   * Validate CMS
+   *
+   * @return bool
+   */
+  public function validateCMS() {
+    return in_array($this->system, [
+      self::CMS_DRUPAL7,
+      self::CMS_WORDPRESS,
+      self::CMS_JOOMLA,
+    ]);
+  }
+
+  /**
+   * Validate account depends on CMS system
+   *
+   * @param $email
+   * @param $password
+   *
+   * @return bool
+   */
+  public function validateAccount($email, $password) {
+    $uid = FALSE;
+    switch ($this->system) {
+      case self::CMS_DRUPAL7:
+        $account = $this->getDrupalAccount($email);
+        require_once DRUPAL_ROOT . '/' . variable_get('password_inc', 'includes/password.inc');
+        if (user_check_password($password, $account)) {
+          $uid = $account->uid;
         }
-
-        return self::$instance;
-    }
-
-    /**
-     * Validate a user using email/username and password
-     *
-     * @param $email
-     * @param $password
-     * @return bool|integer
-     */
-    public function validateUser($email, $password)
-    {
-        $uid = $this->validateAccount($email, $password);
-        return $uid;
-    }
-
-    /**
-     * Gets drupal user
-     *
-     * @param $name
-     * @return bool|mixed
-     */
-    public function getDrupalAccount($name)
-    {
-        $user = user_load_by_name($name);
-        if (!$user)
-            $user = user_load_by_mail($name);
-
-        return $user;
-    }
-
-    /**
-     * Validate CMS
-     *
-     * @return bool
-     */
-    public function validateCMS()
-    {
-        return in_array($this->system, [self::CMS_DRUPAL7]);
-    }
-
-    /**
-     * Validate account depends on CMS system
-     *
-     * @param $email
-     * @param $password
-     * @return bool
-     */
-    public function validateAccount($email, $password)
-    {
-        $uid = false;
-        switch ($this->system) {
-            case self::CMS_DRUPAL7:
-                $account = $this->getDrupalAccount($email);
-                require_once DRUPAL_ROOT . '/' . variable_get('password_inc', 'includes/password.inc');
-                if (user_check_password($password, $account)) {
-                    $uid = $account->uid;
-                }
-                break;
+        break;
+      case self::CMS_WORDPRESS:
+        $account = $this->getWordPressAccount($email);
+        if ($account && wp_check_password($password, $account->user_pass, $account->ID)) {
+          $uid = $account->ID;
         }
-
-        return $uid;
+        break;
+      case self::CMS_JOOMLA:
+        $account = $this->getJoomlaAccount($email);
+        if (isset($account) && $this->validateJoomlaUser($account->username, $password)) {
+          $uid = $account->id;
+        }
     }
 
-    public function getSystem()
-    {
-        return $this->system;
+    return $uid;
+  }
+
+  public function searchAccount($identificator) {
+    $account = FALSE;
+    switch ($this->system) {
+      case self::CMS_DRUPAL7:
+        $account = $this->getDrupalAccount($identificator);
+        break;
+      case self::CMS_WORDPRESS:
+        $account = $this->getWordPressAccount($identificator);
+        break;
+      case self::CMS_JOOMLA:
+        $account = $this->getJoomlaAccount($identificator);
+        break;
     }
+
+    return $account;
+  }
+
+  public function getSystem() {
+    return $this->system;
+  }
 }
