@@ -26,24 +26,22 @@ More details about how to start with [CiviMobile](https://civimobile.agiliway.co
 - PHP v5.4+
 - CiviCRM v4.7.x+
 
-## Installation (git/cli)
+## Installation
+To install CiviMobileAPI extension you have to follow standard CiviCRM rules - [Installing a new extension](https://docs.civicrm.org/sysadmin/en/latest/customize/extensions/#installing-a-new-extension).
+1. Download the extension package (zip or tar file) from the [download URL](https://github.com/agiliway/com.agiliway.civimobileapi/releases/latest) or use GIT for it ([Installation using GIT/CLI](#Installation_using_GITCLI_41)).
+2. Unzip / untar the package and place it in your configured extensions directory. The default configurations are:
+  * Drupal `/sites/default/files/civicrm/custom_ext`
+  * WordPress `/wp-content/plugins/files/civicrm/custom_ext`
+  * Joomla `/media/civicrm/custom_ext`
+3. Go to Administer -> System Settings -> Extensions.
+3. Click on Install button for **CiviMobileAPI** extension.
+4. Clear the cache: Administer -> System Settings -> Cleanup Caches and Update Paths.
 
-To install the extension on an existing CiviCRM site:
+## Installation using GIT/CLI
 
+To install the extension on an existing CiviCRM site using GIT:
+1. Go to extension folder.
+2. Clone the extension
 ```
-mkdir sites/all/modules/civicrm/ext
-cd sites/default/files/civicrm/ext
 git clone https://github.com/agiliway/com.agiliway.civimobileapi com.agiliway.civimobileapi
 ```
-
-1. Install it within the CiviCRM Extensions tab of the administration panel:
-
-- go to Administer -> System Settings -> Extensions
-- Click on Install button for CiviMobileAPI extension
-
-2. Clear the cache:
-
-- Administer -> System Settings -> Cleanup Caches and Update Paths
-
-3. Install CiviMobile app into your smartphone from App Store or Google Play Market
-4. Open the app on your device and enter the same login information you use for a web version (username and password) and your CiviCRM website URL – a URL you enter to access your CiviCRM system
