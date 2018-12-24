@@ -27,6 +27,9 @@ More details about how to start with [CiviMobile](https://civimobile.agiliway.co
 - CiviCRM v4.7.x+
 
 ## Installation
+
+>**Note**: it is only a part of instruction that describes a CiviCRM extension installation steps. Full instruction can be found [here](https://civimobile.agiliway.com/#how-to-start).
+
 To install CiviMobileAPI extension you have to follow standard CiviCRM rules - [Installing a new extension](https://docs.civicrm.org/sysadmin/en/latest/customize/extensions/#installing-a-new-extension).
 1. Download the extension package (zip or tar file) from the [download URL](https://github.com/agiliway/com.agiliway.civimobileapi/releases/latest) or use GIT for it ([Installation using GIT/CLI](#Installation_using_GITCLI_41)).
 2. Unzip / untar the package and place it in your configured extensions directory. The default configurations are:
@@ -34,8 +37,9 @@ To install CiviMobileAPI extension you have to follow standard CiviCRM rules - [
   * WordPress `/wp-content/plugins/files/civicrm/custom_ext`
   * Joomla `/media/civicrm/custom_ext`
 3. Go to Administer -> System Settings -> Extensions.
-3. Click on Install button for **CiviMobileAPI** extension.
-4. Clear the cache: Administer -> System Settings -> Cleanup Caches and Update Paths.
+4. Click on Install button for **CiviMobileAPI** extension.
+5. Clear the cache: Administer -> System Settings -> Cleanup Caches and Update Paths.
+6. The WordPress requires additional plugin [CiviCRMApiFix](https://github.com/agiliway/com.agiliway.civicrmapifixforwordpress) 
 
 ## Installation using GIT/CLI
 
