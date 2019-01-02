@@ -15,7 +15,7 @@ The **CiviMobileAPI** extension (`com.agiliway.civimobileapi`) is a CiviCRM comp
 - **Cases** - grants immediate access to user’s cases details
 - **Activities** - allows to access details of user’s activities, their priority statuses and information about other constituents engaged in them
 - **Working Offline** - can work in the offline mode
-- **3 locales** - currently, supports 3 locales: English, German and French
+- **4 locales** - currently, supports 4 locales: English, German, French and Italian
 
 The [CiviMobile](https://civimobile.agiliway.com/) application itself can be downloaded from [AppStore](https://itunes.apple.com/us/app/civimobile/id1404824793?mt=8) of [Google Play](https://play.google.com/store/apps/details?id=com.agiliway.civimobile), which should be accessed from the mobile devices of users.
 
