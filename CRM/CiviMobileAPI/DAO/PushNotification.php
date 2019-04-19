@@ -211,4 +211,5 @@ class CRM_CiviMobileAPI_DAO_PushNotification extends CRM_Core_DAO {
 
     return Civi::$statics[__CLASS__]['fields'];
   }
+
 }

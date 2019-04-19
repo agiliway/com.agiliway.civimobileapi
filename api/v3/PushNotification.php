@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Save push tockens
+ * Saves push tokens
  *
  * @param array $params
  * 
@@ -18,9 +18,10 @@ function civicrm_api3_push_notification_create($params) {
     'modified_date' => gmdate("Y-m-d H:i:s", time()),
     'is_active' => $params['is_active']
   ];
+
   if (empty($isContactCreated)) {
     $paramsForInsert['created_date'] = gmdate("Y-m-d H:i:s", time());
-  }else{
+  } else {
     $paramsForInsert['id'] = array_shift($isContactCreated)['id'];
   }
   CRM_CiviMobileAPI_BAO_PushNotification::create($paramsForInsert);

@@ -3,7 +3,7 @@
 /**
  * Gets events, cases and activities for calendar
  *
- * @param array $params array or parameters
+ * @param array $params
  *
  * @return array
  */
@@ -12,11 +12,6 @@ function civicrm_api3_civi_mobile_calendar_get($params) {
   $events = $calendarManager->getEvents();
 
   return civicrm_api3_create_success($events, $params);
-}
-
-function _civicrm_api3_civi_mobile_calendar_get_formatResult($params, $events) {
-  //TODO:return only nedeed fields
-  return $events;
 }
 
 /**

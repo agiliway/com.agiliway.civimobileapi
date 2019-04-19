@@ -1,0 +1,20 @@
+{htxt id="push-notifications-help-title"}
+  <p>{ts}Push Notifications{/ts}</p>
+{/htxt}
+{htxt id="push-notifications-help"}
+    <p>{ts}Push Notifications are small messages that can reach audiences anywhere and anytime. It is "pushed" from the backend server to user mobile applications. The system will "push" reminders and notifications during some activity in your CiviCRM.{/ts}</p>
+{/htxt}
+
+{htxt id="server-key-help-title"}
+  <p>{ts}Server Key{/ts}</p>
+{/htxt}
+{htxt id="server-key-help"}
+    <p>{ts}Server Key is used for security purposes for Push Notifications{/ts}</p>
+{/htxt}
+
+{htxt id="software-update-help-title"}
+  <p>{ts}Software update{/ts}</p>
+{/htxt}
+{htxt id="software-update-help"}
+    <p>{ts}We recommend enabling automatically extension update to be sure that you are using the most secure and powerful extension version and avoid desynchronization between mobile application and extension.{/ts}</p>
+{/htxt}

@@ -10,6 +10,13 @@ class CRM_CiviMobileAPI_PushNotification_Utils_Hook_Post_ParticipantPushNotifica
   private $objectRef;
 
   /**
+   * List of actions text
+   *
+   * @var array
+   */
+  private $actionText = ['edit' => '%display_name has edited participant.'];
+
+  /**
    * Sets object reference
    *
    * @param object $objectRef
@@ -26,28 +33,32 @@ class CRM_CiviMobileAPI_PushNotification_Utils_Hook_Post_ParticipantPushNotifica
       $contacts[] = $this->objectRef->contact_id;
       return $contacts;
     }
+
+    return NULL;
   }
   
   /**
    * @inheritdoc
    */
   protected function getTitle() {
-    return ts('Update registration to the event');
+    if ($this->objectRef->event_id) {
+      try {
+        $eventTitle = civicrm_api3('Event', 'getvalue', ['return' => "title", 'id' => $this->objectRef->event_id]);
+      } catch (Exception $e) {
+        $eventTitle = NULL;
+      }
+
+      return $eventTitle;
+    }
+
+    return NULL;
   }
   
   /**
    * @inheritdoc
    */
   protected function getText() {
-    if($this->objectRef->event_id) {
-      try {
-        $eventTitle = civicrm_api3('Event', 'getvalue', ['return' => "title", 'id' => $this->objectRef->event_id]);
-      } catch (Exception $e) {
-        $eventTitle = NULL;
-      }
-      
-      return $eventTitle;
-    }
+    return isset($this->actionText[$this->action]) ? ts($this->actionText[$this->action]) : '';
   }
 
 }

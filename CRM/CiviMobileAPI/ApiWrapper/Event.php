@@ -2,10 +2,18 @@
 
 class CRM_CiviMobileAPI_ApiWrapper_Event implements API_Wrapper {
 
+  /**
+   * Interface for interpreting api input
+   *
+   * @param array $apiRequest
+   *
+   * @return array
+   */
   public function fromApiInput($apiRequest) {
-    if(is_mobile_request()) {
+    if (is_mobile_request()) {
       $apiRequest['params']['check_permissions'] = 0;
     }
+
     return $apiRequest;
   }
 
@@ -18,9 +26,10 @@ class CRM_CiviMobileAPI_ApiWrapper_Event implements API_Wrapper {
    * @return array
    */
   public function toApiOutput($apiRequest, $result) {
-  	if($apiRequest['action'] == 'getsingle'){
+  	if ($apiRequest['action'] == 'getsingle') {
   		$result['url'] = CRM_Utils_System::url('civicrm/event/info', 'id=' . $result['id'], true);
   	}
+
     return $result;
   }
 }

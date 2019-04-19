@@ -12,4 +12,22 @@
     <title>Core</title>
     <access_callback>1</access_callback>
   </item>
+  <item>
+    <path>civicrm/civimobile/delete_push_token</path>
+    <page_callback>CRM_CiviMobileAPI_Page_DeletePushToken</page_callback>
+    <title>DeletePushToken</title>
+    <access_callback>1</access_callback>
+  </item>
+  <item>
+    <path>civicrm/civimobile/settings</path>
+    <title>CiviMobile Settings</title>
+    <page_callback>CRM_CiviMobileAPI_Form_Settings</page_callback>
+    <access_arguments>administer CiviCRM</access_arguments>
+  </item>
+  <item>
+    <path>civicrm/civimobile/dashboard</path>
+    <title>CiviMobile</title>
+    <page_callback>CRM_CiviMobileAPI_Form_Dashboard</page_callback>
+    <access_arguments>access CiviCRM</access_arguments>
+  </item>
 </menu>

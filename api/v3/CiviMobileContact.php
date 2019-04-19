@@ -1,6 +1,8 @@
 <?php
 
 /**
+ * Uploads picture for Contact
+ *
  * @param $params
  *
  * @return array
@@ -15,10 +17,11 @@ function civicrm_api3_civi_mobile_contact_create($params) {
 
     $photoName = basename($_FILES['image_file']['name']);
     $fileStructure = pathinfo($photoName);
-
-    $newName = $fileStructure['filename'] . "_" . base64_encode($photoName . date("Y-m-d H:i:s")) . "." . $fileStructure['extension'];
-    $pathToCustomFileUploadDir = Civi::paths()->getPath(Civi::settings()
-        ->get('customFileUploadDir')) . $newName;
+    $contactSalt = "33a76s3as3162aq2e4cg5d68d64eefe" . time();
+    $fileSalt = "e787ada2e9a69a3bc67d14893ac3sdf3a67a21a2a" . time();
+    $newName = md5($params['contact_id'] . $contactSalt);
+    $newName .= md5($photoName . $fileSalt) . time() . '.' . $fileStructure['extension'];
+    $pathToCustomFileUploadDir = Civi::paths()->getPath(Civi::settings()->get('customFileUploadDir')) . $newName;
 
     if (!move_uploaded_file($_FILES['image_file']['tmp_name'], $pathToCustomFileUploadDir)) {
       return civicrm_api3_create_error(ts("Can`t upload image"));

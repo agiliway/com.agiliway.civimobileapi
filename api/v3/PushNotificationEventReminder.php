@@ -19,14 +19,20 @@ function civicrm_api3_push_notification_event_reminder_send($params) {
     'is_active' => 1,
   ]);
 
-  if(!empty($events['values'])) {
-    foreach($events['values'] as $event){
+  if (!empty($events['values'])) {
+    foreach ($events['values'] as $event) {
       $eventsIDs[] = $event['id'];
       $eventsTime[$event['id']] = $event['start_date'];
     }
     
     $participants = civicrm_api3('Participant', 'get', ['return' => ["contact_id", "event_id"], 'event_id' => $eventsIDs]);
-    foreach($participants['values'] as $participant){
+    foreach ($participants['values'] as $participant) {
+      CRM_CiviMobileAPI_PushNotification_SaveMessageHelper::saveMessages(
+        [$participant['contact_id']],
+        $participant['event_id'],
+        'Event',
+        ts('Event start at') . ' ' . $eventsTime[$participant['event_id']]
+      );
       CRM_CiviMobileAPI_PushNotification_Helper::sendPushNotification(
         [$participant['contact_id']],
         ts('Event start at') . ' ' . $eventsTime[$participant['event_id']],

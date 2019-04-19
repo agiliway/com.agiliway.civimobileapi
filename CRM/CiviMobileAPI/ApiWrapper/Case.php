@@ -2,6 +2,13 @@
 
 class CRM_CiviMobileAPI_ApiWrapper_Case implements API_Wrapper {
 
+  /**
+   * Interface for interpreting api input
+   *
+   * @param array $apiRequest
+   *
+   * @return array
+   */
   public function fromApiInput($apiRequest) {
     return $apiRequest;
   }
@@ -17,21 +24,27 @@ class CRM_CiviMobileAPI_ApiWrapper_Case implements API_Wrapper {
    * @return array
    */
   public function toApiOutput($apiRequest, $result) {
-    if(isset($result['details'])) {
+    $editAllCase = CRM_Core_Permission::check('access all cases and activities');
+    $editMyCase = CRM_Core_Permission::check('access my cases and activities');
+
+    $result['your_roles'] = [];
+
+    if (isset($result['details'])) {
       $result['details'] = preg_replace('/&nbsp;/', ' ', $result['details']);
-      if(!isset($result['short_description']) && isset($result['details'])) {
-          $result['short_description'] = $result['details'] ? mb_substr (strip_tags(preg_replace('/\s\s+/', ' ', $result['details'])), 0, 200) : '';
+
+      if (!isset($result['short_description']) && isset($result['details'])) {
+        $result['short_description'] = $result['details'] ? mb_substr (strip_tags(preg_replace('/\s\s+/', ' ', $result['details'])), 0, 200) : '';
       } else {
         $result['short_description'] = '';
       }
     }
-    
-    if(isset($result['contacts'])) {
+
+    if (isset($result['contacts'])) {
       foreach ($result['contacts'] as $key => $contact) {
-        if(!isset($contact['image_URL'])) {
+        if (!isset($contact['image_URL'])) {
           try {
             $imageUrl = civicrm_api3('Contact', 'getvalue', [
-              'return' => "image_URL",
+              'return' => 'image_URL',
               'id' => $contact['contact_id'],
             ]);
           } catch (Exception $e) {
@@ -40,8 +53,17 @@ class CRM_CiviMobileAPI_ApiWrapper_Case implements API_Wrapper {
 
           $result['contacts'][$key]['image_URL'] = $imageUrl;
         }
+
+        if ($contact['contact_id'] == CRM_Core_Session::singleton()->get('userID')) {
+          $result['your_roles'][] = $contact['role'];
+        }
       }
     }
+
+    $result['can_create_activity'] = $editMyCase || $editAllCase ? 1 : 0;
+    $result['can_add_all_roles'] = $editAllCase ? 1 : 0;
+    $result['can_add_ordinary_roles'] = $editAllCase ? 1 : 0;
+
     return $result;
   }
 }

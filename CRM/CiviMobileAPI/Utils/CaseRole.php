@@ -33,25 +33,57 @@ class CRM_CiviMobileAPI_Utils_CaseRole {
    */
   private $caseRelationships;
 
+  /**
+   * List of you roles in case
+   *
+   * @var array
+   */
+  private $yourRoles;
+
+  /**
+   * CRM_CiviMobileAPI_Utils_CaseRole constructor.
+   *
+   * @param $caseId
+   * @param $contactId
+   */
   public function __construct($caseId, $contactId) {
     $this->caseId = $caseId;
     $this->contactId = $contactId;
     $this->caseRelationships = CRM_Case_BAO_Case::getCaseRoles($contactId, $caseId);
+    $this->yourRoles = self::getYourRoles($this->caseRelationships, $this->contactId);
   }
 
   /**
    * Gets list of roles for current case
    *
    * @return array
+   * @throws \CiviCRM_API3_Exception
    */
   public function getListOfRolesForCurrentCase() {
     $this->setCaseRoles();
     $this->removeAssignedRelation();
     $this->setContactImageUrlForRoles();
-
     $this->setClientAndUnsignedRoles();
 
     return $this->caseRelationships;
+  }
+
+  /**
+   * @param $caseRelationships
+   * @param $contactId
+   *
+   * @return array
+   */
+  public static function getYourRoles($caseRelationships, $contactId) {
+    $yourRoles = [];
+
+    foreach ($caseRelationships as $relationship) {
+      if ($relationship['cid'] == $contactId) {
+        $yourRoles[] = $relationship['relation'];
+      }
+    }
+
+    return $yourRoles;
   }
 
   /**
@@ -86,6 +118,8 @@ class CRM_CiviMobileAPI_Utils_CaseRole {
 
   /**
    *  Sets contact image url for assigned role
+   *
+   * @throws \CiviCRM_API3_Exception
    */
   private function setContactImageUrlForRoles() {
     foreach ($this->caseRelationships as $relationshipId => $data) {
@@ -99,6 +133,7 @@ class CRM_CiviMobileAPI_Utils_CaseRole {
    * @param $contactId
    *
    * @return array
+   * @throws \CiviCRM_API3_Exception
    */
   private function getContactImageUrl($contactId) {
     return civicrm_api3('Contact', 'getvalue', [
@@ -146,9 +181,11 @@ class CRM_CiviMobileAPI_Utils_CaseRole {
    * @param $listOfRoles
    *
    * @return array
+   * @throws \CiviCRM_API3_Exception
    */
   public function convertListOfRoles($listOfRoles) {
     $role = [];
+
     foreach ($listOfRoles as $id => $relation) {
       $role[] = $this->convertRole($relation);
     }
@@ -162,6 +199,7 @@ class CRM_CiviMobileAPI_Utils_CaseRole {
    * @param $listOfRoles
    *
    * @return array
+   * @throws \CiviCRM_API3_Exception
    */
   public function convertRole($listOfRoles) {
     return [
@@ -170,8 +208,28 @@ class CRM_CiviMobileAPI_Utils_CaseRole {
       'name' => $this->validateEntityExistence($listOfRoles['name']) ? $listOfRoles['name'] : '',
       'relation_type' => $this->getRelationTypeWithDirections($listOfRoles['relation']),
       'relation_id' => $this->validateEntityExistence($listOfRoles['rel_id']) ? $listOfRoles['rel_id'] : '',
+      'can_edit' => $this->canEdit(),
+      'can_delete' => $this->canEdit(),
       'image_URL' => $this->validateEntityExistence($listOfRoles['image_URL']) ? $listOfRoles['image_URL'] : '',
     ];
+  }
+
+  /**
+   * @return int
+   */
+  private function canEdit() {
+    if (empty($this->yourRoles)) {
+      $editAllContacts = CRM_Core_Permission::check('edit all contacts');
+      $editAllCase = CRM_Core_Permission::check('access all cases and activities');
+
+      return $editAllContacts && $editAllCase ? 1 : 0;
+    }
+    else {
+      $editMyContact = CRM_Core_Permission::check('edit my contact');
+      $editAllContacts = CRM_Core_Permission::check('edit all contacts');
+
+      return $editMyContact || $editAllContacts ? 1 : 0;
+    }
   }
 
   /**
@@ -191,6 +249,7 @@ class CRM_CiviMobileAPI_Utils_CaseRole {
    * @param $relationTitle
    *
    * @return false|int|string
+   * @throws \CiviCRM_API3_Exception
    */
   private function getRelationTypeWithDirections($relationTitle) {
     $directionAtoB = "_a_b";
@@ -218,6 +277,7 @@ class CRM_CiviMobileAPI_Utils_CaseRole {
    * @param $relationTitle
    *
    * @return mixed
+   * @throws \CiviCRM_API3_Exception
    */
   private function getRelationTypeId($direction, $relationTitle) {
     $result = civicrm_api3('RelationshipType', 'get', [
@@ -228,6 +288,5 @@ class CRM_CiviMobileAPI_Utils_CaseRole {
 
     return $result['values'][0]['id'];
   }
-
 
 }

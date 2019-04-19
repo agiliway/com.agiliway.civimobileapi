@@ -8,8 +8,8 @@ class CRM_CiviMobileAPI_PushNotification_Utils_Hook_Post_ActivityPushNotificatio
    * @var array
    */
   private $actionText = [
-    'create' => 'New activity',
-    'edit' => 'Activity details updated',
+    'create' => '%display_name has created activity.',
+    'edit' => '%display_name has edited activity.',
   ];
 
   /**
@@ -19,15 +19,12 @@ class CRM_CiviMobileAPI_PushNotification_Utils_Hook_Post_ActivityPushNotificatio
     switch ($this->action) {
       case 'create':
         return CRM_CiviMobileAPI_PushNotification_Helper::getActivityContacts($this->id);
-      break;
 
       case 'edit':
         return CRM_CiviMobileAPI_PushNotification_Helper::getActivityContacts($this->id, TRUE);
-      break;
 
       default:
         return [];
-      break;
     }
   }
 
@@ -35,14 +32,14 @@ class CRM_CiviMobileAPI_PushNotification_Utils_Hook_Post_ActivityPushNotificatio
    * @inheritdoc
    */
   protected function getTitle() {
-    return isset($this->actionText[$this->action]) ? ts($this->actionText[$this->action]) : '';
+    return CRM_Core_DAO::getFieldValue('CRM_Activity_BAO_Activity', $this->id, 'subject');
   }
   
   /**
    * @inheritdoc
    */
   protected function getText() {
-    return CRM_Utils_Request::retrieve('subject', 'String');
+    return isset($this->actionText[$this->action]) ? ts($this->actionText[$this->action]) : '';
   }
 
 }

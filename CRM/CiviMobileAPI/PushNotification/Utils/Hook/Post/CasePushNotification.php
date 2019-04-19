@@ -8,8 +8,8 @@ class CRM_CiviMobileAPI_PushNotification_Utils_Hook_Post_CasePushNotification ex
    * @var array
    */
   private $actionText = [
-    'create' => 'New case',
-    'edit' => 'Case details updated',
+    'create' => '%display_name has created case.',
+    'edit' => '%display_name has edited case.',
   ];
 
   private $objectRef;
@@ -28,15 +28,12 @@ class CRM_CiviMobileAPI_PushNotification_Utils_Hook_Post_CasePushNotification ex
     switch ($this->action) {
       case 'create':
         return $this->getContactFromCreateAction();
-        break;
 
       case 'edit':
         return CRM_CiviMobileAPI_PushNotification_Helper::getCaseRelationshipContacts($this->id);
-        break;
 
       default:
         return [];
-        break;
     }
   }
 
@@ -44,27 +41,26 @@ class CRM_CiviMobileAPI_PushNotification_Utils_Hook_Post_CasePushNotification ex
    * @inheritdoc
    */
   protected function getTitle() {
-    return isset($this->actionText[$this->action]) ? ts($this->actionText[$this->action]) : '';
+    if (CRM_Utils_Request::retrieve('activity_subject', 'String')) {
+      return CRM_Utils_Request::retrieve('activity_subject', 'String');
+    }
+
+    if (CRM_Utils_Request::retrieve('subject', 'String')) {
+      return CRM_Utils_Request::retrieve('subject', 'String');
+    }
+
+    if (!empty($this->objectRef->subject)) {
+      return $this->objectRef->subject;
+    }
+
+    return NULL;
   }
 
   /**
    * @inheritdoc
    */
   protected function getText() {
-    if (CRM_Utils_Request::retrieve('activity_subject', 'String')) {
-      return CRM_Utils_Request::retrieve('activity_subject', 'String');
-    }
-    if (CRM_Utils_Request::retrieve('subject', 'String')) {
-      return CRM_Utils_Request::retrieve('subject', 'String');
-    }
-  }
-
-  private function getCaseContact($id) {
-    $result = civicrm_api3('CaseContact', 'get', [
-      'return' => "contact_id",
-      'case_id' => $id,
-    ]);
-    return key($result['values']);
+    return isset($this->actionText[$this->action]) ? ts($this->actionText[$this->action]) : '';
   }
 
   private function getContactFromCreateAction() {
@@ -85,7 +81,8 @@ class CRM_CiviMobileAPI_PushNotification_Utils_Hook_Post_CasePushNotification ex
       return $contacts;
     }
 
-    $contacts[] = isset($_POST['client_id']) ? $_POST['client_id'] : [];
+    $contacts = isset($_POST['client_id']) ? [$_POST['client_id']] : [];
+
     return $contacts;
   }
 

@@ -5,6 +5,13 @@ use CRM_CiviMobileAPI_PushNotification_Helper as PushNotification_Helper;
 class CRM_CiviMobileAPI_PushNotification_Utils_Hook_Pre_ParticipantPushNotification extends CRM_CiviMobileAPI_PushNotification_Utils_BasePushNotificationManager {
 
   /**
+   * List of actions text
+   *
+   * @var array
+   */
+  private $actionText = ['delete' => '%display_name has deleted participant.'];
+
+  /**
    * @inheritdoc
    */
   protected function getContact() {
@@ -15,7 +22,18 @@ class CRM_CiviMobileAPI_PushNotification_Utils_Hook_Pre_ParticipantPushNotificat
    * @inheritdoc
    */
   protected function getTitle() {
-    return ts('Registration to the event removed');
+    if ($this->action === 'delete' && $this->id) {
+      try {
+        $eventTitle = civicrm_api3('Participant', 'getvalue', ['return' => 'event_title', 'id' => $this->id]);
+      }
+      catch (Exception $e) {
+        $eventTitle = NULL;
+      }
+
+      return $eventTitle;
+    }
+
+    return NULL;
   }
   
   
@@ -23,15 +41,7 @@ class CRM_CiviMobileAPI_PushNotification_Utils_Hook_Pre_ParticipantPushNotificat
    * @inheritdoc
    */
   protected function getText() {
-    if($this->action === 'delete' && $this->id) {
-      try {
-        $eventTitle = civicrm_api3('Participant', 'getvalue', ['return' => 'event_title', 'id' => $this->id]);
-      } catch (Exception $e) {
-        $eventTitle = NULL;
-      }
-    
-      return $eventTitle;
-    }
+    return isset($this->actionText[$this->action]) ? ts($this->actionText[$this->action]) : '';
   }
 
 }

@@ -7,15 +7,45 @@ class CRM_CiviMobileAPI_Calendar_Handler {
   const TYPE_CASES = 'case';
   const TYPE_ACTIVITIES = 'activity';
 
+  /**
+   * Contact id
+   *
+   * @var int
+   */
   private $contactId;
+
+  /**
+   * Validated params
+   *
+   * @var array
+   */
   private $params;
+
+  /**
+   * Fields which returned from DAO
+   *
+   * @var array
+   */
   private $fields = ['title' => 'title', 'start' => 'start', 'end' => 'end', 'url' => 'url', 'type' => 'type'];
 
+  /**
+   * CRM_CiviMobileAPI_Calendar_Handler constructor.
+   *
+   * @param $contactId
+   * @param $params
+   */
   public function __construct($contactId, $params) {
     $this->contactId = $contactId;
     $this->params = $this->validateParams($params);
   }
 
+  /**
+   * Validates params
+   *
+   * @param $params
+   *
+   * @return mixed
+   */
   private function validateParams($params) {
     if (empty($params['startDate'])) {
       $params['startDate'] = gmdate("Y-m-d H:i:s", time());
@@ -44,11 +74,12 @@ class CRM_CiviMobileAPI_Calendar_Handler {
     if (!empty($params['fields'])) {
       $this->fields = $params['fields'];
     }
+
     return $params;
   }
 
   /**
-   * Get all type events
+   * Gets all type events
    * @deprecated please use getAll function, which combine all items in one array and has filter by type
    * @return mixed
    */
@@ -66,9 +97,13 @@ class CRM_CiviMobileAPI_Calendar_Handler {
     return $events;
   }
 
+  /**
+   * Gets events
+   *
+   * @return array
+   */
   public function getEvents() {
     $result = [];
-    /** Generate SQL query to get Contact's Events * */
     $query = '
       SELECT DISTINCT
         civicrm_event.id,
@@ -87,7 +122,6 @@ class CRM_CiviMobileAPI_Calendar_Handler {
         )
     ';
 
-    /** Hide Past Events when hidePastEvents setting is enabled * */
     if ($this->params['hidePastEvents'] == "1") {
       $query .= ' AND civicrm_event.start_date > NOW()';
     }
@@ -112,12 +146,17 @@ class CRM_CiviMobileAPI_Calendar_Handler {
     }
 
     $dao->free();
+
     return $result;
   }
 
+  /**
+   * Gets Cases
+   *
+   * @return array
+   */
   public function getCases() {
     $result = [];
-    /** Generate SQL query to get Contact's Cases * */
     $query = '
       SELECT 
         civicrm_case.id AS id,
@@ -143,7 +182,6 @@ class CRM_CiviMobileAPI_Calendar_Handler {
       OR ("' . $this->params['startDate'] . '" BETWEEN civicrm_activity.activity_date_time AND COALESCE (DATE_ADD(civicrm_activity.activity_date_time, INTERVAL COALESCE (civicrm_activity.duration, 30) MINUTE),civicrm_activity.activity_date_time)))
     ';
 
-    /** Hide Past Cases when hidePastEvents setting is enabled * */
     if ($this->params['hidePastEvents'] == "1") {
       $query .= ' AND civicrm_activity.activity_date_time > NOW()';
     }
@@ -179,12 +217,17 @@ class CRM_CiviMobileAPI_Calendar_Handler {
     }
 
     $dao->free();
+
     return $result;
   }
 
+  /**
+   * Gets Activities
+   *
+   * @return array
+   */
   public function getActivities() {
     $result = [];
-    /** Generate SQL query to get Contact's Activities * */
     $query = '
       SELECT DISTINCT
         civicrm_activity.id AS id,
@@ -208,7 +251,6 @@ class CRM_CiviMobileAPI_Calendar_Handler {
         )
     ';
 
-    /** Hide Past Activities when hidePastEvents setting is enabled * */
     if ($this->params['hidePastEvents'] == "1") {
       $query .= ' AND civicrm_activity.activity_date_time > NOW()';
     }
@@ -234,6 +276,7 @@ class CRM_CiviMobileAPI_Calendar_Handler {
     }
 
     $dao->free();
+
     return $result;
   }
 

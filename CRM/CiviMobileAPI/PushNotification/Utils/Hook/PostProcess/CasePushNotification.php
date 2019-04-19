@@ -8,9 +8,9 @@ class CRM_CiviMobileAPI_PushNotification_Utils_Hook_PostProcess_CasePushNotifica
    * @var array
    */
   private $actionText = [
-    "create" => 'Activity in the case created',
-    "edit" => 'Activity details updated',
-    "delete" => 'Activity removed',
+    'create' => '%display_name has created activity.',
+    'edit' => '%display_name has edited activity.',
+    'delete' => '%display_name has deleted activity.',
   ];
 
   /**
@@ -24,22 +24,26 @@ class CRM_CiviMobileAPI_PushNotification_Utils_Hook_PostProcess_CasePushNotifica
    * @inheritdoc
    */
   protected function getTitle() {
-    return isset($this->actionText[$this->action]) ? ts($this->actionText[$this->action]) : '';
+    $caseTitle = '';
+
+    if ($this->id) {
+      try {
+        $caseTitle = civicrm_api3('Case', 'getvalue', [
+          'return' => 'subject',
+          'id' => $this->id,
+        ]);
+      } catch (Exception $e) {
+      }
+    }
+
+    return $caseTitle;
   }
   
   /**
    * @inheritdoc
    */
   protected function getText() {
-    if($this->id) {
-      try {
-        $caseTitle = civicrm_api3('Case', 'getvalue', ['return' => 'subject', 'id' => $this->id]);
-      } catch (Exception $e) {
-        $caseTitle = NULL;
-      }
-      
-      return $caseTitle;
-    }
+    return isset($this->actionText[$this->action]) ? ts($this->actionText[$this->action]) : '';
   }
 
 }

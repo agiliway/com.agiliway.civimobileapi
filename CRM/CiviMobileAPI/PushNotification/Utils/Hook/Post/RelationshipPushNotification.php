@@ -17,6 +17,16 @@ class CRM_CiviMobileAPI_PushNotification_Utils_Hook_Post_RelationshipPushNotific
   private $caseID;
 
   /**
+   * List of actions text
+   *
+   * @var array
+   */
+  private $actionText = [
+    'create' => '%display_name has created relationship.',
+    'edit' => '%display_name has edited relationship.',
+  ];
+
+  /**
    * Sets object reference
    *
    * @param object $objectRef
@@ -71,40 +81,24 @@ class CRM_CiviMobileAPI_PushNotification_Utils_Hook_Post_RelationshipPushNotific
    * @inheritdoc
    */
   protected function getTitle() {
-    switch ($this->action) {
-      case 'create':
-        return isset($this->objectRef->case_id) ? ts('Role in the case added') : '';
-      break;
+    if ($this->caseID) {
+      try {
+        $caseTitle = civicrm_api3('Case', 'getvalue', ['return' => 'subject', 'id' => $this->caseID]);
+      } catch (Exception $e) {
+        $caseTitle = NULL;
+      }
 
-      case 'edit':
-        if (isset($this->objectRef->case_id)) {
-          return ts('Role in the case changed');
-        }
-        else {
-          return $this->caseID ? ts('Role in the case removed') : '';
-        }
-      break;
-
-      default:
-        return '';
-      break;
+      return $caseTitle;
     }
+
+    return NULL;
   }
 
   /**
    * @inheritdoc
    */
   protected function getText() {
-//    $this->setCaseId();
-    if($this->caseID) {
-      try {
-        $caseTitle = civicrm_api3('Case', 'getvalue', ['return' => 'subject', 'id' => $this->caseID]);
-      } catch (Exception $e) {
-        $caseTitle = NULL;
-      }
-      
-      return $caseTitle;
-    }
+    return isset($this->actionText[$this->action]) ? ts($this->actionText[$this->action]) : '';
   }
   
 }

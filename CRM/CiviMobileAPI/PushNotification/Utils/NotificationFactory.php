@@ -40,6 +40,15 @@ class CRM_CiviMobileAPI_PushNotification_Utils_NotificationFactory {
    */
   private $hookContext;
 
+  /**
+   * CRM_CiviMobileAPI_PushNotification_Utils_NotificationFactory constructor.
+   *
+   * @param $action
+   * @param $objectName
+   * @param $objectId
+   * @param $objectRef
+   * @param $hookContext
+   */
   public function __construct($action, $objectName, $objectId, $objectRef, $hookContext) {
     $this->action = $action;
     $this->objectName = $objectName;
@@ -47,7 +56,6 @@ class CRM_CiviMobileAPI_PushNotification_Utils_NotificationFactory {
     $this->objectRef = $objectRef;
     $this->hookContext = $hookContext;
   }
-
 
   /**
    * Converts post process action to appropriate for factory type
@@ -59,7 +67,7 @@ class CRM_CiviMobileAPI_PushNotification_Utils_NotificationFactory {
   public static function convertPostProcessAction($form) {
     $action = $form->getAction();
 
-    switch ($action){
+    switch ($action) {
       case CRM_Core_Action::ADD:
         $action = "create";
         break;
@@ -72,7 +80,6 @@ class CRM_CiviMobileAPI_PushNotification_Utils_NotificationFactory {
     }
 
     return $action;
-
   }
 
   /**
@@ -83,25 +90,23 @@ class CRM_CiviMobileAPI_PushNotification_Utils_NotificationFactory {
    * @return string
    */
   public static function convertPostProcessFormName($formName) {
-    switch ($formName){
+    switch ($formName) {
       case 'CRM_Activity_Form_Activity':
-//        $formName = "Activity";
         break;
 
-//      case 'CRM_Case_Form_Case':
       case 'CRM_Case_Form_Activity':
         $formName = 'ActivityInCase';
         break;
     }
 
     return $formName;
-
   }
 
   /**
    * Gets notification manager depends from entity name
    *
    * @return \CRM_CiviMobileAPI_PushNotification_Utils_BasePushNotificationManager
+   * @throws \Exception
    */
   public function getPushNotificationManager() {
     $notificationManager = NULL;
@@ -153,15 +158,25 @@ class CRM_CiviMobileAPI_PushNotification_Utils_NotificationFactory {
   /**
    * Gets relationship notification manager
    *
-   * @return \CRM_CiviMobileAPI_PushNotification_Utils_Hook_Post_RelationshipPushNotification
+   * @return \CRM_CiviMobileAPI_PushNotification_Utils_Hook_Post_CasePushNotification|\CRM_CiviMobileAPI_PushNotification_Utils_Hook_Post_RelationshipPushNotification|null
+   * @throws \Exception
    */
   private function getRelationshipNotification() {
     $notificationManager = NULL;
 
     if ($this->hookContext === "post") {
-      $notificationManager = new CRM_CiviMobileAPI_PushNotification_Utils_Hook_Post_RelationshipPushNotification($this->objectName, $this->action, $this->objectId);
-      $notificationManager->setObjectRef($this->objectRef);
+      if (!empty($this->objectRef->case_id)) {
+        $caseObjectRef = CRM_Case_BAO_Case::findById($this->objectRef->case_id);
+
+        $notificationManager = new CRM_CiviMobileAPI_PushNotification_Utils_Hook_Post_CasePushNotification("Case", "edit", $this->objectRef->case_id);
+        $notificationManager->setObjectRef($caseObjectRef);
+      }
+      else {
+        $notificationManager = new CRM_CiviMobileAPI_PushNotification_Utils_Hook_Post_RelationshipPushNotification($this->objectName, $this->action, $this->objectId);
+        $notificationManager->setObjectRef($this->objectRef);
+      }
     }
+    
     return $notificationManager;
   }
 
@@ -197,7 +212,7 @@ class CRM_CiviMobileAPI_PushNotification_Utils_NotificationFactory {
     } else {
       $objName = 'Activity';
 
-      if(is_object($this->objectRef)){
+      if (is_object($this->objectRef)) {
         $activityId = isset($this->objectRef->_activityId) ? $this->objectRef->_activityId : $this->objectRef->id;
         $notificationManager = new CRM_CiviMobileAPI_PushNotification_Utils_Hook_PostProcess_ActivityPushNotification($objName, $this->action, $activityId);
       }

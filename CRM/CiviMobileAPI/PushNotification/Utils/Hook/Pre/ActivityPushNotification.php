@@ -5,6 +5,15 @@ use CRM_CiviMobileAPI_PushNotification_Helper as PushNotification_Helper;
 class CRM_CiviMobileAPI_PushNotification_Utils_Hook_Pre_ActivityPushNotification extends CRM_CiviMobileAPI_PushNotification_Utils_BasePushNotificationManager {
 
   /**
+   * List of actions text
+   *
+   * @var array
+   */
+  private $actionText = [
+    'delete' => '%display_name has deleted activity.'
+  ];
+
+  /**
    * @inheritdoc
    */
   protected function getContact() {
@@ -13,12 +22,15 @@ class CRM_CiviMobileAPI_PushNotification_Utils_Hook_Pre_ActivityPushNotification
 
       return empty($caseID['values']) ? PushNotification_Helper::getActivityContacts($this->id, TRUE) : '';
     }
+
+    return NULL;
   }
 
   /**
    * Gets id of current case id
    *
    * @return array
+   * @throws \CiviCRM_API3_Exception
    */
   private function getCaseId() {
     return civicrm_api3('Case', 'get', [
@@ -31,22 +43,24 @@ class CRM_CiviMobileAPI_PushNotification_Utils_Hook_Pre_ActivityPushNotification
    * @inheritdoc
    */
   protected function getTitle() {
-    return ts('Activity removed');
-  }
-
-  /**
-   * @inheritdoc
-   */
-  protected function getText() {
     if ($this->action === 'delete' && $this->id) {
       try {
         $activityName = civicrm_api3('Activity', 'getvalue', ['return' => 'subject', 'id' => $this->id]);
       } catch (Exception $e) {
         $activityName = NULL;
       }
-      
+
       return $activityName;
     }
+
+    return NULL;
+  }
+
+  /**
+   * @inheritdoc
+   */
+  protected function getText() {
+    return isset($this->actionText[$this->action]) ? ts($this->actionText[$this->action]) : '';
   }
 
 }

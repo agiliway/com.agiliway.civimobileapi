@@ -1,7 +1,5 @@
 <?php
 
-// AUTO-GENERATED FILE -- Civix may overwrite any changes made to this file
-
 /**
  * The ExtensionUtil class provides small stubs for accessing resources of this
  * extension.
@@ -59,7 +57,6 @@ class CRM_CiviMobileAPI_ExtensionUtil {
    *   Ex: '/var/www/example.org/sites/default/ext/org.example.foo/css/foo.css'.
    */
   public static function path($file = NULL) {
-    // return CRM_Core_Resources::singleton()->getPath(self::LONG_NAME, $file);
     return __DIR__ . ($file === NULL ? '' : (DIRECTORY_SEPARATOR . $file));
   }
 
@@ -296,7 +293,6 @@ function _civimobileapi_civix_civicrm_caseTypes(&$caseTypes) {
     if ($name != CRM_Case_XMLProcessor::mungeCaseType($name)) {
       $errorMessage = sprintf("Case-type file name is malformed (%s vs %s)", $name, CRM_Case_XMLProcessor::mungeCaseType($name));
       CRM_Core_Error::fatal($errorMessage);
-      // throw new CRM_Core_Exception($errorMessage);
     }
     $caseTypes[$name] = array(
       'module' => E::LONG_NAME,
@@ -358,7 +354,6 @@ function _civimobileapi_civix_glob($pattern) {
  *    filled for you)
  */
 function _civimobileapi_civix_insert_navigation_menu(&$menu, $path, $item) {
-  // If we are done going down the path, insert menu
   if (empty($path)) {
     $menu[] = array(
       'attributes' => array_merge(array(
@@ -369,7 +364,6 @@ function _civimobileapi_civix_insert_navigation_menu(&$menu, $path, $item) {
     return TRUE;
   }
   else {
-    // Find an recurse into the next level down
     $found = FALSE;
     $path = explode('/', $path);
     $first = array_shift($path);
@@ -414,7 +408,6 @@ function _civimobileapi_civix_fixNavigationMenuItems(&$nodes, &$maxNavID, $paren
     if (!isset($nodes[$origKey]['attributes']['parentID']) && $parentID !== NULL) {
       $nodes[$origKey]['attributes']['parentID'] = $parentID;
     }
-    // If no navID, then assign navID and fix key.
     if (!isset($nodes[$origKey]['attributes']['navID'])) {
       $newKey = ++$maxNavID;
       $nodes[$origKey]['attributes']['navID'] = $newKey;

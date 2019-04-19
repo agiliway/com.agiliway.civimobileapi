@@ -6,10 +6,17 @@ class CRM_CiviMobileAPI_PushNotification_EventReminderHelper {
    * API Entity
    */
   const API_ENTITY = 'PushNotificationEventReminder';
-  
+
+  /**
+   * Activates Event reminder
+   * 
+   * @param $active
+   *
+   * @throws \CiviCRM_API3_Exception
+   */
   public static function setEventReminderActive($active) {
     $jobs = civicrm_api3('Job', 'get', ['api_entity' => self::API_ENTITY]);
-    foreach($jobs['values'] as $job) {
+    foreach ($jobs['values'] as $job) {
       civicrm_api3('Job', 'create', [
         'id' => $job['id'],
         'run_frequency' => $job['run_frequency'],
@@ -20,14 +27,22 @@ class CRM_CiviMobileAPI_PushNotification_EventReminderHelper {
       ]);
     }
   }
-  
+
+  /**
+   * Deletes Event reminder
+   * 
+   * @throws \CiviCRM_API3_Exception
+   */
   public static function deleteEventReminder() {
     $jobs = civicrm_api3('Job', 'get', ['api_entity' => self::API_ENTITY]);
-    foreach($jobs['values'] as $job) {
+    foreach ($jobs['values'] as $job) {
       civicrm_api3('Job', 'delete', ['id' => $job['id']]);
     }
   }
-  
+
+  /**
+   * Creates Event reminder
+   */
   public static function createEventReminder() {
     try {
       civicrm_api3('Job', 'getvalue', ['return' => 'id', 'api_entity' => self::API_ENTITY]);

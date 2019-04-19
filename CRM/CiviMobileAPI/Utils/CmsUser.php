@@ -44,9 +44,13 @@ class CRM_CiviMobileAPI_Utils_CmsUser {
     $this->system = defined('CIVICRM_UF') ? CIVICRM_UF : '';
   }
 
-  private function __clone() {
-  }
+  private function __clone() {}
 
+  /**
+   * Gets instance of CRM_CiviMobileAPI_Utils_CmsUser
+   *
+   * @return \CRM_CiviMobileAPI_Utils_CmsUser
+   */
   public static function getInstance() {
     if (self::$instance === NULL) {
       self::$instance = new self;
@@ -109,7 +113,7 @@ class CRM_CiviMobileAPI_Utils_CmsUser {
     }
 
     $user = NULL;
-    if(isset($userId) && !empty($userId)){
+    if (isset($userId) && !empty($userId)) {
       $user = JFactory::getUser($userId);
     }
 
@@ -174,6 +178,11 @@ class CRM_CiviMobileAPI_Utils_CmsUser {
     return $uid;
   }
 
+  /**
+   * @param $identificator
+   *
+   * @return bool|mixed
+   */
   public function searchAccount($identificator) {
     $account = FALSE;
     switch ($this->system) {
@@ -191,7 +200,11 @@ class CRM_CiviMobileAPI_Utils_CmsUser {
     return $account;
   }
 
+  /**
+   * @return array|false|mixed|string
+   */
   public function getSystem() {
     return $this->system;
   }
+
 }

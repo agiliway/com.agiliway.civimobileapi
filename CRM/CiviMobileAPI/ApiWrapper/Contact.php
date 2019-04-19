@@ -2,6 +2,13 @@
 
 class CRM_CiviMobileAPI_ApiWrapper_Contact implements API_Wrapper {
 
+  /**
+   * Interface for interpreting api input
+   *
+   * @param array $apiRequest
+   *
+   * @return array
+   */
   public function fromApiInput($apiRequest) {
     return $apiRequest;
   }
@@ -15,25 +22,13 @@ class CRM_CiviMobileAPI_ApiWrapper_Contact implements API_Wrapper {
    * @return array
    */
   public function toApiOutput($apiRequest, $result) {
-    if($apiRequest['action'] == 'getsingle') {
-      if(empty($result['current_employer_id']) && isset($result['contact_id'])) {
-        try {
-          $organization_id = civicrm_api3('Relationship', 'getvalue', [
-            'return' => 'contact_id_b',
-            'contact_id_a' => $result['contact_id'],
-            'relationship_type_id' => 5,
-            'is_active' => 1,
-            'options' => [
-              'limit' => 1,
-            ],
-          ]);
-        } catch (Exception $e) {
-          $organization_id = '';
-        }
-        $result['current_employer_id'] = $organization_id;
+    if ($apiRequest['action'] == 'getsingle') {
+      if (empty($result['current_employer_id']) && !empty($result['contact_id'])) {
+        $result['current_employer_id'] = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact', $result['contact_id'], 'employer_id');
       }
     }
     
     return $result;
   }
+
 }

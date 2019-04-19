@@ -23,6 +23,13 @@ abstract class CRM_CiviMobileAPI_PushNotification_Utils_BasePushNotificationMana
    */
   protected $id;
 
+  /**
+   * CRM_CiviMobileAPI_PushNotification_Utils_BasePushNotificationManager constructor.
+   *
+   * @param $objectName
+   * @param $action
+   * @param $id
+   */
   public function __construct($objectName, $action, $id) {
     $this->objectName = $objectName;
     $this->action = $action;
@@ -38,8 +45,14 @@ abstract class CRM_CiviMobileAPI_PushNotification_Utils_BasePushNotificationMana
     $title = $this->getTitle();
     $isContactExist = isset($contact) && !empty($contact) && !empty($title);
 
+    CRM_Utils_Hook::singleton()
+      ->commonInvoke(6, $isContactExist, $listOfContactsID, $this->id, $this->objectName, $text, $title, 'civimobile_send_notification', '');
+
     if ($isContactExist) {
-      CRM_CiviMobileAPI_PushNotification_Helper::sendPushNotification($contact, $title, $text);
+      CRM_CiviMobileAPI_PushNotification_SaveMessageHelper::saveMessages(
+        $contact, $this->id, $this->objectName, $title, $text);
+      CRM_CiviMobileAPI_PushNotification_Helper::sendPushNotification(
+        $contact, $title, $text);
     }
   }
 

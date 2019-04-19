@@ -1,6 +1,5 @@
 <?php
 
-// AUTO-GENERATED FILE -- Civix may overwrite any changes made to this file
 use CRM_CiviMobileAPI_ExtensionUtil as E;
 
 /**
@@ -44,7 +43,6 @@ class CRM_CiviMobileAPI_Upgrader_Base {
    */
   static public function instance() {
     if (!self::$instance) {
-      // FIXME auto-generate
       self::$instance = new CRM_CiviMobileAPI_Upgrader(
         'com.agiliway.civimobileapi',
         realpath(__DIR__ . '/../../../')
@@ -76,8 +74,6 @@ class CRM_CiviMobileAPI_Upgrader_Base {
     $this->extensionName = $extensionName;
     $this->extensionDir = $extensionDir;
   }
-
-  // ******** Task helpers ********
 
   /**
    * Run a CustomData file.
@@ -125,7 +121,6 @@ class CRM_CiviMobileAPI_Upgrader_Base {
    * @return bool
    */
   public function executeSqlTemplate($tplFile) {
-    // Assign multilingual variable to Smarty.
     $upgrade = new CRM_Upgrade_Form();
 
     $tplFile = CRM_Utils_File::isAbsolute($tplFile) ? $tplFile : $this->extensionDir . DIRECTORY_SEPARATOR . $tplFile;
@@ -145,7 +140,6 @@ class CRM_CiviMobileAPI_Upgrader_Base {
    * run different queries
    */
   public function executeSql($query, $params = array()) {
-    // FIXME verify that we raise an exception on error
     CRM_Core_DAO::executeQuery($query, $params);
     return TRUE;
   }
@@ -169,8 +163,6 @@ class CRM_CiviMobileAPI_Upgrader_Base {
     );
     return $this->queue->createItem($task, array('weight' => -1));
   }
-
-  // ******** Revision-tracking helpers ********
 
   /**
    * Determine if there are any pending revisions.
@@ -204,8 +196,6 @@ class CRM_CiviMobileAPI_Upgrader_Base {
           1 => $this->extensionName,
           2 => $revision,
         ));
-
-        // note: don't use addTask() because it sets weight=-1
 
         $task = new CRM_Queue_Task(
           array(get_class($this), '_queueAdapter'),
@@ -264,7 +254,6 @@ class CRM_CiviMobileAPI_Upgrader_Base {
 
   public function setCurrentRevision($revision) {
     CRM_Core_BAO_Extension::setSchemaVersion($this->extensionName, $revision);
-    // clean up legacy schema version store (CRM-19252)
     $this->deleteDeprecatedRevision();
     return TRUE;
   }
@@ -277,8 +266,6 @@ class CRM_CiviMobileAPI_Upgrader_Base {
       CRM_Core_Error::debug_log_message("Migrated extension schema revision ID for {$this->extensionName} from civicrm_setting (deprecated) to civicrm_extension.\n");
     }
   }
-
-  // ******** Hook delegates ********
 
   /**
    * @see https://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_install
@@ -345,7 +332,6 @@ class CRM_CiviMobileAPI_Upgrader_Base {
    * @see https://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_enable
    */
   public function onEnable() {
-    // stub for possible future use
     if (is_callable(array($this, 'enable'))) {
       $this->enable();
     }
@@ -355,7 +341,6 @@ class CRM_CiviMobileAPI_Upgrader_Base {
    * @see https://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_disable
    */
   public function onDisable() {
-    // stub for possible future use
     if (is_callable(array($this, 'disable'))) {
       $this->disable();
     }

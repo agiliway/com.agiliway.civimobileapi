@@ -9,6 +9,11 @@ class CRM_CiviMobileAPI_Utils_Calendar {
    */
   private $params;
 
+  /**
+   * CRM_CiviMobileAPI_Utils_Calendar constructor.
+   *
+   * @param $params
+   */
   public function __construct($params) {
     $this->params = $params;
   }
@@ -17,6 +22,7 @@ class CRM_CiviMobileAPI_Utils_Calendar {
    * Gets calendar events
    *
    * @return array
+   * @throws \CiviCRM_API3_Exception
    */
   public function getEvents() {
     $calendarParams = [
@@ -27,10 +33,9 @@ class CRM_CiviMobileAPI_Utils_Calendar {
     ];
 
     $events = [];
-    if ($this->getPermission()){
+    if ($this->getPermission()) {
       $eventsHandler = new CRM_CiviMobileAPI_Calendar_Handler($this->params['contact_id'], $calendarParams);
       $events = $eventsHandler->getAll();
-      $events = _civicrm_api3_civi_mobile_calendar_get_formatResult($this->params, $events);
     }
 
     return $events;
@@ -40,14 +45,18 @@ class CRM_CiviMobileAPI_Utils_Calendar {
    * Gets permission if user allowed to receive events
    *
    * @return bool
+   * @throws \CiviCRM_API3_Exception
    */
   private function getPermission() {
-    $accessCiviEvent = CRM_Core_Permission::check("access CiviEvent");
-    $accessMyCase = CRM_Core_Permission::check("access my cases and activities");
-    $accessAllCase = CRM_Core_Permission::check("access all cases and activities");
+    $result = civicrm_api3('CiviMobilePermission', 'get', [
+      'sequential' => 1,
+    ]);
 
-    return  $accessCiviEvent && ($accessMyCase || $accessAllCase)? TRUE : FALSE;
+    if (!isset($result['values'][0]['event']['view']['all']) || empty($result['values'][0]['event']['view']['all'])) {
+      return FALSE;
+    }
+
+    return  $result['values'][0]['event']['view']['all'] ? TRUE : FALSE;
   }
-
 
 }

@@ -3,11 +3,6 @@
 class CRM_CiviMobileAPI_PushNotification_Helper {
 
   /**
-   * Server Key Token
-   */
-  const SERVER_KEY = '';
-
-  /**
    * Url to Firebase Cloud Massaging
    */
   const FCM_URL = 'https://fcm.googleapis.com/fcm/send';
@@ -15,14 +10,55 @@ class CRM_CiviMobileAPI_PushNotification_Helper {
   /**
    * Sends push notification
    *
-   * @param $contactsID
+   * @param array $contactsIDs
+   * @param $title
    * @param $text
    *
    * @return bool|mixed
    */
-  public static function sendPushNotification($contactsID, $title, $text) {
-    //TODO: finish the push token functionality
-    return true;
+  public static function sendPushNotification(array $contactsIDs, $title, $text) {
+    $contactsTokens = self::getContactsToken($contactsIDs);
+
+    if (empty($contactsTokens) || empty($contactsIDs)) {
+      return FALSE;
+    }
+    $title = self::compileMessage($title);
+    $text = self::compileMessage($text);
+
+    $notificationBody = [
+      'title' => $title,
+      'text' => $text,
+    ];
+    $postFields = [
+      'registration_ids' => $contactsTokens['Tokens'],
+      'notification' => $notificationBody,
+      'priority' => 'high',
+    ];
+    $requestHeader = [
+      'Content-Type:application/json',
+      'Authorization:key=' . Civi::settings()->get('civimobile_server_key'),
+    ];
+    
+    $nullObject = CRM_Utils_Hook::$_nullObject;
+    CRM_Utils_Hook::singleton()
+      ->commonInvoke(2, $notificationBody, $requestHeader, $nullObject, $nullObject, $nullObject, $nullObject, 'civimobile_send_push', '');
+    
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, self::FCM_URL);
+    curl_setopt($ch, CURLOPT_POST, TRUE);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $requestHeader);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($postFields));
+    try {
+      $result = curl_exec($ch);
+    } catch (Exception $e) {
+      $result = FALSE;
+    }
+    curl_close($ch);
+
+    return $result;
   }
 
   /**
@@ -49,13 +85,14 @@ class CRM_CiviMobileAPI_PushNotification_Helper {
 
     return $tokens;
   }
-  
+
   /**
    * Collects all Relationships for Activity
    *
    * @param $caseID
    *
    * @return array
+   * @throws \CiviCRM_API3_Exception
    */
   public static function getCaseRelationshipContacts($caseID) {
     $contacts = [];
@@ -112,6 +149,7 @@ class CRM_CiviMobileAPI_PushNotification_Helper {
    * @param $participantID
    *
    * @return array
+   * @throws \CiviCRM_API3_Exception
    */
   public static function getEventContactByParticipantId($participantID) {
     $contacts = [];
@@ -134,16 +172,44 @@ class CRM_CiviMobileAPI_PushNotification_Helper {
    *
    * @param $customGroup
    *
-   * @return array
-   *
+   * @throws \CiviCRM_API3_Exception
    */
   public static function deleteCustomGroup($customGroup) {
-    $customGroupID = civicrm_api3('CustomGroup', 'get', ['return' => "id", 'name' => $customGroup]);
-    if(!empty($customGroupID["values"])){
+    $customGroupID = civicrm_api3('CustomGroup', 'get', [
+      'return' => "id",
+      'name' => $customGroup,
+    ]);
+    if (!empty($customGroupID["values"])) {
       $id = array_shift($customGroupID['values'])['id'];
       civicrm_api3('CustomGroup', 'delete', ['id' => $id]);
     }
   }
 
+  /**
+   * @param $message
+   * @param $contactId
+   *
+   * @return string
+   */
+  public static function compileMessage($message, $contactId = NULL) {
+    if (empty($contactId)) {
+      $contactId = CRM_Core_Session::singleton()->getLoggedInContactID();
+    }
+    $params = ['id' => $contactId];
+    $default = [];
+    $contact = CRM_Contact_BAO_Contact::getValues($params, $default);
+    $i = 1;
+    $replace = [];
+    
+    foreach ((array) $contact as $k => $value) {
+      if (strpos($message, '%' . $k) !== FALSE) {
+        $message = str_replace('%' . $k, '%' . $i, $message);
+        $replace[$i] = $value;
+        $i++;
+      }
+    }
+
+    return ts($message, $replace);
+  }
 
 }

@@ -17,13 +17,20 @@ class CRM_CiviMobileAPI_Utils_Request {
    */
   private $jsonBody;
 
+  /**
+   * CRM_CiviMobileAPI_Utils_Request constructor.
+   */
   private function __construct() {
     $this->getJsonBody();
   }
 
-  private function __clone() {
-  }
+  private function __clone() {}
 
+  /**
+   * Gets instance of CRM_CiviMobileAPI_Utils_Request
+   *
+   * @return \CRM_CiviMobileAPI_Utils_Request
+   */
   public static function getInstance() {
     if (self::$instance === NULL) {
       self::$instance = new self;
@@ -42,7 +49,7 @@ class CRM_CiviMobileAPI_Utils_Request {
   public function get($name, $type) {
     try {
       $null = NULL;
-      $param = CRM_Utils_Request::retrieve($name, $type, $null, FALSE, NULL,'GET');
+      $param = CRM_Utils_Request::retrieve($name, $type, $null, FALSE, NULL, 'GET');
     } catch (Exception $e) {
       $param = NULL;
     }
@@ -77,8 +84,10 @@ class CRM_CiviMobileAPI_Utils_Request {
    */
   public function find($name, $type) {
     $param = $this->json($name);
-    if(!$param)
+    if (!$param) {
       $param = $this->post($name, $type);
+    }
+
     return $param;
   }
 
@@ -91,6 +100,7 @@ class CRM_CiviMobileAPI_Utils_Request {
    */
   public function json($name) {
     $param = !empty($this->jsonBody[$name]) ? $this->jsonBody[$name] : '';
+
     return $param;
   }
 

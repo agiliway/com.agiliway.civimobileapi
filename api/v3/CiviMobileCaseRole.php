@@ -28,7 +28,6 @@ function _civicrm_api3_civi_mobile_case_role_get_spec(&$params) {
     'api.required' => 1,
     'type' => CRM_Utils_Type::T_INT,
   ];
-
   $params['contact_id'] = [
     'title' => 'Contact ID',
     'description' => ts('Contact ID'),
