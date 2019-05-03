@@ -71,6 +71,7 @@
       color:#FFFFFF;
       float: right;
       text-transform: uppercase;
+      opacity: 1;
     }
     #got-text:hover {
       cursor: pointer;
@@ -79,8 +80,11 @@
       float: left;
     }
     #got-text span.close{
+      color:#FFFFFF;
+      font-size: 20px;
       margin: 0 0 0 9px;
       font-size: 20px;
+      opacity: 1;
     }
   }
 
@@ -127,6 +131,12 @@
       margin: 0 auto;
       padding: 30px 0;
       cursor: pointer;
+      opacity: 1;
+      float: none;
+      color: #000000;
+      font-size: 17px;
+      line-height: 22px;
+      font-family: Helvetica, Open Sans, sans-serif;
     }
 
     #got-text {
@@ -159,17 +169,15 @@
   }
 
   jQuery(document).ready(function () {
-    if (jQuery('body').hasClass('logged-in')) {
-      jQuery('#ignore-text, #got-text').click(function () {
-        setCookie("civimobile_popup_close", true, 30);
-        jQuery('.civimobile-bg, .civimobile-popup').hide();
-      });
-      jQuery('.civimobile-bg').click(function () {
-        jQuery('.civimobile-bg, .civimobile-popup').hide();
-      });
-      if (getCookie('civimobile_popup_close') === "") {
-        jQuery('.civimobile-bg, .civimobile-popup').show();
-      }
+    jQuery('#ignore-text, #got-text').click(function () {
+      setCookie("civimobile_popup_close", true, 30);
+      jQuery('.civimobile-bg, .civimobile-popup').hide();
+    });
+    jQuery('.civimobile-bg').click(function () {
+      jQuery('.civimobile-bg, .civimobile-popup').hide();
+    });
+    if (getCookie('civimobile_popup_close') === "") {
+      jQuery('.civimobile-bg, .civimobile-popup').show();
     }
   });
 </script>

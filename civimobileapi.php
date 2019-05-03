@@ -225,17 +225,19 @@ function civimobileapi_civicrm_alterAPIPermissions($entity, $action, &$params, &
  */
 function civimobileapi_civicrm_pageRun(&$page) {
   if (empty($_GET['snippet'])) {
-    $param = [
-      'apple_link' => 'https://itunes.apple.com/us/app/civimobile/id1404824793?mt=8',
-      'google_link' => 'https://play.google.com/store/apps/details?id=com.agiliway.civimobile',
-      'bg_color' => '#2786C2',
-      'logo' => CRM_CiviMobileAPI_ExtensionUtil::url('/img/logo.png'),
-    ];
+    if (CRM_Core_Permission::check('administer CiviCRM')){
+      $param = [
+        'apple_link' => 'https://itunes.apple.com/us/app/civimobile/id1404824793?mt=8',
+        'google_link' => 'https://play.google.com/store/apps/details?id=com.agiliway.civimobile',
+        'bg_color' => '#2786C2',
+        'logo' => CRM_CiviMobileAPI_ExtensionUtil::url('/img/logo.png'),
+      ];
 
-    CRM_Core_Smarty::singleton()->assign($param);
-    CRM_Core_Region::instance('page-body')->add([
-      'template' => CRM_CiviMobileAPI_ExtensionUtil::path() . '/templates/CRM/CiviMobileAPI/popup.tpl',
-    ]);
+      CRM_Core_Smarty::singleton()->assign($param);
+      CRM_Core_Region::instance('page-body')->add([
+        'template' => CRM_CiviMobileAPI_ExtensionUtil::path() . '/templates/CRM/CiviMobileAPI/popup.tpl',
+      ]);
+    }
   }
 }
 

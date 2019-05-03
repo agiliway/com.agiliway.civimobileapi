@@ -69,7 +69,7 @@ class CRM_CiviMobileAPI_Utils_Version {
   /**
    * @throws \Exception
    */
-  private static function updateSchemaVersion() {
+  public static function updateSchemaVersion() {
     $queue = CRM_Extension_Upgrades::createQueue();
 
     $taskCtx = new CRM_Queue_TaskContext();

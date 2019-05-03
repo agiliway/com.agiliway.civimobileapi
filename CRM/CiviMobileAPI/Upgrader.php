@@ -74,10 +74,10 @@ class CRM_CiviMobileAPI_Upgrader extends CRM_CiviMobileAPI_Upgrader_Base {
    */
   public function install() {
     CRM_CiviMobileAPI_PushNotification_EventReminderHelper::createEventReminder();
-    $this->executeSql('ALTER TABLE civicrm_contact_push_notification_messages ADD invoke_contact_id INT(10) UNSIGNED NULL');
-
+    CRM_CiviMobileAPI_Utils_Version::updateSchemaVersion();
     Civi::settings()->set('civimobile_auto_update', 1);
   }
+
   /**
    * Uninstalls scheduled job
    */

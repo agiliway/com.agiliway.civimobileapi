@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS `civicrm_contact_push_notification_messages` (
   `message` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
   `entity_table` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
   `entity_id` int(11) DEFAULT NULL,
-  `send_date` datetime DEFAULT CURRENT_TIMESTAMP,
+  `send_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `is_read` tinyint(4) DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `FK_civicrm_contact_push_notification_message` (`contact_id`),
