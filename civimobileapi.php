@@ -129,56 +129,58 @@ function civimobileapi_civicrm_alterSettingsFolders(&$metaDataFolders = NULL) {
  * Implements hook_civicrm_apiWrappers().
  */
 function civimobileapi_civicrm_apiWrappers(&$wrappers, $apiRequest) {
-  if ($apiRequest['entity'] == 'Contact' && ($apiRequest['action'] == 'getsingle' || $apiRequest['action'] == 'get')) {
-    $wrappers[] = new CRM_CiviMobileAPI_ApiWrapper_Contact();
-  }
-  elseif ($apiRequest['entity'] == 'Address' && $apiRequest['action'] == 'get') {
-    $wrappers[] = new CRM_CiviMobileAPI_ApiWrapper_Address();
-  }
-  elseif ($apiRequest['entity'] == 'Activity') {
-    if ($apiRequest['action'] == 'getsingle') {
-      $wrappers[] = new CRM_CiviMobileAPI_ApiWrapper_Activity_GetSingle();
+  if (is_mobile_request()) {
+    if ($apiRequest['entity'] == 'Contact' && ($apiRequest['action'] == 'getsingle' || $apiRequest['action'] == 'get')) {
+      $wrappers[] = new CRM_CiviMobileAPI_ApiWrapper_Contact();
     }
+    elseif ($apiRequest['entity'] == 'Address' && $apiRequest['action'] == 'get') {
+      $wrappers[] = new CRM_CiviMobileAPI_ApiWrapper_Address();
+    }
+    elseif ($apiRequest['entity'] == 'Activity') {
+      if ($apiRequest['action'] == 'getsingle') {
+        $wrappers[] = new CRM_CiviMobileAPI_ApiWrapper_Activity_GetSingle();
+      }
 
-    if ($apiRequest['action'] == 'get') {
-      $wrappers[] = new CRM_CiviMobileAPI_ApiWrapper_Activity_Get();
-    }
+      if ($apiRequest['action'] == 'get') {
+        $wrappers[] = new CRM_CiviMobileAPI_ApiWrapper_Activity_Get();
+      }
 
-    $wrappers[] = new CRM_CiviMobileAPI_ApiWrapper_Activity_Notification();
-  }
-  elseif ($apiRequest['entity'] == 'Case' && $apiRequest['action'] == 'getsingle') {
-    $wrappers[] = new CRM_CiviMobileAPI_ApiWrapper_Case();
-  }
-  elseif ($apiRequest['entity'] == 'Event' && ($apiRequest['action'] == 'getsingle' || $apiRequest['action'] == 'get')) {
-    $wrappers[] = new CRM_CiviMobileAPI_ApiWrapper_Event();
-  }
-  elseif ($apiRequest['entity'] == 'Job' && $apiRequest['action'] == 'version_check') {
-    $wrappers[] = new CRM_CiviMobileAPI_ApiWrapper_Job_VersionCheck();
-  }
-  elseif ($apiRequest['entity'] == 'Note' && $apiRequest['action'] == 'get') {
-    $wrappers[] = new CRM_CiviMobileAPI_ApiWrapper_Note();
-  }
-  elseif ($apiRequest['entity'] == 'Contribution' && ($apiRequest['action'] == 'getsingle' || $apiRequest['action'] == 'get')) {
-    $wrappers[] = new CRM_CiviMobileAPI_ApiWrapper_Contribution();
-  }
-  elseif ($apiRequest['entity'] == 'Membership') {
-    if ($apiRequest['action'] == 'create') {
-      $wrappers[] = new CRM_CiviMobileAPI_ApiWrapper_Membership_Create();
+      $wrappers[] = new CRM_CiviMobileAPI_ApiWrapper_Activity_Notification();
     }
+    elseif ($apiRequest['entity'] == 'Case' && $apiRequest['action'] == 'getsingle') {
+      $wrappers[] = new CRM_CiviMobileAPI_ApiWrapper_Case();
+    }
+    elseif ($apiRequest['entity'] == 'Event' && ($apiRequest['action'] == 'getsingle' || $apiRequest['action'] == 'get')) {
+      $wrappers[] = new CRM_CiviMobileAPI_ApiWrapper_Event();
+    }
+    elseif ($apiRequest['entity'] == 'Job' && $apiRequest['action'] == 'version_check') {
+      $wrappers[] = new CRM_CiviMobileAPI_ApiWrapper_Job_VersionCheck();
+    }
+    elseif ($apiRequest['entity'] == 'Note' && $apiRequest['action'] == 'get') {
+      $wrappers[] = new CRM_CiviMobileAPI_ApiWrapper_Note();
+    }
+    elseif ($apiRequest['entity'] == 'Contribution' && ($apiRequest['action'] == 'getsingle' || $apiRequest['action'] == 'get')) {
+      $wrappers[] = new CRM_CiviMobileAPI_ApiWrapper_Contribution();
+    }
+    elseif ($apiRequest['entity'] == 'Membership') {
+      if ($apiRequest['action'] == 'create') {
+        $wrappers[] = new CRM_CiviMobileAPI_ApiWrapper_Membership_Create();
+      }
 
-    if ($apiRequest['action'] == 'getsingle' || $apiRequest['action'] == 'get') {
-      $wrappers[] = new CRM_CiviMobileAPI_ApiWrapper_Membership_Get();
+      if ($apiRequest['action'] == 'getsingle' || $apiRequest['action'] == 'get') {
+        $wrappers[] = new CRM_CiviMobileAPI_ApiWrapper_Membership_Get();
+      }
     }
-  }
-  elseif ($apiRequest['entity'] == 'Relationship' && $apiRequest['action'] == 'get') {
-    $wrappers[] = new CRM_CiviMobileAPI_ApiWrapper_Relationship_Get();
-  }
-  elseif ($apiRequest['entity'] == 'Participant') {
-    if ($apiRequest['action'] == 'create') {
-      $wrappers[] = new CRM_CiviMobileAPI_ApiWrapper_Participant_Create();
+    elseif ($apiRequest['entity'] == 'Relationship' && $apiRequest['action'] == 'get') {
+      $wrappers[] = new CRM_CiviMobileAPI_ApiWrapper_Relationship_Get();
     }
-    elseif ($apiRequest['action'] == 'get') {
-      $wrappers[] = new CRM_CiviMobileAPI_ApiWrapper_Participant_Get();
+    elseif ($apiRequest['entity'] == 'Participant') {
+      if ($apiRequest['action'] == 'create') {
+        $wrappers[] = new CRM_CiviMobileAPI_ApiWrapper_Participant_Create();
+      }
+      elseif ($apiRequest['action'] == 'get') {
+        $wrappers[] = new CRM_CiviMobileAPI_ApiWrapper_Participant_Get();
+      }
     }
   }
 }
