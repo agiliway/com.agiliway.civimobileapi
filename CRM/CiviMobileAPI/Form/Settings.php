@@ -25,63 +25,37 @@
 
 class CRM_CiviMobileAPI_Form_Settings extends CRM_Core_Form {
 
-  /**
-   * @var bool
-   */
-  private $isWritable;
-
-  /**
-   * @var bool
-   */
-  private $needUpdate;
-
-  /**
-   * @var float
-   */
-  private $currentVersion;
-
-  /**
-   * @var float
-   */
-  private $latestVersion;
-
   public function preProcess() {
     parent::preProcess();
 
-    $this->currentVersion = CRM_CiviMobileAPI_Utils_Version::getCurrentVersion();
-    $this->latestVersion = CRM_CiviMobileAPI_Utils_Version::getLatestVersion();
-    $this->isWritable = CRM_CiviMobileAPI_Utils_Version::directoryIsWritable();
-    $this->assign('isWritable', $this->isWritable);
-
+    $pushNotificationMessage = ts('To use Push Notifications you must register at <a href="https://civimobile.org/partner"  target="_blank">civimobile.org</a> and generate your own Server Key');
+    $version = CRM_CiviMobileAPI_Utils_VersionController::getInstance();
     $latestCivicrmMessage = FALSE;
     $oldCivicrmMessage = FALSE;
+    $serverKeyValidMessage = FALSE;
+    $folderPermissionMessage = FALSE;
+    $serverKeyInValidMessage = FALSE;
 
-    if ($this->latestVersion > $this->currentVersion) {
+    if ($version->isCurrentVersionLowerThanRepositoryVersion()) {
       $oldCivicrmMessage = ts('You are using CiviMobile <strong>%1</strong>. The latest version is CiviMobile <strong>%2</strong>', [
-        1 => 'v' . number_format($this->currentVersion, 1, '.', ''),
-        2 => 'v' . number_format($this->latestVersion, 1, '.', ''),
+        1 => 'v' . $version->getCurrentFullVersion(),
+        2 => 'v' . $version->getLatestFullVersion(),
       ]);
-
-      $this->needUpdate = TRUE;
     } else {
-      $latestCivicrmMessage = ts('Your extension version is up to date - CiviMobile <strong>%1</strong>', [1 => 'v' . number_format($this->currentVersion, 1, '.', '')]);
-      $this->needUpdate = FALSE;
+      $latestCivicrmMessage = ts('Your extension version is up to date - CiviMobile <strong>%1</strong>', [1 => 'v' . $version->getCurrentFullVersion()]);
     }
 
-    $folderPermissionMessage = FALSE;
-    if (!$this->isWritable) {
+    if (!CRM_CiviMobileAPI_Utils_Extension::directoryIsWritable()) {
       $folderPermissionMessage = '<strong>' . ts('Access to extension directory (%1) is denied. Please provide permission to access the extension directory', [1 => CRM_Core_Config::singleton()->extensionsDir . CRM_CiviMobileAPI_ExtensionUtil::LONG_NAME ]) . '</strong> ';
     }
-    $serverKeyValidMessage = FALSE;
-    $serverKeyInValidMessage = FALSE;
+
     if (Civi::settings()->get('civimobile_is_server_key_valid') == 1) {
       $serverKeyValidMessage = ts('Your Server Key is valid and you can use Push Notifications.');
     } else {
       $serverKeyInValidMessage =  ts('Your Server Key is invalid. Please enter valid Server Key.');
     }
 
-    $pushNotificationMessage = ts('To use Push Notifications you must register at <a href="https://civimobile.org/partner"  target="_blank">civimobile.org</a> and generate your own Server Key');
-
+    $this->assign('isWritable', CRM_CiviMobileAPI_Utils_Extension::directoryIsWritable());
     $this->assign('serverKeyValidMessage', $serverKeyValidMessage);
     $this->assign('serverKeyInValidMessage', $serverKeyInValidMessage);
     $this->assign('pushNotificationMessage', $pushNotificationMessage);
@@ -141,7 +115,7 @@ class CRM_CiviMobileAPI_Form_Settings extends CRM_Core_Form {
   }
 
   /**
-   * Build the form object.
+   * Build the form object
    *
    * @return void
    * @throws \HTML_QuickForm_Error
@@ -164,7 +138,8 @@ class CRM_CiviMobileAPI_Form_Settings extends CRM_Core_Form {
       ]
     ];
 
-    if ($this->needUpdate && !empty(CRM_CiviMobileAPI_Utils_Version::directoryIsWritable())) {
+    if (CRM_CiviMobileAPI_Utils_VersionController::getInstance()->isCurrentVersionLowerThanRepositoryVersion()
+      && !empty(CRM_CiviMobileAPI_Utils_Extension::directoryIsWritable())) {
       $buttons[] = [
         'type' => 'next',
         'name' => ts('Update CiviMobile Extension'),
@@ -192,9 +167,9 @@ class CRM_CiviMobileAPI_Form_Settings extends CRM_Core_Form {
     }
     elseif (!empty($params['_qf_Settings_next'])) {
       try {
-        if ($this->latestVersion > $this->currentVersion) {
+        if (CRM_CiviMobileAPI_Utils_VersionController::getInstance()->isCurrentVersionLowerThanRepositoryVersion()) {
           $this->controller->setDestination(CRM_Utils_System::url('civicrm/civimobile/settings', http_build_query([])));
-          CRM_CiviMobileAPI_Utils_Version::update($this->latestVersion);
+          CRM_CiviMobileAPI_Utils_Extension::update();
 
           CRM_Core_Session::setStatus(ts('CiviMobile updated'));
         }

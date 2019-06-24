@@ -24,6 +24,10 @@ class CRM_CiviMobileAPI_ApiWrapper_Activity_Get implements API_Wrapper {
    * @return array
    */
   public function toApiOutput($apiRequest, $result) {
+    if (empty($result['values'])) {
+      return $result;
+    }
+
     $userId = CRM_Core_Session::singleton()->get('userID');
     $editAllContacts = CRM_Core_Permission::check('edit all contacts');
     $editAllCase = CRM_Core_Permission::check('access all cases and activities');

@@ -25,11 +25,8 @@ class CRM_CiviMobileAPI_ApiWrapper_Job_VersionCheck implements API_Wrapper {
    */
   public function toApiOutput($apiRequest, $result) {
     if (Civi::settings()->get('civimobile_auto_update')) {
-      $currentVersion = CRM_CiviMobileAPI_Utils_Version::getCurrentVersion();
-      $latestVersion = CRM_CiviMobileAPI_Utils_Version::getLatestVersion();
-
-      if ($latestVersion > $currentVersion) {
-        CRM_CiviMobileAPI_Utils_Version::update($latestVersion);
+      if (CRM_CiviMobileAPI_Utils_VersionController::getInstance()->isCurrentVersionLowerThanRepositoryVersion()) {
+        CRM_CiviMobileAPI_Utils_Extension::update();
       }
     }
 
