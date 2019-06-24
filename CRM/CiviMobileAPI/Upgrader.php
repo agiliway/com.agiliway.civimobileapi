@@ -71,24 +71,30 @@ class CRM_CiviMobileAPI_Upgrader extends CRM_CiviMobileAPI_Upgrader_Base {
 
   /**
    * Installs scheduled job
+   *
+   * @throws \Exception
    */
   public function install() {
     CRM_CiviMobileAPI_PushNotification_EventReminderHelper::createEventReminder();
-    CRM_CiviMobileAPI_Utils_Version::updateSchemaVersion();
+    CRM_CiviMobileAPI_Utils_Extension::updateSchemaVersion();
     Civi::settings()->set('civimobile_auto_update', 1);
   }
 
   /**
    * Uninstalls scheduled job
+   *
+   * @throws \CiviCRM_API3_Exception
    */
   public function uninstall() {
     CRM_CiviMobileAPI_PushNotification_EventReminderHelper::deleteEventReminder();
     $this->uninstallPushNotificationCustomGroup();
     CRM_CiviMobileAPI_ContactSettings_Helper::deleteGroup();
   }
-  
+
   /**
    * Run a simple query when a module is enabled.
+   *
+   * @throws \CiviCRM_API3_Exception
    */
   public function enable() {
     CRM_CiviMobileAPI_PushNotification_EventReminderHelper::setEventReminderActive(1);
@@ -98,6 +104,8 @@ class CRM_CiviMobileAPI_Upgrader extends CRM_CiviMobileAPI_Upgrader_Base {
 
   /**
    * Run a simple query when a module is disabled.
+   *
+   * @throws \CiviCRM_API3_Exception
    */
   public function disable() {
     CRM_CiviMobileAPI_PushNotification_EventReminderHelper::setEventReminderActive(0);

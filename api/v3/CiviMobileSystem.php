@@ -14,20 +14,8 @@ function civicrm_api3_civi_mobile_system_get($params) {
   $result[] = [
     'cms' => CRM_CiviMobileAPI_Utils_CmsUser::getInstance()->getSystem(),
     'crm_version' => CRM_Utils_System::version(),
-    'ext_version' => _civicrm_api3_civi_mobile_system_get_ext_version(),
+    'ext_version' => CRM_CiviMobileAPI_Utils_VersionController::getInstance()->getCurrentFullVersion(),
   ];
 
   return civicrm_api3_create_success($result, $params);
-}
-
-/**
- * Gets version of civimobile extension
- *
- * @return string
- * @throws \CRM_Extension_Exception_ParseException
- */
-function _civicrm_api3_civi_mobile_system_get_ext_version()
-{
-    $ext_info = CRM_Extension_Info::loadFromFile(CRM_CiviMobileAPI_ExtensionUtil::path() . DIRECTORY_SEPARATOR . CRM_Extension_Info::FILENAME);
-    return isset($ext_info->version) ? $ext_info->version : '';
 }
