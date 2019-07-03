@@ -315,6 +315,7 @@ function civimobileapi_civicrm_pre($op, $objectName, $id, &$params) {
 function civimobileapi_civicrm_tabset($tabsetName, &$tabs, $context) {
   if ($tabsetName == 'civicrm/contact/view' && !empty($context['contact_id'])) {
     if (CRM_Contact_BAO_Contact::getContactType($context['contact_id']) == 'Individual' &&
+        CRM_CiviMobileAPI_Utils_Contact::isContactHasApiKey($context['contact_id']) &&
        (CRM_Core_Permission::check('administer CiviCRM') || CRM_Core_Session::singleton()->getLoggedInContactID() == $context['contact_id'])
     ) {
       $tabs[] = [

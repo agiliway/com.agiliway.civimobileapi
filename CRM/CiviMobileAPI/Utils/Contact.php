@@ -89,4 +89,21 @@ class CRM_CiviMobileAPI_Utils_Contact {
     return $displayName;
   }
 
+  /**
+   * Is contact has 'api_key'
+   *
+   * @param int $contactId
+   *
+   * @return bool
+   */
+  public static function isContactHasApiKey($contactId) {
+    if (empty($contactId)) {
+      return FALSE;
+    }
+
+    $apiKey = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact', (int) $contactId, 'api_key');
+
+    return !empty($apiKey);
+  }
+
 }
