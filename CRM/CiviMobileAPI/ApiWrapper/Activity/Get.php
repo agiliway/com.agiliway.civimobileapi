@@ -24,7 +24,7 @@ class CRM_CiviMobileAPI_ApiWrapper_Activity_Get implements API_Wrapper {
    * @return array
    */
   public function toApiOutput($apiRequest, $result) {
-    if (empty($result['values'])) {
+    if (empty($result['values']) || !is_array($result['values'])) {
       return $result;
     }
 
