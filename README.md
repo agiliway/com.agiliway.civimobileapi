@@ -13,14 +13,15 @@ The **CiviMobileAPI** extension (`com.agiliway.civimobileapi`) is a CiviCRM comp
 - **Membership** – users can access and renew their membership 
 - **Contributions** – access to the history of all contributions, aggregated total and average payments.   
 - **Relationships** – users can create a relationship between oneself and other individuals or organizations and optionally set a start date and end date for the relationship
-- **Events & Registration** - ability to filter all the available events by type, date or title, register to the chosen event, view past and future events, share the information about events, and view events’ locations on the map
+- **Events & Registration** - ability to filter all the available events by type, date or title, check the event description, register yourself or others for the chosen event, view past and future events, share the information about events, and view events’ locations on the map
+- **Participants Management & Check-In** - ability to view and manage event participants and their statuses. Additionally, a user can use Check-In functionality to mark participants who have attended an event while an built-in QR scanner will make this process fast and reliable 
 - **Navigation** - users can switch to map navigation to easily find a direction to the location (e.g. a branch office or an event location)
 - **Cases** - grants immediate access to user’s cases details
 - **Activities** - allows to access details of user’s activities, their priority statuses and information about other constituents engaged in them
 - **Push-notifications** - notifications about the updates in the system are displayed on the dashboard of the mobile phone
 - **Working Offline** - can work in the offline mode
 - **Settings** – users can configurate a set of parameters customizing the view and work of the application
-- **4 locales** - currently, supports 4 locales: English, German, French and Italian
+- **4 locales** - currently, supports 6 locales: English, German, French, Italian, Spanish and Dutch
 
 
 More details about how to install CiviMobileAPI extension and start using CiviMobile can be found at official CiviMobile website [https://civimobile.org](https://civimobile.org).   
@@ -32,8 +33,13 @@ The latest CiviMobile application can be downloaded from [AppStore](https://itun
 
 ## Requirements
 
-- PHP v5.4+
 - CiviCRM v4.7.x+
+- PHP v5.4+
+- Drupal 7.x
+- Joomla 3.x
+- WordPress 4.8+
+
+*WordPress API patch is required. Please install [CiviCRM API fix for Wordpress](https://github.com/mecachisenros/civicrm-wp-rest) or [contact us](mailto:civicrm@agiliway.com) for details.
 
 ## Installation (git/cli)
 
