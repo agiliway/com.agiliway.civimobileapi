@@ -36,6 +36,7 @@ function civicrm_api3_civi_mobile_permission_get() {
     $editContributions = CRM_Core_Permission::check('edit contributions');
     $deleteInCiviContribute = CRM_Core_Permission::check('delete in CiviContribute');
 	  $accessToProfileListings = CRM_Core_Permission::check('profile listings and forms');
+    $canCheckInOnEvent = CRM_Core_Permission::check(CRM_CiviMobileAPI_Utils_Permission::CAN_CHECK_IN_ON_EVENT);
 
     $permissions['access'] = [
       'accessCiviCRM' => $accessToCiviCrm && $viewMyContact ? 1 : 0,
@@ -104,10 +105,12 @@ function civicrm_api3_civi_mobile_permission_get() {
         'my' => $accessToCiviCrm && $viewMyContact && $accessCiviEvent && $viewAllEvent ? 1 : 0,
       ],
       'edit' => [
-        'all' => $accessToCiviCrm && $viewMyContact && $accessCiviEvent && $editAllEvents ? 1 : 0,
-        'my' => $accessToCiviCrm && $viewMyContact && $accessCiviEvent && $editAllEvents ? 1 : 0,
+        'all' => $accessToCiviCrm && $viewMyContact && $accessCiviEvent && $viewAllEvent && $editAllEvents ? 1 : 0,
+        'my' => $accessToCiviCrm && $viewMyContact && $accessCiviEvent && $viewAllEvent && $editAllEvents ? 1 : 0,
       ],
       'register' => $accessToCiviCrm && $viewMyContact && $accessCiviEvent && $registerForEvents && $viewAllEvent && $accessToProfileListings ? 1 : 0,
+      'view_my_tickets' => CRM_CiviMobileAPI_Utils_Permission::isEnoughPermissionForViewMyTickets() ? 1 : 0,
+      'is_enough_permission_for_changing_participant_statuses' => CRM_CiviMobileAPI_Utils_Permission::isEnoughPermissionForChangingParticipantStatuses() ? 1 : 0,
     ];
 
     $permissions['relationship'] = [
@@ -135,21 +138,22 @@ function civicrm_api3_civi_mobile_permission_get() {
 
     $permissions['participant'] = [
       'view' => [
-        'all' => $accessToCiviCrm && $viewMyContact && $accessCiviEvent && $viewEventParticipants && ($viewAllContacts || $editAllContacts) ? 1 : 0,
-        'my' => $accessToCiviCrm && $viewMyContact && $accessCiviEvent && $viewEventParticipants ? 1 : 0,
+        'all' => $accessToCiviCrm && $viewMyContact && $accessCiviEvent && $viewAllEvent && $viewEventParticipants && ($viewAllContacts || $editAllContacts) ? 1 : 0,
+        'my' => $accessToCiviCrm && $viewMyContact && $accessCiviEvent && $viewAllEvent && $viewEventParticipants ? 1 : 0,
       ],
       'edit' => [
-        'all' => $accessToCiviCrm && $viewMyContact && $accessCiviEvent && $editEventParticipants && ($viewAllContacts || $editAllContacts) ? 1 : 0,
-        'my' => $accessToCiviCrm && $viewMyContact && $accessCiviEvent && $editEventParticipants ? 1 : 0,
+        'all' => $accessToCiviCrm && $viewMyContact && $accessCiviEvent && $viewAllEvent && $viewEventParticipants && $editEventParticipants && ($viewAllContacts || $editAllContacts) ? 1 : 0,
+        'my' => $accessToCiviCrm && $viewMyContact && $accessCiviEvent && $viewAllEvent && $viewEventParticipants && $editEventParticipants && ($viewAllContacts || $editAllContacts) ? 1 : 0,
       ],
       'delete' => [
-        'all' => $accessToCiviCrm && $viewMyContact && $accessCiviEvent && $deleteInEvent && ($viewAllContacts || $editAllContacts) ? 1 : 0,
-        'my' => $accessToCiviCrm && $viewMyContact && $accessCiviEvent && $deleteInEvent ? 1 : 0,
+        'all' => $accessToCiviCrm && $viewMyContact && $accessCiviEvent && $viewAllEvent && $viewEventParticipants && $deleteInEvent && ($viewAllContacts || $editAllContacts) ? 1 : 0,
+        'my' => $accessToCiviCrm && $viewMyContact && $accessCiviEvent && $viewAllEvent && $viewEventParticipants && $deleteInEvent ? 1 : 0,
       ],
       'create' => [
-        'all' => $accessToCiviCrm && $viewMyContact && $accessCiviEvent && $editEventParticipants && ($viewAllContacts || $editAllContacts) ? 1 : 0,
-        'my' => $accessToCiviCrm && $viewMyContact && $accessCiviEvent && $editEventParticipants ? 1 : 0,
+        'all' => $accessToCiviCrm && $viewMyContact && $accessCiviEvent && $viewAllEvent && $viewEventParticipants && $editEventParticipants && ($viewAllContacts || $editAllContacts) && $editAllEvents ? 1 : 0,
+        'my' => $accessToCiviCrm && $viewMyContact && $accessCiviEvent && $viewAllEvent && $viewEventParticipants && $editEventParticipants && $editAllEvents ? 1 : 0,
       ],
+      'register_for_events' => ($registerForEvents) ? 1 : 0,
     ];
 
     $permissions['membership'] = [

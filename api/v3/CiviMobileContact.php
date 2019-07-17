@@ -8,6 +8,16 @@
  * @return array
  */
 function civicrm_api3_civi_mobile_contact_create($params) {
+  if (empty($params['contact_id'])) {
+    return civicrm_api3_create_error(ts("Required field 'contact_id'."));
+  }
+
+  if ($_POST["method"] == 'DeletePic') {
+    $result = CRM_CiviMobileAPI_Utils_Contact::removeContactAvatar($params['contact_id']);
+
+    return civicrm_api3_create_success("Photo was deleted", $params);
+  }
+
   try {
     $isFileExist = isset($_FILES['image_file']['name']);
     $isUploadPic = $_POST["method"] == 'UploadPic';
@@ -21,11 +31,13 @@ function civicrm_api3_civi_mobile_contact_create($params) {
     $fileSalt = "e787ada2e9a69a3bc67d14893ac3sdf3a67a21a2a" . time();
     $newName = md5($params['contact_id'] . $contactSalt);
     $newName .= md5($photoName . $fileSalt) . time() . '.' . $fileStructure['extension'];
-    $pathToCustomFileUploadDir = Civi::paths()->getPath(Civi::settings()->get('customFileUploadDir')) . $newName;
+    $pathToCustomFileUploadDir = CRM_CiviMobileAPI_Utils_File::getUploadDirPath() . $newName;
 
     if (!move_uploaded_file($_FILES['image_file']['tmp_name'], $pathToCustomFileUploadDir)) {
       return civicrm_api3_create_error(ts("Can`t upload image"));
     }
+
+    CRM_CiviMobileAPI_Utils_Contact::removeContactAvatar($params['contact_id']);
 
     civicrm_api3('Contact', 'create', [
       'id' => $params['contact_id'],
@@ -45,7 +57,7 @@ function civicrm_api3_civi_mobile_contact_create($params) {
  *
  * @param array $params array or parameters determined by getfields
  */
-function _civicrm_api3_civi_mobile_contact_get_create(&$params) {
+function _civicrm_api3_civi_mobile_contact_create_spec(&$params) {
   $params['contact_id'] = [
     'title' => 'Contact ID',
     'description' => ts('Contact ID'),

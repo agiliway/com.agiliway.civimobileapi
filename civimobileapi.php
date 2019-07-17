@@ -1,6 +1,8 @@
 <?php
 
 require_once 'civimobileapi.civix.php';
+require_once 'lib/PHPQRCode.php';
+\PHPQRCode\Autoloader::register();
 
 use CRM_CiviMobileAPI_ExtensionUtil as E;
 
@@ -181,6 +183,19 @@ function civimobileapi_civicrm_apiWrappers(&$wrappers, $apiRequest) {
       $wrappers[] = new CRM_CiviMobileAPI_ApiWrapper_Participant_Get();
     }
   }
+  elseif ($apiRequest['entity'] == 'GroupContact') {
+    if ($apiRequest['action'] == 'get') {
+      $wrappers[] = new CRM_CiviMobileAPI_ApiWrapper_GroupContact_Get();
+    }
+    elseif ($apiRequest['action'] == 'create') {
+      $wrappers[] = new CRM_CiviMobileAPI_ApiWrapper_GroupContact_Create();
+    }
+  }
+  elseif ($apiRequest['entity'] == 'EntityTag') {
+    if ($apiRequest['action'] == 'get') {
+      $wrappers[] = new CRM_CiviMobileAPI_ApiWrapper_EntityTag_Get();
+    }
+  }
 }
 
 /**
@@ -190,9 +205,14 @@ function civimobileapi_civicrm_alterAPIPermissions($entity, $action, &$params, &
   if (is_mobile_request()) {
     civimobileapi_secret_validation();
     if (($entity == 'calendar' and $action == 'get') ||
+      ($entity == 'civi_mobile_participant' and $action == 'create') ||
+      ($entity == 'civi_mobile_participant_payment' and $action == 'create') ||
+      ($entity == 'participant_status_type' and $action == 'get') ||
+      ($entity == 'civi_mobile_get_price_set_by_event' and $action == 'get') ||
       ($entity == 'my_event' and $action == 'get') ||
       ($entity == 'civi_mobile_system' and $action == 'get') ||
       ($entity == 'civi_mobile_calendar' and $action == 'get') ||
+      ($entity == 'civi_mobile_my_ticket' and $action == 'get') ||
       ($entity == 'relationship' and $action == 'update') ||
       ($entity == 'civi_mobile_case_role') ||
       ($entity == 'civi_mobile_allowed_relationship_types') ||
@@ -266,6 +286,19 @@ function is_mobile_request() {
 }
 
 function civimobileapi_civicrm_post($op, $objectName, $objectId, &$objectRef) {
+  if ($objectName == 'Participant' && $op == 'create') {
+    CRM_CiviMobileAPI_Utils_QRcode::generateQRcode($objectId);
+  }
+
+  if ($objectName == 'Event' && $op == 'create') {
+    $qrcodeCheckinEvent = CRM_Utils_Request::retrieve('default_qrcode_checkin_event', 'String');
+    $eventId = $objectId;
+
+    if ($qrcodeCheckinEvent) {
+      CRM_CiviMobileAPI_Utils_EventQrCode::setQrCodeToEvent($eventId);
+    }
+  }
+
   /**
    * This hook run only when create Case or make relationship to Case. And send
    * notification if contact or relation contact haves token.
@@ -292,7 +325,11 @@ function civimobileapi_civicrm_postProcess($formName, &$form) {
   if (isset($notificationManager)) {
     $notificationManager->sendNotification();
   }
+}
 
+function civimobileapi_civicrm_alterMailParams(&$params, $context) {
+  CRM_CiviMobileAPI_Hook_AlterMailParams_EventOnlineReceipt::run($params, $context);
+  CRM_CiviMobileAPI_Hook_AlterMailParams_EventOfflineReceipt::run($params, $context);
 }
 
 function civimobileapi_civicrm_pre($op, $objectName, $id, &$params) {
@@ -346,6 +383,22 @@ function civimobileapi_civicrm_selectWhereClause($entity, &$clauses) {
   }
 }
 
+/**
+ * Implements hook_civicrm_permission().
+ *
+ * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_permission/
+ *
+ * @param $permissionList
+ */
+function civimobileapi_civicrm_permission(&$permissionList) {
+  $permissionsPrefix = 'CiviCRM : ';
+
+  $permissionList[CRM_CiviMobileAPI_Utils_Permission::CAN_CHECK_IN_ON_EVENT] = [
+    $permissionsPrefix . CRM_CiviMobileAPI_Utils_Permission::CAN_CHECK_IN_ON_EVENT,
+    ts("It means User can only update Participant status to 'Registered' or 'Attended'. Uses by QR Code."),
+  ];
+}
+
 if (!function_exists('is_writable_r')) {
 
   /**
@@ -387,12 +440,38 @@ if (!function_exists('is_writable_r')) {
  * @param $menu
  */
 function civimobileapi_civicrm_navigationMenu(&$menu) {
-  $directDebitMenuItem = [
+  $menuItem = [
     'name' => ts('CiviMobile Settings'),
     'url' => 'civicrm/civimobile/settings',
     'permission' => 'administer CiviCRM',
     'operator' => NULL,
     'separator' => NULL,
   ];
-  _civimobileapi_civix_insert_navigation_menu($menu, 'Administer/', $directDebitMenuItem);
+  _civimobileapi_civix_insert_navigation_menu($menu, 'Administer/', $menuItem);
+}
+
+/**
+ * Implements hook_civicrm_buildForm().
+ *
+ * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_buildForm/
+ */
+function civimobileapi_civicrm_buildForm($formName, &$form) {
+  $action = $form->getAction();
+  if ($formName == 'CRM_Event_Form_ManageEvent_EventInfo' && $action == CRM_Core_Action::ADD) {
+    $templatePath = realpath(dirname(__FILE__)."/templates");
+
+    $form->add('checkbox', 'default_qrcode_checkin_event', ts('When generating QR Code tokens, use this Event'));
+    CRM_Core_Region::instance('page-body')->add([
+      'template' => "{$templatePath}/qrcode-checkin-event-options.tpl"
+    ]);
+  }
+
+  if ($formName == 'CRM_Event_Form_Participant' && $action == CRM_Core_Action::ADD) {
+    $elementName = 'send_receipt';
+    if ($form->elementExists($elementName)) {
+      $element = $form->getElement($elementName);
+      $element->setValue(1);
+    }
+  }
+
 }

@@ -32,6 +32,10 @@ class CRM_CiviMobileAPI_ApiWrapper_Activity_Get implements API_Wrapper {
     $editAllContacts = CRM_Core_Permission::check('edit all contacts');
     $editAllCase = CRM_Core_Permission::check('access all cases and activities');
 
+    if (empty($result['values'])) {
+      return $result;
+    }
+
     foreach ($result['values'] as &$value) {
       $checkCaseActivity = new CRM_Case_DAO_CaseActivity();
       $checkCaseActivity->activity_id = $value['id'];
