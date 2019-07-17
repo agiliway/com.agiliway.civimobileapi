@@ -21,7 +21,7 @@ The **CiviMobileAPI** extension (`com.agiliway.civimobileapi`) is a CiviCRM comp
 - **Push-notifications** - notifications about the updates in the system are displayed on the dashboard of the mobile phone
 - **Working Offline** - can work in the offline mode
 - **Settings** – users can configurate a set of parameters customizing the view and work of the application
-- **4 locales** - currently, supports 6 locales: English, German, French, Italian, Spanish and Dutch
+- **6 locales** - English, German, French, Italian, Spanish and Dutch
 
 
 More details about how to install CiviMobileAPI extension and start using CiviMobile can be found at official CiviMobile website [https://civimobile.org](https://civimobile.org).   
