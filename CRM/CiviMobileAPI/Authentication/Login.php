@@ -41,7 +41,7 @@ class CRM_CiviMobileAPI_Authentication_Login {
   private $nullObject;
 
   /**
-   * Response which was sended to user
+   * Response which was sent to user
    *
    * @var array
    */

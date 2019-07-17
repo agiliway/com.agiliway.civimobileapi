@@ -24,4 +24,19 @@ class CRM_CiviMobileAPI_Utils_Event {
     return !empty($allowSameParticipantEmails) && $allowSameParticipantEmails == 1;
   }
 
+  /**
+   * Gets Event by id
+   *
+   * @param $eventId
+   *
+   * @return bool
+   */
+  public static function getById($eventId) {
+    $event = civicrm_api3('Event', 'getsingle', [
+      'id' => $eventId
+    ]);
+
+    return (!empty($event) && $event['is_error'] != 1) ? $event : false;
+  }
+
 }

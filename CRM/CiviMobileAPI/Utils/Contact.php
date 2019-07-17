@@ -90,6 +90,41 @@ class CRM_CiviMobileAPI_Utils_Contact {
   }
 
   /**
+   * Gets current Contact id
+   *
+   * @return null|string
+   */
+  public static function getCurrentContactId() {
+    $session = CRM_Core_Session::singleton();
+    if (CRM_Contact_BAO_Contact_Utils::isContactId($session->get('userID'))) {
+      return  $session->get('userID');
+    }
+
+    return false;
+  }
+
+  /**
+   * Remove Contact's avatar
+   *  -clears url on that file in Contact table
+   *  -remove file on server
+   *
+   * @param $contactId
+   *
+   * @return bool
+   */
+  public static function removeContactAvatar($contactId) {
+    $avatarFileName = CRM_CiviMobileAPI_Utils_File::getContactAvatarFileName($contactId);
+
+    try {
+      civicrm_api3('Contact', 'create', ['id' => $contactId, 'image_URL' => '']);
+    } catch (CiviCRM_API3_Exception $e) {
+      return false;
+    }
+
+    return CRM_CiviMobileAPI_Utils_File::removeUploadFile($avatarFileName);
+  }
+
+  /**
    * Is contact has 'api_key'
    *
    * @param int $contactId
