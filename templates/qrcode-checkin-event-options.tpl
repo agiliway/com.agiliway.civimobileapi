@@ -4,7 +4,7 @@
     <td>
       {$form.default_qrcode_checkin_event.html}
       {$form.default_qrcode_checkin_event.label}
-      <div class="help">{ts}If enabled, the QR Code for this event will be used (you can only have one event enabled at a time, enabling this event will disable all other events).{/ts}</div>
+      <div class="help">{ts}QR Code generation option accessible is only available when creating an event. It is not possible to tick the QR Code generation when you edit this event.{/ts}</div>
     </td>
   </tr>
 </table>

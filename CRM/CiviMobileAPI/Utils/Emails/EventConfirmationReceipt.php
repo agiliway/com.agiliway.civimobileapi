@@ -43,11 +43,12 @@ class CRM_CiviMobileAPI_Utils_Emails_EventConfirmationReceipt {
     $checkNumber = (!empty($contribution->checkNumber)) ? $contribution->checkNumber : false;
     $trxnId = (!empty($contribution->trxn_id)) ? $contribution->trxn_id : false;
     $isPayLater = (!empty($event['is_pay_later'])) ? $event['is_pay_later'] : false;
-    $isOnWaitlist = (!empty($event['has_waitlist'])) ? $event['has_waitlist'] : false;
+    $isOnWaitlist = false;
     $payLaterReceipt = (!empty($event['pay_later_receipt'])) ? $event['pay_later_receipt'] : false;
     $isPrimary = (!empty($event['is_monetary']) && $event['is_monetary'] == 1) ? 1 : false;
     $isAmountZero = ($totalAmount <= 0) ? TRUE : FALSE;
     $defaultRole = (!empty($event['default_role_id'])) ? $event['default_role_id'] : false;
+    $participantStatus = (!empty($participant->status_id)) ? CRM_Event_PseudoConstant::participantStatus($participant->status_id, NULL, 'label') : false;
     if (empty($totalAmount) && !empty($participant->fee_amount)) {
       $totalAmount = $participant->fee_amount;
     }
@@ -97,6 +98,7 @@ class CRM_CiviMobileAPI_Utils_Emails_EventConfirmationReceipt {
         'defaultRole' => $defaultRole,
         'isAmountzero' => $isAmountZero,
         'isOnWaitlist' => $isOnWaitlist,
+        'participant_status' => $participantStatus,
         'currency' => $currency
       ]
     ];
