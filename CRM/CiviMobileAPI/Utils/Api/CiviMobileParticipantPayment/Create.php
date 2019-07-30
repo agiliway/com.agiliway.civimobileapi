@@ -46,7 +46,7 @@ class CRM_CiviMobileAPI_Utils_Api_CiviMobileParticipantPayment_Create {
         'total_amount' => $validParams['participant_params']['fee_amount'],
         'contact_id' => $this->contact->id,
         'payment_instrument_id' => "Check",
-        'contribution_status_id' => "Completed",
+        'contribution_status_id' => "Pending",
       ]);
 
       $participantPayment = civicrm_api3('ParticipantPayment', 'create', [
