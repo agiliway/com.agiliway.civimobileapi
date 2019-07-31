@@ -46,7 +46,12 @@ class CRM_CiviMobileAPI_Utils_QRcode {
       $entityFileDAO->entity_id = $participantId;
       $entityFileDAO->find(true);
       $fileId = $entityFileDAO->file_id;
-      $protocol = stripos($_SERVER['SERVER_PROTOCOL'],'https') === true ? 'https://' : 'http://';
+      if (isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] == 'on' || $_SERVER['HTTPS'] == 1)
+        || isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') {
+        $protocol = 'https://';
+      } else {
+        $protocol = 'http://';
+      }
       $fileUrlOther = $protocol . $_SERVER['SERVER_NAME'] . CRM_Utils_System::url('civicrm/file', 'reset=1&filename=participantId_' . $participantId . '.png&mime-type=image/png');
       $fileUrl = $protocol . $_SERVER['SERVER_NAME'] . CRM_Utils_System::url('civicrm/file', 'reset=1&id=' . $fileId . '&eid=' . $participantId);
       CRM_CiviMobileAPI_Utils_ParticipantQrCode::setQrCodeToParticipant($participantId, $eventId, $contactId, $hashCode, $fileUrl);
