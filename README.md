@@ -39,7 +39,7 @@ The latest CiviMobile application can be downloaded from [AppStore](https://itun
 - Joomla 3.x
 - WordPress 4.8+
 
-*WordPress API patch is required. Please install [CiviCRM API fix for Wordpress](https://github.com/mecachisenros/civicrm-wp-rest) or [contact us](mailto:civicrm@agiliway.com) for details.
+*WordPress API patch is required. Please install ["CiviCRM WP REST API Wrapper" plugin](https://github.com/mecachisenros/civicrm-wp-rest) or [contact us](mailto:civicrm@agiliway.com) for details.
 
 ## Installation (git/cli)
 
