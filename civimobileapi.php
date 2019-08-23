@@ -464,6 +464,10 @@ function civimobileapi_civicrm_buildForm($formName, &$form) {
     CRM_Core_Region::instance('page-body')->add([
       'template' => "{$templatePath}/qrcode-checkin-event-options.tpl"
     ]);
+
+    CRM_Core_Region::instance('page-body')->add([
+      'style' => '.custom-group-' . CRM_CiviMobileAPI_Install_Entity_CustomGroup::QR_USES . ' { display:none;}'
+    ]);
   }
 
   if ($formName == 'CRM_Event_Form_Participant' && $action == CRM_Core_Action::ADD) {
@@ -474,4 +478,26 @@ function civimobileapi_civicrm_buildForm($formName, &$form) {
     }
   }
 
+}
+
+/**
+ * Implements hook_civicrm_alterBadge().
+ *
+ * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_alterBadge/
+ */
+function civimobileapi_civicrm_alterBadge( &$labelName, &$label, &$format, &$participant ) {
+  $qrCodeCustomFieldName = "custom_" . CRM_CiviMobileAPI_Utils_CustomField::getId(CRM_CiviMobileAPI_Install_Entity_CustomGroup::QR_CODES, CRM_CiviMobileAPI_Install_Entity_CustomField::QR_IMAGE);
+  if (isset($format['values'][$qrCodeCustomFieldName])) {
+    $link = $format['values'][$qrCodeCustomFieldName];
+    $label->printImage($link, '100', '0' , 30, 30);
+
+    //hide label
+    if (!empty($format['token'])) {
+      foreach ($format['token'] as $key => $token) {
+        if ($token['token'] == '{participant.' . $qrCodeCustomFieldName . '}') {
+          $format['token'][$key]['value'] =  '';
+        }
+      }
+    }
+  }
 }

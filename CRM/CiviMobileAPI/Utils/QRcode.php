@@ -10,6 +10,8 @@ class CRM_CiviMobileAPI_Utils_QRcode {
    * Saves QRcode in Participant's custom fields
    *
    * @param $participantId
+   *
+   * @throws \api_Exception
    */
   public static function generateQRcode($participantId) {
     $participant = new CRM_Event_BAO_Participant();
@@ -28,7 +30,8 @@ class CRM_CiviMobileAPI_Utils_QRcode {
       $config = CRM_Core_Config::singleton();
       $directoryName = $config->uploadDir . DIRECTORY_SEPARATOR . 'qr';
       CRM_Utils_File::createDir($directoryName);
-      $path = $directoryName . DIRECTORY_SEPARATOR . 'participantId_' . $participantId . '.png';
+      $imageName = self::generateImageName($participantId);
+      $path = $directoryName . DIRECTORY_SEPARATOR . $imageName;
       $params = [
         'attachFile_1' => [
           'uri' => $path,
@@ -40,17 +43,61 @@ class CRM_CiviMobileAPI_Utils_QRcode {
 
       \PHPQRCode\QRcode::png("http://civimobile.org/events?qr=" . $participantId . '_' . $hashCode, $path, 'L', 9, 3);
       CRM_Core_BAO_File::processAttachment($params, 'civicrm_participant', $participantId);
-
-      $entityFileDAO = new CRM_Core_DAO_EntityFile();
-      $entityFileDAO->entity_table = 'civicrm_participant';
-      $entityFileDAO->entity_id = $participantId;
-      $entityFileDAO->find(true);
-      $fileId = $entityFileDAO->file_id;
-      $protocol = CRM_CiviMobileAPI_Utils_Website::getProtocol();
-      $fileUrlOther = $protocol . $_SERVER['SERVER_NAME'] . CRM_Utils_System::url('civicrm/file', 'reset=1&filename=participantId_' . $participantId . '.png&mime-type=image/png');
-      $fileUrl = $protocol . $_SERVER['SERVER_NAME'] . CRM_Utils_System::url('civicrm/file', 'reset=1&id=' . $fileId . '&eid=' . $participantId);
+      $fileUrl = self::getFileUrl($participantId);
       CRM_CiviMobileAPI_Utils_ParticipantQrCode::setQrCodeToParticipant($participantId, $eventId, $contactId, $hashCode, $fileUrl);
     }
+  }
+
+  /**
+   * Gets file url to qr code
+   *
+   * @param $participantId
+   *
+   * @return string
+   */
+  private static function getFileUrl($participantId) {
+    $url = '';
+    $files = CRM_Core_BAO_File::getEntityFile('civicrm_participant', $participantId);
+
+    foreach ($files as $file) {
+      if ((!empty($file['fileName']) && $file['fileName'] == self::generateImageName($participantId))
+        || (!empty($file['cleanName']) && $file['cleanName'] == self::generateImageName($participantId))) {
+        $url = $file['url'];
+      }
+    }
+
+    if (substr($url, 0, 1) == '/') {
+      $url = substr($url, 1);
+    }
+
+    $url = urldecode($url);
+
+    $currentCMS = CRM_CiviMobileAPI_Utils_CmsUser::getInstance()->getSystem();
+    if ($currentCMS == CRM_CiviMobileAPI_Utils_CmsUser::CMS_WORDPRESS ) {
+      $url = str_replace("wp-admin/admin.php", "index.php", $url);
+    }
+
+    if ($currentCMS == CRM_CiviMobileAPI_Utils_CmsUser::CMS_JOOMLA ) {
+      $url = str_replace("administrator/", "", CIVICRM_UF_BASEURL) . $url;
+      $url = str_replace("administrator/", "index.php", $url);
+    } else {
+      $url = CIVICRM_UF_BASEURL . $url;
+    }
+
+    $url = htmlspecialchars_decode($url);
+
+    return $url;
+  }
+
+  /**
+   * Generates image name
+   *
+   * @param $participantId
+   *
+   * @return string
+   */
+  private static function generateImageName($participantId) {
+    return 'participantId_' . $participantId . '.png';
   }
 
 }

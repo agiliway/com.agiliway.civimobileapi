@@ -16,6 +16,10 @@ class CRM_CiviMobileAPI_Utils_RestPath {
       $restPath = $this->getWordpressRestPath();
     }
 
+    if ($currentCMS == CRM_CiviMobileAPI_Utils_CmsUser::CMS_JOOMLA ) {
+      $restPath = $this->getJoomlaRestPath();
+    }
+
     return $restPath;
   }
 
@@ -51,6 +55,15 @@ class CRM_CiviMobileAPI_Utils_RestPath {
     }
 
     return $restPath;
+  }
+
+  /**
+   * Gets Joomla 'rest path' for CiviCRM API
+   *
+   * @return string
+   */
+  private function getJoomlaRestPath() {
+    return '/administrator' . Civi::paths()->getUrl("[civicrm.root]/extern/rest.php");
   }
 
 }
