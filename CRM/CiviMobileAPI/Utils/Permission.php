@@ -80,4 +80,46 @@ class CRM_CiviMobileAPI_Utils_Permission {
     return true;
   }
 
+  /**
+   * Is enough permission for delete ContactGroup entity
+   *
+   * @return bool
+   */
+  public static function isEnoughPermissionForDeleteContactGroup() {
+    if (CRM_Core_Permission::check('administer CiviCRM')) {
+      return true;
+    }
+
+    if (CRM_Core_Permission::check('access CiviCRM')
+      && CRM_Core_Permission::check('edit all contacts')
+      && CRM_Core_Permission::check('view my contact')
+    ) {
+      return true;
+    }
+
+    return false;
+  }
+
+  /**
+   * Is enough permission for get available ContactGroups in create select
+   *
+   */
+  public static function isEnoughPermissionForGetAvailableContactGroup() {
+    if (CRM_Core_Permission::check('administer CiviCRM')) {
+      return true;
+    }
+
+    if (CRM_Core_Permission::check('access CiviCRM')
+        && (CRM_Core_Permission::check('edit my contact')
+          || CRM_Core_Permission::check('view all contacts')
+          || CRM_Core_Permission::check('view my contact')
+          || CRM_Core_Permission::check('edit all contacts')
+        )
+    ) {
+      return true;
+    }
+
+    return false;
+  }
+
 }

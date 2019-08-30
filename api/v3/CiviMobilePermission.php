@@ -213,6 +213,10 @@ function civicrm_api3_civi_mobile_permission_get() {
       ],
     ];
 
+    $permissions['contact_group'] = [
+      'delete' => CRM_CiviMobileAPI_Utils_Permission::isEnoughPermissionForDeleteContactGroup() ? 1 : 0,
+    ];
+
     $nullObject = CRM_Utils_Hook::$_nullObject;
     CRM_Utils_Hook::singleton()
       ->commonInvoke(1, $permissions, $nullObject, $nullObject, $nullObject, $nullObject, $nullObject, 'civimobile_permission', '');

@@ -3,7 +3,7 @@
 /**
  * Class handles CiviMobileParticipantPaymentCreate api
  */
-class CRM_CiviMobileAPI_Utils_Api_CiviMobileParticipantPayment_Create {
+class CRM_CiviMobileAPI_Api_CiviMobileParticipantPayment_Create {
 
   /**
    * Api request params
