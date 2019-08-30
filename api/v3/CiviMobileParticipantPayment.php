@@ -13,7 +13,7 @@ function civicrm_api3_civi_mobile_participant_payment_create($params) {
     throw new api_Exception('Permission required.', 'permission_required');
   }
 
-  $result = (new CRM_CiviMobileAPI_Utils_Api_CiviMobileParticipantPayment_Create($params))->getResult();
+  $result = (new CRM_CiviMobileAPI_Api_CiviMobileParticipantPayment_Create($params))->getResult();
 
   return civicrm_api3_create_success($result);
 }

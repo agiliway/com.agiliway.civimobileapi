@@ -31,18 +31,22 @@ class CRM_CiviMobileAPI_Utils_OptionValue {
    * Gets OptionValues by OptionGroupId
    *
    * @param $optionGroupId
+   * @param array $extraParams
+   *
    * @return array|bool
    */
-  public static function getGroupValues($optionGroupId) {
+  public static function getGroupValues($optionGroupId, $extraParams = []) {
     if (empty($optionGroupId)) {
       return [];
     }
 
+    $params =  [
+      'sequential' => 1,
+      'option_group_id' => $optionGroupId,
+    ];
+
     try {
-      $optionValue = civicrm_api3('OptionValue', 'get', [
-        'sequential' => 1,
-        'option_group_id' => $optionGroupId,
-      ]);
+      $optionValue = civicrm_api3('OptionValue', 'get', array_merge($params, $extraParams));
     } catch (CiviCRM_API3_Exception $e) {
       return [];
     }
