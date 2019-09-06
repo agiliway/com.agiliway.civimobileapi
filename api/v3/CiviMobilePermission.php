@@ -35,7 +35,8 @@ function civicrm_api3_civi_mobile_permission_get() {
     $accessCiviContribute = CRM_Core_Permission::check('access CiviContribute');
     $editContributions = CRM_Core_Permission::check('edit contributions');
     $deleteInCiviContribute = CRM_Core_Permission::check('delete in CiviContribute');
-	  $accessToProfileListings = CRM_Core_Permission::check('profile listings and forms');
+    $accessToProfileListings = CRM_Core_Permission::check('profile listings and forms');
+    $accessAllCustomData = CRM_Core_Permission::check('access all custom data');
     $canCheckInOnEvent = CRM_Core_Permission::check(CRM_CiviMobileAPI_Utils_Permission::CAN_CHECK_IN_ON_EVENT);
 
     $permissions['access'] = [
@@ -215,6 +216,17 @@ function civicrm_api3_civi_mobile_permission_get() {
 
     $permissions['contact_group'] = [
       'delete' => CRM_CiviMobileAPI_Utils_Permission::isEnoughPermissionForDeleteContactGroup() ? 1 : 0,
+    ];
+
+    $permissions['custom_fields'] = [
+      'view' => [
+        'all' => $accessToCiviCrm && $viewMyContact && ($viewAllContacts || $editAllContacts) && $accessAllCustomData ? 1 : 0,
+        'my' => $accessToCiviCrm && $viewMyContact && $accessAllCustomData ? 1 : 0,
+      ],
+      'edit' => [
+        'all' => $accessToCiviCrm && $viewMyContact && $editAllContacts && $accessAllCustomData ? 1 : 0,
+        'my' => $accessToCiviCrm && $viewMyContact && ($editMyContact || $editAllContacts) && $accessAllCustomData ? 1 : 0,
+      ],
     ];
 
     $nullObject = CRM_Utils_Hook::$_nullObject;

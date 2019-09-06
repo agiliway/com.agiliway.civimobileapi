@@ -9,7 +9,7 @@ The **CiviMobileAPI** extension (`com.agiliway.civimobileapi`) is a CiviCRM comp
 [CiviMobile](https://civimobile.org) Features:
 
 - **Graphical Calendar** - all the scheduled information is displayed in a graphical calendar on the dashboard on the mobile app;  
-- **Contacts** - users can view the list of all contacts in the system, add new contacts and edit contact information. A variety of contact information options is available including several phone numbers, websites, social media profiles, etc.;     
+- **Contacts** - users can view the list of all contacts in the system, add new contacts and edit contact information. A variety of contact information options is available including several phone numbers, websites, social media profiles, etc. The app supports custom fields that are configured in CiviCRM
 - **Membership** – users can access and renew their membership 
 - **Contributions** – access to the history of all contributions, aggregated total and average payments.   
 - **Relationships** – users can create a relationship between oneself and other individuals or organizations and optionally set a start date and end date for the relationship
@@ -21,7 +21,7 @@ The **CiviMobileAPI** extension (`com.agiliway.civimobileapi`) is a CiviCRM comp
 - **Push-notifications** - notifications about the updates in the system are displayed on the dashboard of the mobile phone
 - **Working Offline** - can work in the offline mode
 - **Settings** – users can configurate a set of parameters customizing the view and work of the application
-- **6 locales** - English, German, French, Italian, Spanish and Dutch
+- **7 locales** - currently, supports 7 locales: English, German, French, Italian, Dutch, Hungarian and Ukrainian
 
 
 More details about how to install CiviMobileAPI extension and start using CiviMobile can be found at official CiviMobile website [https://civimobile.org](https://civimobile.org).   

@@ -87,6 +87,7 @@ class CRM_CiviMobileAPI_Api_CiviMobileCustomFields_Get extends CRM_CiviMobileAPI
       'name' => $customGroup['name'],
       'title' => $customGroup['title'],
       'style' => $customGroup['style'],
+      'weight' => $customGroup['weight'],
       'is_multiple' => $customGroup['is_multiple'],
       'custom_fields' => [],
     ];
