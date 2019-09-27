@@ -2,8 +2,6 @@
 
 class CRM_CiviMobileAPI_ContactSettings_Helper {
 
-  const CONTACT_SETTINGS = 'contact_settings';
-
   /**
    * Get custom fields names and IDs
    *
@@ -14,7 +12,7 @@ class CRM_CiviMobileAPI_ContactSettings_Helper {
     $out = [];
     $customGroupID = civicrm_api3('CustomGroup', 'get', [
       'return' => "id",
-      'name' => self::CONTACT_SETTINGS,
+      'name' => CRM_CiviMobileAPI_Install_Entity_CustomGroup::CONTACT_SETTINGS,
       'is_active' => 1,
     ]);
 
@@ -24,7 +22,7 @@ class CRM_CiviMobileAPI_ContactSettings_Helper {
           "id",
           "name",
         ],
-        'custom_group_id' => self::CONTACT_SETTINGS,
+        'custom_group_id' => CRM_CiviMobileAPI_Install_Entity_CustomGroup::CONTACT_SETTINGS,
         'is_active' => 1,
       ]);
       if (isset($customFeilds["values"])) {
@@ -38,71 +36,16 @@ class CRM_CiviMobileAPI_ContactSettings_Helper {
   }
 
   /**
-   * Activates/disables custom fields
-   *
-   * @param $active
-   *
-   * @throws \CiviCRM_API3_Exception
-   */
-  public static function setActiveFields($active) {
-    if (!self::isCustomGroupExist(self::CONTACT_SETTINGS)) {
-      return;
-    }
-
-    $customFields = civicrm_api3('CustomField', 'get', ['custom_group_id' => self::CONTACT_SETTINGS]);
-    if (isset($customFields["values"])) {
-      foreach ($customFields["values"] as $field) {
-        $field['is_active'] = $active;
-        civicrm_api3('CustomField', 'create', $field);
-      }
-    }
-  }
-
-  /**
-   * Activates/disables custom group
-   *
-   * @param $active
-   *
-   * @throws \CiviCRM_API3_Exception
-   */
-  public static function setActiveGroup($active) {
-    $customGroupID = civicrm_api3('CustomGroup', 'get', ['name' => self::CONTACT_SETTINGS]);
-    if (isset($customGroupID["values"])) {
-      foreach ($customGroupID["values"] as $group) {
-        $group['is_active'] = $active;
-        civicrm_api3('CustomGroup', 'create', $group);
-      }
-    }
-  }
-
-  /**
    * Deletes custom group
    *
    * @throws \CiviCRM_API3_Exception
    */
   public static function deleteGroup() {
-    $customGroupID = civicrm_api3('CustomGroup', 'get', ['name' => self::CONTACT_SETTINGS]);
+    $customGroupID = civicrm_api3('CustomGroup', 'get', ['name' => CRM_CiviMobileAPI_Install_Entity_CustomGroup::CONTACT_SETTINGS]);
     if (isset($customGroupID["values"])) {
       foreach ($customGroupID["values"] as $group) {
         civicrm_api3('CustomGroup', 'delete', ['id' => $group['id']]);
       }
     }
   }
-
-  /**
-   * Checks if custom group exists
-   *
-   * @param $customGroupName
-   *
-   * @return bool
-   * @throws \CiviCRM_API3_Exception
-   */
-  private static function isCustomGroupExist($customGroupName) {
-    $result = civicrm_api3('CustomGroup', 'getcount', [
-      'name' => $customGroupName,
-    ]);
-
-    return $result == 1 ? TRUE : FALSE;
-  }
-
 }
