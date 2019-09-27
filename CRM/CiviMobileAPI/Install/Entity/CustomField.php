@@ -18,6 +18,7 @@ class CRM_CiviMobileAPI_Install_Entity_CustomField extends CRM_CiviMobileAPI_Ins
   const QR_EVENT_ID = 'civi_mobile_qr_event_id';
   const QR_CODE = 'civi_mobile_qr_code';
   const QR_IMAGE = 'civi_mobile_qr_image';
+  const BLOCKED_APP = 'blocked_app';
 
   /**
    * Params for checking Entity existence
@@ -66,6 +67,20 @@ class CRM_CiviMobileAPI_Install_Entity_CustomField extends CRM_CiviMobileAPI_Ins
         'data_type' => 'String',
         'default_value' => 0,
         'is_view' => 1,
+      ],
+      [
+        'name' => self::BLOCKED_APP,
+        'column_name' => self::BLOCKED_APP,
+        'label' => ts('Blocked application'),
+        'custom_group_id' => CRM_CiviMobileAPI_Install_Entity_CustomGroup::CONTACT_SETTINGS,
+        'html_type' => 'Radio',
+        'data_type' => 'Boolean',
+        'default_value' => 0,
+        'is_view' => 0,
+        'is_searchable' => 1,
+        'is_required' => 0,
+        'is_active' => 1,
+        'weight' => 2,
       ]
     ];
   }
