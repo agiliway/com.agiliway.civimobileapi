@@ -35,6 +35,9 @@ class CRM_CiviMobileAPI_Form_Settings extends CRM_Core_Form {
     $serverKeyValidMessage = FALSE;
     $folderPermissionMessage = FALSE;
     $serverKeyInValidMessage = FALSE;
+    $currentExtensionName = CRM_CiviMobileAPI_Utils_Extension::getCurrentExtensionName();
+    $currentExtensionPath = CRM_CiviMobileAPI_Utils_Extension::getCurrentExtensionPath();
+    $isCorrectExtensionName = CRM_CiviMobileAPI_Utils_Extension::isCorrectExtensionName();
 
     if ($version->isCurrentVersionLowerThanRepositoryVersion()) {
       $oldCivicrmMessage = ts('You are using CiviMobile <strong>%1</strong>. The latest version is CiviMobile <strong>%2</strong>', [
@@ -62,6 +65,10 @@ class CRM_CiviMobileAPI_Form_Settings extends CRM_Core_Form {
     $this->assign('latestCivicrmMessage', $latestCivicrmMessage);
     $this->assign('oldCivicrmMessage', $oldCivicrmMessage);
     $this->assign('folderPermissionMessage', $folderPermissionMessage);
+    $this->assign('currentExtensionName', $currentExtensionName);
+    $this->assign('currentExtensionPath', $currentExtensionPath);
+    $this->assign('isCorrectExtensionName', $isCorrectExtensionName);
+    $this->assign('correctExtensionName', CRM_CiviMobileAPI_ExtensionUtil::LONG_NAME);
   }
 
   /**

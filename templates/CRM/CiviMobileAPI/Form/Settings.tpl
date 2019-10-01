@@ -98,6 +98,32 @@
         </td>
       </tr>
 
+      {if !$isCorrectExtensionName}
+        <tr class="crm-group-form-block-isReserved">
+          <td class="label">
+            <label>{ts}Extension name doesn't correct{/ts}</label>
+          </td>
+          <td>
+            <div>
+                <div class="status">
+                  <div>
+                    <span>{ts}Current extension name:{/ts}</span>
+                    <span><strong>{$currentExtensionName}</strong></span>
+                  </div>
+                  <div>
+                    <span>{ts}Required extension name:{/ts}</span>
+                    <span><strong>{$correctExtensionName}</strong></span>
+                  </div>
+                  <div>
+                    <span>{ts}Current extension path:{/ts}</span>
+                    <span><strong>{$currentExtensionPath}</strong></span>
+                  </div>
+                </div>
+            </div>
+          </td>
+        </tr>
+      {/if}
+
       </tbody>
     </table>
   </div>
