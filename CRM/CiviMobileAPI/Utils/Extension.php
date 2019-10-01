@@ -87,4 +87,35 @@ class CRM_CiviMobileAPI_Utils_Extension {
     return is_writable_r($extensionPath);
   }
 
+  /**
+   * Returns current extension path
+   * Be careful when move this method
+   *
+   * @return bool|string
+   */
+  public static function getCurrentExtensionPath() {
+    return realpath(__DIR__ . '/../../../');
+  }
+
+  /**
+   * Returns current extension name
+   *
+   * @return string
+   */
+  public static function getCurrentExtensionName() {
+    $path = static::getCurrentExtensionPath();
+    $separatedPath = explode('/', $path);
+
+    return end($separatedPath);
+  }
+
+  /**
+   * Checks if is correct extension name
+   *
+   * @return bool
+   */
+  public static function isCorrectExtensionName() {
+    return static::getCurrentExtensionName() == CRM_CiviMobileAPI_ExtensionUtil::LONG_NAME;
+  }
+
 }
