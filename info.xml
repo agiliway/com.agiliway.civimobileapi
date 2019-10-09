@@ -9,13 +9,13 @@
         <email>civicrm@agiliway.com</email>
     </maintainer>
     <urls>
-        <url desc="Main Extension Page">https://github.com/agiliway/com.agiliway.civimobileapi</url>
-        <url desc="documentation">https://civimobile.agiliway.com/</url>
+        <url desc="Main Extension Page">https://lab.civicrm.org/extensions/civimobileapi</url>
+        <url desc="documentation">https://civimobile.org</url>
         <url desc="Support">https://agiliway.com</url>
         <url desc="Licensing">http://www.gnu.org/licenses/agpl-3.0.html</url>
     </urls>
-    <releaseDate>2019-10-01</releaseDate>
-    <version>4.1.3</version>
+    <releaseDate>2019-10-09</releaseDate>
+    <version>4.1.4</version>
     <develStage>stable</develStage>
     <compatibility>
         <ver>4.7</ver>
