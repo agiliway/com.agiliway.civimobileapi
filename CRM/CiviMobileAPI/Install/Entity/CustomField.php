@@ -79,8 +79,7 @@ class CRM_CiviMobileAPI_Install_Entity_CustomField extends CRM_CiviMobileAPI_Ins
         'is_view' => 0,
         'is_searchable' => 1,
         'is_required' => 0,
-        'is_active' => 1,
-        'weight' => 2,
+        'is_active' => 1
       ]
     ];
   }

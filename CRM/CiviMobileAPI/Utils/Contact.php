@@ -121,7 +121,11 @@ class CRM_CiviMobileAPI_Utils_Contact {
       return false;
     }
 
-    return CRM_CiviMobileAPI_Utils_File::removeUploadFile($avatarFileName);
+    if (!empty($avatarFileName)) {
+      return CRM_CiviMobileAPI_Utils_File::removeUploadFile($avatarFileName);
+    }
+
+    return true;
   }
 
   /**

@@ -229,6 +229,44 @@ function civicrm_api3_civi_mobile_permission_get() {
       ],
     ];
 
+    $permissions['group'] = [
+      'view' => [
+        'all' => $accessToCiviCrm && $viewMyContact && ($viewAllContacts || $editAllContacts) ? 1 : 0,
+        'my' => $accessToCiviCrm && $viewMyContact ? 1 : 0,
+      ],
+      'remove' => [
+        'all' => $accessToCiviCrm && $viewMyContact && $editAllContacts ? 1 : 0,
+        'my' => $accessToCiviCrm && $viewMyContact && $editAllContacts ? 1 : 0,
+      ],
+      'rejoin' => [
+        'all' => $accessToCiviCrm && $viewMyContact && $editAllContacts ? 1 : 0,
+        'my' => $accessToCiviCrm && $viewMyContact && $editAllContacts ? 1 : 0,
+      ],
+      'add_to_group' => [
+        'all' => $accessToCiviCrm && $viewMyContact && $editAllContacts ? 1 : 0,
+        'my' => $accessToCiviCrm && $viewMyContact && ($editMyContact || $editAllContacts)? 1 : 0,
+      ],
+      'delete' => [
+        'all' => $accessToCiviCrm && $viewMyContact && $editAllContacts ? 1 : 0,
+        'my' => $accessToCiviCrm && $viewMyContact && $editAllContacts ? 1 : 0,
+      ],
+    ];
+
+    $permissions['tags'] = [
+      'view' => [
+        'all' => $accessToCiviCrm && $viewMyContact && ($viewAllContacts || $editAllContacts) ? 1 : 0,
+        'my' => $accessToCiviCrm && $viewMyContact ? 1 : 0,
+      ],
+      'add' => [
+        'all' => $accessToCiviCrm && $viewMyContact && $editAllContacts ? 1 : 0,
+        'my' => $accessToCiviCrm && $viewMyContact && ($editMyContact || $editAllContacts)? 1 : 0,
+      ],
+      'remove' => [
+        'all' => $accessToCiviCrm && $viewMyContact && $editAllContacts ? 1 : 0,
+        'my' => $accessToCiviCrm && $viewMyContact && ($editMyContact || $editAllContacts)? 1 : 0,
+      ],
+    ];
+
     $nullObject = CRM_Utils_Hook::$_nullObject;
     CRM_Utils_Hook::singleton()
       ->commonInvoke(1, $permissions, $nullObject, $nullObject, $nullObject, $nullObject, $nullObject, 'civimobile_permission', '');

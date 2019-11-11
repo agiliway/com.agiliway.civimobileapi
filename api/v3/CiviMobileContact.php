@@ -38,10 +38,15 @@ function civicrm_api3_civi_mobile_contact_create($params) {
     }
 
     CRM_CiviMobileAPI_Utils_Contact::removeContactAvatar($params['contact_id']);
+    $currentCMS = CRM_CiviMobileAPI_Utils_CmsUser::getInstance()->getSystem();
+    $imageUrl = CRM_Utils_System::url('civicrm/contact/imagefile', ['photo' => $newName], TRUE);
+    if ($currentCMS == CRM_CiviMobileAPI_Utils_CmsUser::CMS_JOOMLA ) {
+      $imageUrl = preg_replace('/administrator\//', 'index.php', $imageUrl);
+    }
 
     civicrm_api3('Contact', 'create', [
       'id' => $params['contact_id'],
-      'image_URL' => CRM_Utils_System::url('civicrm/contact/imagefile', ['photo' => $newName], TRUE),
+      'image_URL' => $imageUrl,
     ]);
 
     return civicrm_api3_create_success("Photo was updated", $params);

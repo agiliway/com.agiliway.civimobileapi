@@ -87,7 +87,7 @@ class CRM_CiviMobileAPI_Api_CiviMobileCustomFields_Get extends CRM_CiviMobileAPI
       'name' => $customGroup['name'],
       'title' => $customGroup['title'],
       'style' => $customGroup['style'],
-      'weight' => $customGroup['weight'],
+      'weight' => (int) $customGroup['weight'],
       'is_multiple' => $customGroup['is_multiple'],
       'custom_fields' => [],
     ];
@@ -130,8 +130,12 @@ class CRM_CiviMobileAPI_Api_CiviMobileCustomFields_Get extends CRM_CiviMobileAPI
       $availableValues = CRM_CiviMobileAPI_Utils_OptionValue::getGroupValues($customField['option_group_id'], ['is_active' => 1]);
     }
 
+    foreach ($availableValues as $key => $value) {
+      $availableValues[$key]['weight'] = (int) $availableValues[$key]['weight'];
+    }
+
     if ($customField['html_type'] == 'Radio' && $customField['data_type'] == "Boolean") {
-      $availableValues = ['0','1'];
+      $availableValues = ['1','0'];
     }
 
     $prepareCustomField = [
@@ -141,10 +145,19 @@ class CRM_CiviMobileAPI_Api_CiviMobileCustomFields_Get extends CRM_CiviMobileAPI
       "text_length" => (!empty($customField['text_length'])) ? (int) $customField['text_length'] : "NULL",
       "is_view" => $customField['is_view'],
       "label" => $customField['label'],
+      "weight" => (int) $customField['weight'],
       "data_type" => $customField['data_type'],
       "html_type" => $customField['html_type'],
       "is_required" => $customField['is_required'],
       "current_value" => $this->getCurrentValue($customFieldId),
+      "note_columns" => (!empty($customField['note_columns'])) ? (int) $customField['note_columns'] : "",
+      "note_rows" => (!empty($customField['note_rows'])) ? (int) $customField['note_rows'] : "",
+      "date_format" => (!empty($customField['date_format'])) ? $customField['date_format'] : "",
+      "time_format" => (!empty($customField['time_format'])) ? $customField['time_format'] : "",
+      "start_date_years" => (!empty($customField['start_date_years'])) ? $customField['start_date_years'] : "",
+      "end_date_years" => (!empty($customField['end_date_years'])) ? $customField['end_date_years'] : "",
+      "default_currency" => CRM_Core_Config::singleton()->defaultCurrency,
+      "default_currency_symbol" => CRM_Core_Config::singleton()->defaultCurrencySymbol,
       "available_values" => $availableValues
     ];
 
