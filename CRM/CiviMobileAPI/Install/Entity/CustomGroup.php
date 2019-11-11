@@ -49,7 +49,6 @@ class CRM_CiviMobileAPI_Install_Entity_CustomGroup extends CRM_CiviMobileAPI_Ins
         'is_public' => 1,
         'table_name' => 'civicrm_contact_settings',
         'style' => 'Inline',
-        'weight' => 1,
         'is_active' => 1,
         'collapse_display' => 1,
         'collapse_adv_display' => 1,

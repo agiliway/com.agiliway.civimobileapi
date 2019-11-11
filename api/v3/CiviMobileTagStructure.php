@@ -9,6 +9,10 @@
  * @throws \api_Exception
  */
 function civicrm_api3_civi_mobile_tag_structure_get($params) {
+  if (!CRM_CiviMobileAPI_Utils_Permission::isEnoughPermissionForGetTagStructure()) {
+    throw new api_Exception('Permission required.', 'permission_required');
+  }
+
   $result = (new CRM_CiviMobileAPI_Api_CiviMobileTagStructure_Get($params))->getResult();
 
   return civicrm_api3_create_success($result, $params);

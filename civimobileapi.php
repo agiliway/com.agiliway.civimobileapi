@@ -233,6 +233,8 @@ function civimobileapi_civicrm_alterAPIPermissions($entity, $action, &$params, &
       ($entity == 'civi_mobile_allowed_activity_types' and $action == 'get') ||
       ($entity == 'civi_mobile_contribution_statistic') ||
       ($entity == 'state_province' and $action == 'get') ||
+      ($entity == 'civi_mobile_available_contact_group' and $action == 'get') ||
+      ($entity == 'civi_mobile_tag_structure' and $action == 'get') ||
       ($entity == 'civi_mobile_custom_fields' and $action == 'get')
     ) {
       $params['check_permissions'] = FALSE;

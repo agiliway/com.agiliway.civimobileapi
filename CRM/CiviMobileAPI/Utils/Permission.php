@@ -122,4 +122,25 @@ class CRM_CiviMobileAPI_Utils_Permission {
     return false;
   }
 
+  /**
+   * Is enough permission tag structure
+   */
+  public static function isEnoughPermissionForGetTagStructure() {
+    if (CRM_Core_Permission::check('administer CiviCRM')) {
+      return true;
+    }
+
+    if (CRM_Core_Permission::check('access CiviCRM')
+        && (CRM_Core_Permission::check('edit my contact')
+          || CRM_Core_Permission::check('view all contacts')
+          || CRM_Core_Permission::check('view my contact')
+          || CRM_Core_Permission::check('edit all contacts')
+        )
+    ) {
+      return true;
+    }
+
+    return false;
+  }
+
 }
