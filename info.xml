@@ -14,8 +14,8 @@
         <url desc="Support">https://agiliway.com</url>
         <url desc="Licensing">http://www.gnu.org/licenses/agpl-3.0.html</url>
     </urls>
-    <releaseDate>2019-11-12</releaseDate>
-    <version>4.2</version>
+    <releaseDate>2019-11-26</releaseDate>
+    <version>4.2.1</version>
     <develStage>stable</develStage>
     <compatibility>
         <ver>4.7</ver>
