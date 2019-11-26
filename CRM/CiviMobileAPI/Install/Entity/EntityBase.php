@@ -77,7 +77,7 @@ abstract class CRM_CiviMobileAPI_Install_Entity_EntityBase  implements CRM_CiviM
    *
    * @return bool|int
    */
-  private function getId($entityParam) {
+  protected function getId($entityParam) {
     $searchParam = [];
     foreach ($this->entitySearchParamNameList as $nameParam) {
       $searchParam[$nameParam] = $entityParam[$nameParam];

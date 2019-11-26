@@ -3,6 +3,11 @@
 class CRM_CiviMobileAPI_BAO_PushNotificationMessages extends CRM_CiviMobileAPI_DAO_PushNotificationMessages {
 
   /**
+   * Life time
+   */
+  const LIFE_TIME_IN_DAYS = 90;
+
+  /**
    * Adds params to Push Notification Messages table
    *
    * @param $params
@@ -24,7 +29,7 @@ class CRM_CiviMobileAPI_BAO_PushNotificationMessages extends CRM_CiviMobileAPI_D
    */
   public static function &create(&$params) {
     $transaction = new self();
-    
+
     if (!empty($params['id'])) {
       CRM_Utils_Hook::pre('edit', self::getEntityName(), $params['id'], $params);
     }
@@ -128,7 +133,7 @@ class CRM_CiviMobileAPI_BAO_PushNotificationMessages extends CRM_CiviMobileAPI_D
 
   /**
    * Gets notifications by params
-   * 
+   *
    * @param $params
    *
    * @return array|bool
@@ -143,7 +148,7 @@ class CRM_CiviMobileAPI_BAO_PushNotificationMessages extends CRM_CiviMobileAPI_D
     }
 
     $query->orderBy($params['sort'] . ' ' . $params['direction']);
-    
+
     if (isset($params['limit'])) {
       $offset = isset($params['offset']) ? $params['offset'] : 0;
       $query->limit($params['limit'], $offset);
@@ -153,6 +158,22 @@ class CRM_CiviMobileAPI_BAO_PushNotificationMessages extends CRM_CiviMobileAPI_D
     $data = $results->fetchAll();
 
     return !empty($data) ? $data : FALSE;
+  }
+
+  /**
+   * Deletes older than count of days
+   *
+   * @param $day
+   */
+  public static function deleteOlderThan($day) {
+    $query = '
+      DELETE FROM civicrm_contact_push_notification_messages 
+      WHERE send_date < NOW() - INTERVAL %1 DAY;
+    ';
+
+    CRM_Core_DAO::singleValueQuery($query, [
+      1 => [$day, 'Integer']
+    ]);
   }
 
 }

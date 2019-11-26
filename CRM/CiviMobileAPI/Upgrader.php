@@ -66,6 +66,12 @@ class CRM_CiviMobileAPI_Upgrader extends CRM_CiviMobileAPI_Upgrader_Base {
     return TRUE;
   }
 
+  public function upgrade_0013() {
+    CRM_CiviMobileAPI_Install_Install::run();
+
+    return TRUE;
+  }
+
   /**
    * Installs scheduled job
    *
