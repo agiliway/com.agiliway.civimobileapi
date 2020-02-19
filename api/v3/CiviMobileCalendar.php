@@ -6,12 +6,12 @@
  * @param array $params
  *
  * @return array
+ * @throws \Exception
  */
 function civicrm_api3_civi_mobile_calendar_get($params) {
-  $calendarManager = new CRM_CiviMobileAPI_Utils_Calendar($params);
-  $events = $calendarManager->getEvents();
+  $result = (new CRM_CiviMobileAPI_Api_CiviMobileCalendar_Get($params))->getResult();
 
-  return civicrm_api3_create_success($events, $params);
+  return civicrm_api3_create_success($result, $params);
 }
 
 /**

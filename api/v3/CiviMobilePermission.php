@@ -10,6 +10,7 @@ function civicrm_api3_civi_mobile_permission_get() {
     $permissions = [];
 
     $accessToCiviCrm = CRM_Core_Permission::check('access CiviCRM');
+    $accessUploadedFiles = CRM_Core_Permission::check('access uploaded files');
     $viewAllContacts = CRM_Core_Permission::check('view all contacts');
     $editAllContacts = CRM_Core_Permission::check('edit all contacts');
     $viewMyContact = CRM_Core_Permission::check('view my contact');
@@ -58,6 +59,7 @@ function civicrm_api3_civi_mobile_permission_get() {
 		    'my' => $accessToCiviCrm && $viewMyContact && $deleteContact ? 1 : 0,
       ],
       'search' => $accessToCiviCrm && $viewMyContact && $viewAllContacts ? 1 : 0,
+      'access_uploaded_files' => $accessUploadedFiles ? 1 : 0,
     ];
 
     $permissions['activity'] = [

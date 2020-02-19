@@ -40,11 +40,8 @@ class CRM_CiviMobileAPI_Utils_RestPath {
   private function getWordpressRestPath() {
     $restPath = $this->getStandardRestPath();
 
-    if (function_exists('is_plugin_active')) {
-      $pathPlugin = 'civicrm-wp-rest/civicrm-wp-rest.php';
-      if (is_plugin_active($pathPlugin)) {
-        $restPath =  '/wp-json/civicrm/v3/rest';
-      }
+    if ($this->isWpRestPluginActive()) {
+      $restPath =  '/wp-json/civicrm/v3/rest';
     }
 
     if (class_exists('CiviCRM_WP_REST\Controller\Rest')) {
@@ -55,6 +52,33 @@ class CRM_CiviMobileAPI_Utils_RestPath {
     }
 
     return $restPath;
+  }
+
+  /**
+   * Is 'civicrm-wp-rest' plugin active
+   *
+   * @return bool
+   */
+  public function isWpRestPluginActive() {
+    if (CRM_CiviMobileAPI_Utils_CmsUser::getInstance()->getSystem() !== CRM_CiviMobileAPI_Utils_CmsUser::CMS_WORDPRESS ) {
+      return false;
+    }
+
+    if (function_exists('is_plugin_active')) {
+      $pathPlugin = 'civicrm-wp-rest/civicrm-wp-rest.php';
+      if (is_plugin_active($pathPlugin)) {
+        return true;
+      }
+    }
+
+    if (class_exists('CiviCRM_WP_REST\Controller\Rest')) {
+      $restController = new CiviCRM_WP_REST\Controller\Rest();
+      if (method_exists($restController, 'get_endpoint')) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   /**

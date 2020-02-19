@@ -247,19 +247,25 @@ function civimobileapi_civicrm_alterAPIPermissions($entity, $action, &$params, &
  * this website
  */
 function civimobileapi_civicrm_pageRun(&$page) {
-  if (empty($_GET['snippet'])) {
-    if (CRM_Core_Permission::check('administer CiviCRM')){
-      $param = [
-        'apple_link' => 'https://itunes.apple.com/us/app/civimobile/id1404824793?mt=8',
-        'google_link' => 'https://play.google.com/store/apps/details?id=com.agiliway.civimobile',
-        'bg_color' => '#2786C2',
-        'logo' => CRM_CiviMobileAPI_ExtensionUtil::url('/img/logo.png'),
-      ];
+  if(empty($_COOKIE["civimobile_popup_close"])) {
+    if (empty($_GET['snippet'])) {
+      if (Civi::settings()->get('civimobile_is_allow_public_website_url_qrcode') == 1 || CRM_Core_Permission::check('administer CiviCRM')) {
+          $param = [
+            'apple_link' => 'https://itunes.apple.com/us/app/civimobile/id1404824793?mt=8',
+            'google_link' => 'https://play.google.com/store/apps/details?id=com.agiliway.civimobile',
+            'civimobile_logo' => CRM_CiviMobileAPI_ExtensionUtil::url('/img/civimobile_logo.svg'),
+            'app_store_img' => CRM_CiviMobileAPI_ExtensionUtil::url('/img/app-store.png'),
+            'google_play_img' => CRM_CiviMobileAPI_ExtensionUtil::url('/img/google-play.png'),
+            'civimobile_phone_img' => CRM_CiviMobileAPI_ExtensionUtil::url('/img/civimobile-phone.png'),
+            'font_directory' => CRM_CiviMobileAPI_ExtensionUtil::url('/font'),
+            'qr_code_link' => CRM_CiviMobileAPI_Install_Entity_ApplicationQrCode::getPath(),
+          ];
 
-      CRM_Core_Smarty::singleton()->assign($param);
-      CRM_Core_Region::instance('page-body')->add([
-        'template' => CRM_CiviMobileAPI_ExtensionUtil::path() . '/templates/CRM/CiviMobileAPI/popup.tpl',
-      ]);
+          CRM_Core_Smarty::singleton()->assign($param);
+          CRM_Core_Region::instance('page-body')->add([
+            'template' => CRM_CiviMobileAPI_ExtensionUtil::path() . '/templates/CRM/CiviMobileAPI/popup.tpl',
+          ]);
+        }
     }
   }
 }
@@ -293,6 +299,18 @@ function civimobileapi_civicrm_post($op, $objectName, $objectId, &$objectRef) {
     CRM_CiviMobileAPI_Utils_QRcode::generateQRcode($objectId);
   }
 
+  if ($objectName == 'Individual' && $op == 'edit') {
+    try {
+      $contact = CRM_Contact_BAO_Contact::findById($objectId);
+      $apiKey = $contact->api_key;
+    } catch (\CiviCRM_API3_Exception $e) {
+      $apiKey = NULL;
+    }
+    if (!empty($apiKey) && CRM_CiviMobileAPI_Utils_Contact::isBlockedApp($objectId) == 1) {
+      CRM_CiviMobileAPI_Utils_Contact::logoutFromMobile($objectId);
+    }
+  }
+
   if ($objectName == 'Event' && $op == 'create') {
     $qrcodeCheckinEvent = CRM_Utils_Request::retrieve('default_qrcode_checkin_event', 'String');
     $eventId = $objectId;
@@ -311,6 +329,8 @@ function civimobileapi_civicrm_post($op, $objectName, $objectId, &$objectRef) {
   if (isset($notificationManager)) {
     $notificationManager->sendNotification();
   }
+
+  CRM_CiviMobileAPI_Hook_Post_Register::run($op, $objectName, $objectId, $objectRef);
 }
 
 function civimobileapi_civicrm_postProcess($formName, &$form) {
@@ -322,7 +342,12 @@ function civimobileapi_civicrm_postProcess($formName, &$form) {
   $action = CRM_CiviMobileAPI_PushNotification_Utils_NotificationFactory::convertPostProcessAction($form);
   $formName = CRM_CiviMobileAPI_PushNotification_Utils_NotificationFactory::convertPostProcessFormName($formName);
 
-  $notificationFactory = new CRM_CiviMobileAPI_PushNotification_Utils_NotificationFactory($action, $formName, NULL, $form, "postProcess");
+  $objectId = null;
+  if ($formName == 'ActivityInCase' && $action == 'delete') {
+    $objectId = (isset($form->_caseId[0])) ? $form->_caseId[0] : null;
+  }
+
+  $notificationFactory = new CRM_CiviMobileAPI_PushNotification_Utils_NotificationFactory($action, $formName, $objectId, $form, "postProcess");
   $notificationManager = $notificationFactory->getPushNotificationManager();
 
   if (isset($notificationManager)) {
@@ -344,7 +369,6 @@ function civimobileapi_civicrm_pre($op, $objectName, $id, &$params) {
   if (isset($notificationManager)) {
     $notificationManager->sendNotification();
   }
-
 }
 
 /**
@@ -443,14 +467,31 @@ if (!function_exists('is_writable_r')) {
  * @param $menu
  */
 function civimobileapi_civicrm_navigationMenu(&$menu) {
-  $menuItem = [
+  $civiMobile = [
+    'name' => ts('CiviMobile'),
+    'permission' => 'administer CiviCRM',
+    'operator' => NULL,
+    'separator' => NULL,
+  ];
+  _civimobileapi_civix_insert_navigation_menu($menu, 'Administer/', $civiMobile);
+
+  $civiMobileSettings = [
     'name' => ts('CiviMobile Settings'),
     'url' => 'civicrm/civimobile/settings',
     'permission' => 'administer CiviCRM',
     'operator' => NULL,
     'separator' => NULL,
   ];
-  _civimobileapi_civix_insert_navigation_menu($menu, 'Administer/', $menuItem);
+  _civimobileapi_civix_insert_navigation_menu($menu, 'Administer/CiviMobile/', $civiMobileSettings);
+
+  $civiMobileCalendarSettings = [
+    'name' => ts('CiviMobile Calendar Settings'),
+    'url' => 'civicrm/civimobile/calendar/settings',
+    'permission' => 'administer CiviCRM',
+    'operator' => NULL,
+    'separator' => NULL,
+  ];
+  _civimobileapi_civix_insert_navigation_menu($menu, 'Administer/CiviMobile/', $civiMobileCalendarSettings);
 }
 
 /**
@@ -481,6 +522,7 @@ function civimobileapi_civicrm_buildForm($formName, &$form) {
     }
   }
 
+  (new CRM_CiviMobileAPI_Hook_BuildForm_Register)->run($formName, $form);
 }
 
 /**

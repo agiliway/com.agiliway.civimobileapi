@@ -28,17 +28,26 @@ class CRM_CiviMobileAPI_Utils_JsonResponse
 
   /**
    * Prepares wrong JSON response
+   *
    * @param $message
    * @param null $field
+   * @param null $errorCode
    */
-  public static function sendErrorResponse($message, $field = NULL)
+  public static function sendErrorResponse($message, $field = NULL, $errorCode = NULL)
   {
     $data = [
       'is_error' => 1,
+      'error_code' => '',
       'error_message' => $message
     ];
-    if ($field)
+
+    if ($field) {
       $data['error_field'] = $field;
+    }
+
+    if (!empty($errorCode)) {
+      $data['error_code'] = $errorCode;
+    }
 
     self::sendResponse(404, $data);
   }

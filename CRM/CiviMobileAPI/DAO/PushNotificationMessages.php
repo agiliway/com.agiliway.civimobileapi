@@ -39,6 +39,13 @@ class CRM_CiviMobileAPI_DAO_PushNotificationMessages extends CRM_Core_DAO {
   public $contactId;
 
   /**
+   * Send Data
+   *
+   * @var string
+   */
+  public $data;
+
+  /**
    * Send Message
    *
    * @var string
@@ -129,6 +136,21 @@ class CRM_CiviMobileAPI_DAO_PushNotificationMessages extends CRM_Core_DAO {
           'required' => TRUE,
           'import' => TRUE,
           'where' => self::getTableName() . '.contact_id',
+          'headerPattern' => '',
+          'dataPattern' => '',
+          'export' => TRUE,
+          'table_name' => self::getTableName(),
+          'entity' => self::getEntityName(),
+          'bao' => 'CRM_CiviMobileAPI_BAO_PushNotificationMessages',
+        ],
+        'data' => [
+          'name' => 'data',
+          'type' => CRM_Utils_Type::T_STRING,
+          'title' => ts('Data'),
+          'description' => 'Data',
+          'required' => TRUE,
+          'import' => TRUE,
+          'where' => self::getTableName() . '.data',
           'headerPattern' => '',
           'dataPattern' => '',
           'export' => TRUE,

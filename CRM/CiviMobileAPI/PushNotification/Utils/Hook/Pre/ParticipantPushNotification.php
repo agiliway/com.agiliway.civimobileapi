@@ -17,7 +17,7 @@ class CRM_CiviMobileAPI_PushNotification_Utils_Hook_Pre_ParticipantPushNotificat
   protected function getContact() {
     return $this->action === 'delete' ? PushNotification_Helper::getEventContactByParticipantId($this->id) : '';
   }
-  
+
   /**
    * @inheritdoc
    */
@@ -29,19 +29,17 @@ class CRM_CiviMobileAPI_PushNotification_Utils_Hook_Pre_ParticipantPushNotificat
       catch (Exception $e) {
         $eventTitle = NULL;
       }
-
-      return $eventTitle;
     }
 
-    return NULL;
+    return (!empty($eventTitle)) ? $eventTitle : ts('Participant');
   }
-  
-  
+
+
   /**
    * @inheritdoc
    */
   protected function getText() {
-    return isset($this->actionText[$this->action]) ? ts($this->actionText[$this->action]) : '';
+    return isset($this->actionText[$this->action]) ? ts($this->actionText[$this->action]) : $this->action;
   }
 
 }

@@ -5,7 +5,7 @@ class CRM_CiviMobileAPI_PushNotification_Helper {
   /**
    * Url to Firebase Cloud Massaging
    */
-  const FCM_URL = 'https://fcm.googleapis.com/fcm/send';
+  const FCM_URL = 'https://push.civimobile.org/rest.php';
 
   /**
    * Sends push notification
@@ -13,15 +13,19 @@ class CRM_CiviMobileAPI_PushNotification_Helper {
    * @param array $contactsIDs
    * @param $title
    * @param $text
+   * @param $data
    *
    * @return bool|mixed
    */
-  public static function sendPushNotification(array $contactsIDs, $title, $text) {
+  public static function sendPushNotification(array $contactsIDs, $title, $text, $data) {
     $contactsTokens = self::getContactsToken($contactsIDs);
 
     if (empty($contactsTokens) || empty($contactsIDs)) {
       return FALSE;
     }
+    $config = &CRM_Core_Config::singleton();
+    $baseUrl = $config->userFrameworkBaseURL;
+
     $title = self::compileMessage($title);
     $text = self::compileMessage($text);
 
@@ -33,16 +37,18 @@ class CRM_CiviMobileAPI_PushNotification_Helper {
       'registration_ids' => $contactsTokens['Tokens'],
       'notification' => $notificationBody,
       'priority' => 'high',
+      'data' => $data,
     ];
     $requestHeader = [
       'Content-Type:application/json',
-      'Authorization:key=' . Civi::settings()->get('civimobile_server_key'),
+      'Site-Name:' . $baseUrl,
+      'Authorization:' . Civi::settings()->get('civimobile_server_key'),
     ];
-    
+
     $nullObject = CRM_Utils_Hook::$_nullObject;
     CRM_Utils_Hook::singleton()
       ->commonInvoke(2, $notificationBody, $requestHeader, $nullObject, $nullObject, $nullObject, $nullObject, 'civimobile_send_push', '');
-    
+
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, self::FCM_URL);
     curl_setopt($ch, CURLOPT_POST, TRUE);
@@ -137,7 +143,7 @@ class CRM_CiviMobileAPI_PushNotification_Helper {
       $contacts['source_contact'] = end($sourceActivityContacts);
       $prepareContacts = array_merge($prepareContacts, $contacts['source_contact']);
     }
-    
+
     $prepareContacts = array_unique($prepareContacts);
 
     return $prepareContacts;
@@ -200,7 +206,7 @@ class CRM_CiviMobileAPI_PushNotification_Helper {
     $contact = CRM_Contact_BAO_Contact::getValues($params, $default);
     $i = 1;
     $replace = [];
-    
+
     foreach ((array) $contact as $k => $value) {
       if (strpos($message, '%' . $k) !== FALSE) {
         $message = str_replace('%' . $k, '%' . $i, $message);

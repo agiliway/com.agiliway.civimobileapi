@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * @deprecated will be deleted in version 7.0.0
+ */
 class CRM_CiviMobileAPI_ApiWrapper_Contact implements API_Wrapper {
 
   /**
@@ -27,7 +30,7 @@ class CRM_CiviMobileAPI_ApiWrapper_Contact implements API_Wrapper {
         $result['current_employer_id'] = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact', $result['contact_id'], 'employer_id');
       }
     }
-    
+
     return $result;
   }
 

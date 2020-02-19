@@ -14,7 +14,11 @@ class CRM_CiviMobileAPI_PushNotification_Utils_Hook_Post_ParticipantPushNotifica
    *
    * @var array
    */
-  private $actionText = ['edit' => '%display_name has edited participant.'];
+  private $actionText = [
+    'create' => '%display_name has created participant.',
+    'edit' => '%display_name has edited participant.',
+    'delete' => '%display_name has deleted participant.'
+  ];
 
   /**
    * Sets object reference
@@ -29,14 +33,14 @@ class CRM_CiviMobileAPI_PushNotification_Utils_Hook_Post_ParticipantPushNotifica
    * @inheritdoc
    */
   protected function getContact() {
-    if ($this->action === 'edit') {
+    if (isset($this->objectRef->contact_id)) {
       $contacts[] = $this->objectRef->contact_id;
       return $contacts;
     }
 
     return NULL;
   }
-  
+
   /**
    * @inheritdoc
    */
@@ -47,18 +51,16 @@ class CRM_CiviMobileAPI_PushNotification_Utils_Hook_Post_ParticipantPushNotifica
       } catch (Exception $e) {
         $eventTitle = NULL;
       }
-
-      return $eventTitle;
     }
 
-    return NULL;
+    return (!empty($eventTitle)) ? $eventTitle : ts('Participant');
   }
-  
+
   /**
    * @inheritdoc
    */
   protected function getText() {
-    return isset($this->actionText[$this->action]) ? ts($this->actionText[$this->action]) : '';
+    return isset($this->actionText[$this->action]) ? ts($this->actionText[$this->action]) : $this->action;
   }
 
 }

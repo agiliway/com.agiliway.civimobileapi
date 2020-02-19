@@ -10,12 +10,14 @@
  */
 function civicrm_api3_civi_mobile_confirm_token_run($params) {
   _civicrm_api3_confirm_token_check_permission();
+  $config = &CRM_Core_Config::singleton();
+  $baseUrl = $config->userFrameworkBaseURL;
 
   $awgWordpressApiAccessToken = '06fb687ffd4bfb1965035adcc757f5e8c1835facbc18d104e099580314b41554459';
   $awgWordpressDomain = 'https://civimobile.org';
   $json = "{\n\t\"civicrm_server_token\" : \"" . trim($params['civicrm_server_token']) . "\"\n,";
-  $json .= "\n\t\"civicrm_server_domain\" : \"" . CRM_CiviMobileAPI_Utils_Website::getDomainName() . "\"\n }";
-  
+  $json .= "\n\t\"civicrm_server_domain\" : \"" . $baseUrl . "\"\n }";
+
   $curl = curl_init();
   curl_setopt_array($curl, [
     CURLOPT_URL => $awgWordpressDomain . "/wp-json/api/confirm-token",
@@ -31,7 +33,6 @@ function civicrm_api3_civi_mobile_confirm_token_run($params) {
       "content-type: application/json",
     ],
   ]);
-
   $response = curl_exec($curl);
   $err = curl_error($curl);
   curl_close($curl);

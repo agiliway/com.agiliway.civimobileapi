@@ -18,12 +18,10 @@ class CRM_CiviMobileAPI_PushNotification_Utils_Hook_Pre_ActivityPushNotification
    */
   protected function getContact() {
     if ($this->action === 'delete') {
-      $caseID = $this->getCaseId();
-
-      return empty($caseID['values']) ? PushNotification_Helper::getActivityContacts($this->id, TRUE) : '';
+      return PushNotification_Helper::getActivityContacts($this->id, TRUE);
     }
 
-    return NULL;
+    return [];
   }
 
   /**
@@ -49,18 +47,16 @@ class CRM_CiviMobileAPI_PushNotification_Utils_Hook_Pre_ActivityPushNotification
       } catch (Exception $e) {
         $activityName = NULL;
       }
-
-      return $activityName;
     }
 
-    return NULL;
+    return (!empty($activityTitle)) ?  $activityTitle : ts('Activity');
   }
 
   /**
    * @inheritdoc
    */
   protected function getText() {
-    return isset($this->actionText[$this->action]) ? ts($this->actionText[$this->action]) : '';
+    return isset($this->actionText[$this->action]) ? ts($this->actionText[$this->action]) : $this->action;
   }
 
 }

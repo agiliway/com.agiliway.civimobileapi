@@ -1,0 +1,25 @@
+<?php
+
+class CRM_CiviMobileAPI_Page_PublicApi_Transform {
+
+  /**
+   * Adds 'event_type_label' to result of api by 'event_type_id'
+   *
+   * @param $apiResult
+   * @param $params
+   *
+   * @return mixed
+   */
+  public static function addEventTypeLabel($apiResult) {
+    if (empty($apiResult)) {
+      return $apiResult;
+    }
+
+    foreach ($apiResult as $key => $apiResultItem) {
+      $apiResult[$key]['event_type_label'] = 'Event Type Label';
+    }
+
+    return $apiResult;
+  }
+
+}

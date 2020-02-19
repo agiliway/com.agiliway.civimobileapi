@@ -35,14 +35,22 @@ class CRM_CiviMobileAPI_PushNotification_Utils_Hook_PostProcess_ActivityPushNoti
    * @inheritdoc
    */
   protected function getTitle() {
-    return CRM_Core_DAO::getFieldValue('CRM_Activity_BAO_Activity', $this->id, 'subject');
+    if ($this->id) {
+      try {
+        $activityTitle = CRM_Core_DAO::getFieldValue('CRM_Activity_BAO_Activity', $this->id, 'subject');
+      } catch (Exception $e) {
+        $activityTitle = NULL;
+      }
+    }
+
+    return (!empty($activityTitle)) ?  $activityTitle : ts('Activity');
   }
 
   /**
    * @inheritdoc
    */
   protected function getText() {
-    return isset($this->actionText[$this->action]) ? ts($this->actionText[$this->action]) : '';
+    return isset($this->actionText[$this->action]) ? ts($this->actionText[$this->action]) : $this->action;
   }
 
 }

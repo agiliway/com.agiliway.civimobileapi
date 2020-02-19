@@ -43,11 +43,18 @@ class CRM_CiviMobileAPI_Page_Auth extends CRM_Core_Page {
     civimobileapi_secret_validation();
 
     $this->emailOrUsername = $this->getEmailOrUsername();
-
     $this->password = $this->getPassword();
     $this->drupalContactId = CRM_CiviMobileAPI_Authentication_AuthenticationHelper::getDrupalUserIdByMailAndPassword($this->emailOrUsername, $this->password);
+
+    if ($this->isBlocked()) {
+      JsonResponse::sendErrorResponse('User is blocked', 'email', 'cms_user_is_blocked');
+    }
+
     $this->civiContact = CRM_CiviMobileAPI_Authentication_AuthenticationHelper::getCiviContact($this->drupalContactId);
 
+    if (CRM_CiviMobileAPI_Utils_Contact::isBlockedApp($this->civiContact->id) == 1) {
+      JsonResponse::sendErrorResponse('App is blocked for this user.', 'email', 'application_access_is_blocked');
+    }
     parent::__construct();
   }
 
@@ -77,6 +84,33 @@ class CRM_CiviMobileAPI_Page_Auth extends CRM_Core_Page {
     }
 
     return $password;
+  }
+
+  /**
+   * Checks have user blocked status
+   *
+   * @return bool
+   */
+  private function isBlocked() {
+    $user = CRM_CiviMobileAPI_Utils_CmsUser::getInstance()->searchAccount($this->emailOrUsername);
+    $currentCMS = CRM_CiviMobileAPI_Utils_CmsUser::getInstance()->getSystem();
+    $isBlocked = FALSE;
+
+    switch ($currentCMS) {
+      case CRM_CiviMobileAPI_Utils_CmsUser::CMS_JOOMLA:
+        if ($user->block == 1) {
+          $isBlocked = TRUE;
+        }
+        break;
+      case CRM_CiviMobileAPI_Utils_CmsUser::CMS_DRUPAL6:
+      case CRM_CiviMobileAPI_Utils_CmsUser::CMS_DRUPAL7:
+        if ($user->status == 0) {
+          $isBlocked = TRUE;
+        }
+        break;
+    }
+
+    return $isBlocked;
   }
 
   /**

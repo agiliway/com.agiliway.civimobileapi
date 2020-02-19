@@ -17,28 +17,28 @@ class CRM_CiviMobileAPI_PushNotification_Utils_Hook_Pre_CasePushNotification ext
   protected function getContact() {
     return $this->action === 'delete' ? PushNotification_Helper::getCaseRelationshipContacts($this->id) : '';
   }
-  
+
   /**
    * @inheritdoc
    */
   protected function getTitle() {
-    $caseTitle = '';
-
     if ($this->action === 'delete' && $this->id) {
       try {
         $caseTitle = civicrm_api3('Case', 'getvalue', ['return' => 'subject', 'id' => $this->id]);
       }
-      catch (Exception $e) {}
+      catch (Exception $e) {
+        $caseTitle = NULL;
+      }
     }
 
-    return $caseTitle;
+    return (!empty($caseTitle)) ?  $caseTitle : ts('Case');
   }
-  
+
   /**
    * @inheritdoc
    */
   protected function getText() {
-    return isset($this->actionText[$this->action]) ? ts($this->actionText[$this->action]) : '';
+    return isset($this->actionText[$this->action]) ? ts($this->actionText[$this->action]) : $this->action;
   }
 
 }

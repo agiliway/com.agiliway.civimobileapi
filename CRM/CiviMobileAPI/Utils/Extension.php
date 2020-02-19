@@ -24,12 +24,8 @@ class CRM_CiviMobileAPI_Utils_Extension {
    */
   public static function getLatestVersionDownloadLink() {
     $version = CRM_CiviMobileAPI_Utils_VersionController::getInstance();
-    $downloadUrl = 'https://codeload.github.com/agiliway/' . CRM_CiviMobileAPI_ExtensionUtil::LONG_NAME . '/legacy.zip/';
-    $downloadUrl .=  'v' . $version->getLatestMajorVersion() . '.' . $version->getLatestMinorVersion();
-
-    if ($version->getLatestPatchVersion() != 0) {
-      $downloadUrl .= '.' . $version->getLatestPatchVersion();
-    }
+    $downloadUrl = 'https://lab.civicrm.org/extensions/civimobileapi/-/archive/';
+    $downloadUrl .= $version->getLatestFullVersion() . '/civimobileapi-' . $version->getLatestFullVersion() . '.zip';
 
     return $downloadUrl;
   }
@@ -116,6 +112,61 @@ class CRM_CiviMobileAPI_Utils_Extension {
    */
   public static function isCorrectExtensionName() {
     return static::getCurrentExtensionName() == CRM_CiviMobileAPI_ExtensionUtil::LONG_NAME;
+  }
+
+  /**
+   * Is allow public info api
+   *
+   * @return int
+   */
+  public static function isAllowPublicInfoApi() {
+    return (Civi::settings()->get('civimobile_is_allow_public_info_api') == 1) ? 1 : 0;
+  }
+
+  /**
+   * Show a Website URL QR-code for Anonymous users
+   *
+   * @return int
+   */
+  public static function isAllowPublicWebisteURLQRCode() {
+    return (Civi::settings()->get('civimobile_is_allow_public_website_url_qrcode') == 1) ? 1 : 0;
+  }
+
+  /**
+   * Is allow public info
+   *
+   * @return int
+   */
+  public static function isAllowCmsRegistration() {
+    $config = CRM_Core_Config::singleton();
+
+    return (bool) $config->userSystem->isUserRegistrationPermitted() ? 1 : 0;
+  }
+
+  /**
+   * Get site name from settings
+   *
+   * @return string|null
+   */
+  public static function getSiteName() {
+    if(Civi::settings()->get('civimobile_site_name_to_use') == 'custom_site_name') {
+      return Civi::settings()->get('civimobile_custom_site_name');
+    }
+
+    return CRM_CiviMobileAPI_Utils_Cms::getSiteName();
+  }
+
+  /**
+   * Has extension right folder name?
+   *
+   * @return bool
+   */
+  public static function hasExtensionRightFolderName() {
+    $infoFilePath = CRM_Core_Config::singleton()->extensionsDir . CRM_CiviMobileAPI_ExtensionUtil::LONG_NAME . '/civimobileapi.php';
+    if (file_exists($infoFilePath)) {
+      return TRUE;
+    }
+    return FALSE;
   }
 
 }

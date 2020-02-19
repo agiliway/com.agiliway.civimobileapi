@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * @deprecated will be deleted in version 7.0.0
+ */
 class CRM_CiviMobileAPI_ApiWrapper_Event implements API_Wrapper {
 
   /**
@@ -51,6 +54,16 @@ class CRM_CiviMobileAPI_ApiWrapper_Event implements API_Wrapper {
 
     if ($apiRequest['action'] == 'get' && !empty($result['values'])) {
       foreach ($result['values'] as $key => $event) {
+        if (isset($event['currency'])) {
+          if (!empty($event['currency'])) {
+            $result['values'][$key]['currency_symbol'] = CRM_CiviMobileAPI_Utils_Currency::getSymbolByName($event['currency']);
+          } else {
+            $result['values'][$key]['currency_symbol'] = '';
+          }
+        } else {
+          $result['values'][$key]['currency'] = '';
+          $result['values'][$key]['currency_symbol'] = '';
+        }
         if (!empty($event['creator_id'])) {
           $result['values'][$key]['is_user_' . CRM_CiviMobileAPI_Utils_Permission::CAN_CHECK_IN_ON_EVENT] = (int) CRM_Core_Permission::check(CRM_CiviMobileAPI_Utils_Permission::CAN_CHECK_IN_ON_EVENT);
           $result['values'][$key][$isQrUsedAlias] = (isset($event[$isQrUsedFieldName])) ? $event[$isQrUsedFieldName] : NULL;

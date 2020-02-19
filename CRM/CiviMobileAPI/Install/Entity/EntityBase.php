@@ -92,12 +92,20 @@ abstract class CRM_CiviMobileAPI_Install_Entity_EntityBase  implements CRM_CiviM
     }
 
     try {
-      $result = civicrm_api3($this->entityName, 'getsingle', $searchParam);
+      $result = civicrm_api3($this->entityName, 'get', $searchParam);
     } catch (\CiviCRM_API3_Exception $e) {
       return FALSE;
     }
 
-    return (!empty(($result['id']))) ? (int) $result['id'] : FALSE;
+    if (empty($result['values'])) {
+      return FALSE;
+    }
+
+    foreach ($result['values'] as $entity) {
+      return $entity['id'];
+    }
+
+    return FALSE;
   }
 
   /**
@@ -150,6 +158,20 @@ abstract class CRM_CiviMobileAPI_Install_Entity_EntityBase  implements CRM_CiviM
         'is_active' => 1,
       ] );
     } catch (\CiviCRM_API3_Exception $e) {}
+  }
+
+  /**
+   *  Deletes all Entities
+   */
+  public function deleteAll() {
+    foreach ($this->entityParamList as $entityParam) {
+      $entityId = $this->getId($entityParam);
+      if ($entityId !== FALSE) {
+        try {
+          civicrm_api3($this->entityName, 'delete', ['id' => $entityId]);
+        } catch (\CiviCRM_API3_Exception $e) {}
+      }
+    }
   }
 
   /**

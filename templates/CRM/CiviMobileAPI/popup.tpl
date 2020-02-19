@@ -1,184 +1,202 @@
-<div class="civimobile-bg"></div>
-<div class="civimobile-popup">
-  <div class="civimobile-container">
-    <div id="discribe-text">
-        {ts}Congratulations, your CiviCRM supports CiviMobile application now. You can download the mobile application at AppStore or Google PlayMarket.{/ts}
+<div class="civi-mobile-popup-wrap">
+  <div class="civi-mobile-popup-close"></div>
+
+  <div class="civi-mobile-popup-block">
+    <div class="civi-mobile-popup-body">
+      <div class="civi-mobile-top">
+        <img src="{$civimobile_logo}" alt="CiviMobile logo" class="civi-mobile-popup-logo">
+        <button class="civi-mobile-popup-more">MORE</button>
+      </div>
+      <div class="civi-mobile-popup-qr">
+        <p>Scan QR code for login into app</p>
+        <img src="{$qr_code_link}" alt="qr-code">
+      </div>
     </div>
-    <div class="logo-content">
-      <a class="civimobile-logo civimobile-google" href="{$google_link}" target="_blank"></a>
-      <a class="civimobile-logo civimobile-apple" href="{$apple_link}" target="_blank"></a>
-    </div>
-    <div id="got-text" class="close" ><span><?=ts('Got it');?></span> <span class="close">&#10005;</span></div>
-    <div id="ignore-text" class="close">{ts}Ignore{/ts}</div>
   </div>
+
+  <div class="civi-mobile-popup-block-advanced">
+    <div class="civi-mobile-popup-body-advanced">
+      <p>Congratulations, your CiviCRM supports <b>CiviMobile</b> application now. You can download the mobile application at
+        AppStore or Google PlayMarket.</p>
+      <div class="civi-mobile-popup-bottom">
+        <div class="civi-mobile-popup-more-left-block">
+          <a target="_blank" href="{$apple_link}"><img src="{$app_store_img}" alt="app-store"></a>
+          <a target="_blank" href="{$google_link}"><img src="{$google_play_img}" alt="google-play"></a>
+          <div class="civi-mobile-popup-qr">
+            <p>Scan QR code for login into app</p>
+            <img src="{$qr_code_link}" alt="qr-code">
+          </div>
+        </div>
+        <div class="civi-mobile-popup-more-right-block">
+          <img src="{$civimobile_phone_img}" alt="civimobile-phone">
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>
+
 {literal}
-<style>
-  .civimobile-bg {
-    display: none;
-  }
-  .civimobile-popup {
-    position: fixed;
-    display: none;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: 99999999;
-    font-family: Helvetica, Open Sans, sans-serif;
-  }
-  .civimobile-popup .logo-content .civimobile-logo {
-    background: url('{/literal}{$logo}{literal}');
-    width: 180px;
-    height: 55px;
-    display: inline-block;
-    margin: 0 10px;
-  }
-  .civimobile-popup .logo-content .civimobile-google {
-    background-position: -232px -24px;
-  }
-  .civimobile-popup .logo-content .civimobile-apple {
-    background-position: -26px -24px;
-  }
-  @media only screen and (min-width: 960px) {
-    .civimobile-popup .logo-content .civimobile-logo {
-      float: left;
+  <style>
+    @font-face{
+      font-family: 'Roboto';
+      src: url('{/literal}{$font_directory}{literal}/Roboto-Regular.ttf') format('truetype');
+      font-weight: normal;
+      font-style: normal;
     }
-    .civimobile-popup {
-      width: 100%;
-      padding: 20px 0;
-      background: {/literal}{$bg_color}{literal};
-      color:#FFFFFF;
-      font-size: 14px;
-      line-height: 24px;
+
+    @font-face{
+      font-family: 'Roboto';
+      src: url('{/literal}{$font_directory}{literal}/Roboto-Bold.ttf') format('truetype');
+      font-weight: bold;
+      font-style: normal;
     }
-    .civimobile-popup .civimobile-container {
-      width: 960px;
-      margin: 0 auto;
+
+    .civi-mobile-popup-wrap {
+      font-family: Roboto;
+      position: fixed;
+      bottom: 0;
+      right: 0;
+      display: block;
+      box-shadow: 0 8px 20px 0 rgba(0, 0, 0, 0.13);
     }
-    .civimobile-popup #discribe-text {
-      width: 45%;
-      float:left;
+
+    .civi-mobile-popup-block {
+      width: 126px;
     }
-    .civimobile-popup .logo-content {
-      float: left;
-      margin-left:10px;
-    }
-    #ignore-text {
-      display:none;
-    }
-    #got-text {
-      margin-bottom: 34px;
-      color:#FFFFFF;
-      float: right;
-      text-transform: uppercase;
-      opacity: 1;
-    }
-    #got-text:hover {
+
+    .civi-mobile-popup-close {
+      position: absolute;
+      display: block;
+      width: 22px;
+      height: 22px;
+      top: -27px;
+      right: 0;
+      background: rgba(160, 172, 183, 0.12);
+      border-radius: 100%;
       cursor: pointer;
     }
-    #got-text span{
-      float: left;
-    }
-    #got-text span.close{
-      color:#FFFFFF;
-      font-size: 20px;
-      margin: 0 0 0 9px;
-      font-size: 20px;
-      opacity: 1;
-    }
-  }
 
-  @media only screen and (max-width: 960px) {
-    .civimobile-bg {
-      z-index: 9999999;
-      background: rgba(0, 0, 0, 0.5);
-      position: fixed;
-      left: 0;
-      bottom: 0;
-      right: 0;
-      top: 0;
+    .civi-mobile-popup-close:before, .civi-mobile-popup-close:after {
+      position: absolute;
+      left: 11px;
+      top: 5px;
+      content: ' ';
+      height: 12px;
+      width: 1px;
+      background-color: #a0acb7;
     }
 
-    .civimobile-popup {
-      position: fixed;
-      left: 0;
-      bottom: 0;
-      right: 0;
-      z-index: 99999999;
+    .civi-mobile-popup-close:before {
+      transform: rotate(45deg);
+    }
+
+    .civi-mobile-popup-close:after {
+      transform: rotate(-45deg);
+    }
+
+    .civi-mobile-popup-body {
+      background: #e8ecf0;
       width: 100%;
-      background: #FFFFFF;
-      color: #000000;
-      font-size: 17px;
-      line-height: 22px;
-    }
-
-    .civimobile-container {
-      height: 100%;
       text-align: center;
     }
 
-    .civimobile-popup #discribe-text {
-      padding: 30px 20px;
+    .civi-mobile-top{
+      padding: 8px;
     }
 
-    .civimobile-popup .logo-content {
-      margin: 0 auto 40px;
-      text-align: center;
-    }
-
-    #ignore-text {
-      border-top: 1px solid #BCBBC1;
-      margin: 0 auto;
-      padding: 30px 0;
+    .civi-mobile-popup-more {
+      display: block;
+      width: 100%;
+      height: 24px;
+      border-radius: 2px;
+      background-color: #5589b7;
+      margin: 14px 0;
+      font-size: 12px;
+      color: white;
+      padding: 3px;
+      border: none;
       cursor: pointer;
-      opacity: 1;
-      float: none;
-      color: #000000;
-      font-size: 17px;
-      line-height: 22px;
-      font-family: Helvetica, Open Sans, sans-serif;
     }
 
-    #got-text {
+    .civi-mobile-popup-logo {
+      display:block;
+      width: 100%;
+      margin-top: 14px;
+    }
+
+    .civi-mobile-popup-qr {
+      background: white;
+      padding: 8px;
+    }
+
+    .civi-mobile-popup-qr p {
+      color: black;
+      font-size: 12px;
+      margin: 0;
+    }
+
+    .civi-mobile-popup-qr img {
+      width: 100px;
+      padding: 5px;
+    }
+
+    .civi-mobile-popup-block-advanced {
+      box-sizing: border-box;
+      width: 271px;
       display: none;
     }
-  }
-</style>
-<script type="text/javascript">
-  function setCookie(cname, cvalue, exdays) {
-    var d = new Date();
-    d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
-    var expires = "expires=" + d.toUTCString();
-    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
-  }
 
-  function getCookie(cname) {
-    var name = cname + "=";
-    var decodedCookie = decodeURIComponent(document.cookie);
-    var ca = decodedCookie.split(';');
-    for (var i = 0; i < ca.length; i++) {
-      var c = ca[i];
-      while (c.charAt(0) == ' ') {
-        c = c.substring(1);
-      }
-      if (c.indexOf(name) == 0) {
-        return c.substring(name.length, c.length);
-      }
+    .civi-mobile-popup-body-advanced {
+      box-sizing: border-box;
+      padding: 15px;
+      padding-bottom: 0;
+      width: 100%;
+      background: #e8ecf0;
     }
-    return "";
-  }
 
-  jQuery(document).ready(function () {
-    jQuery('#ignore-text, #got-text').click(function () {
-      setCookie("civimobile_popup_close", true, 30);
-      jQuery('.civimobile-bg, .civimobile-popup').hide();
-    });
-    jQuery('.civimobile-bg').click(function () {
-      jQuery('.civimobile-bg, .civimobile-popup').hide();
-    });
-    if (getCookie('civimobile_popup_close') === "") {
-      jQuery('.civimobile-bg, .civimobile-popup').show();
+    .civi-mobile-popup-bottom {
+      overflow: auto;
     }
-  });
-</script>
+
+    .civi-mobile-popup-more-left-block {
+      width: 126px;
+      float: left;
+      text-align: center;
+    }
+
+    .civi-mobile-popup-more-right-block {
+      width: 99px;
+      float: right;
+    }
+
+    .civi-mobile-popup-more-right-block img {
+      width: 100%;
+    }
+
+    .civi-mobile-popup-more-left-block a img {
+      width: 100%;
+      margin-bottom: 8px;
+    }
+
+  </style>
+  <script type="text/javascript">
+      function setCookie(cname, cvalue, exdays) {
+          var d = new Date();
+          d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+          var expires = "expires=" + d.toUTCString();
+          document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+      }
+
+      jQuery(document).ready(function () {
+          jQuery('.civi-mobile-popup-close').click(function () {
+              setCookie("civimobile_popup_close", true, 30);
+              jQuery('.civi-mobile-popup-wrap').hide();
+          });
+          jQuery('.civi-mobile-popup-more').click(function () {
+              jQuery('.civi-mobile-popup-block').hide();
+              jQuery('.civi-mobile-popup-block-advanced').show();
+          });
+      });
+  </script>
 {/literal}

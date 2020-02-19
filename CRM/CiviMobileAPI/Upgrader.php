@@ -15,7 +15,6 @@ class CRM_CiviMobileAPI_Upgrader extends CRM_CiviMobileAPI_Upgrader_Base {
   public function upgrade_0002() {
     try {
       $this->executeSqlFile('sql/auto_install.sql');
-      CRM_CiviMobileAPI_PushNotification_EventReminderHelper::createEventReminder();
       return TRUE;
     } catch (Exception $e) {
       return FALSE;
@@ -72,14 +71,35 @@ class CRM_CiviMobileAPI_Upgrader extends CRM_CiviMobileAPI_Upgrader_Base {
     return TRUE;
   }
 
+  public function upgrade_0014() {
+    (new CRM_CiviMobileAPI_Install_Entity_ApplicationQrCode())->install();
+
+    return TRUE;
+  }
+
+  public function upgrade_0015() {
+    try {
+      $this->executeSqlFile('sql/civimobile_event_payment_info_install.sql');
+      $this->executeSql('ALTER TABLE civicrm_contact_push_notification_messages ADD data varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL');
+      CRM_CiviMobileAPI_Utils_CustomGroup::delete(CRM_CiviMobileAPI_Install_Entity_CustomGroup::CONTACT_SETTINGS);
+      CRM_Core_Invoke::rebuildMenuAndCaches(TRUE);
+      return TRUE;
+    } catch (Exception $e) {
+      return FALSE;
+    }
+  }
+
   /**
    * Installs scheduled job
    *
    * @throws \Exception
    */
   public function install() {
-    CRM_CiviMobileAPI_PushNotification_EventReminderHelper::createEventReminder();
     CRM_CiviMobileAPI_Install_Install::run();
+    CRM_CiviMobileAPI_Settings_Calendar::setCalendarIsAllowToUseCiviCalendarSettings(
+      CRM_CiviMobileAPI_Utils_Calendar::isCiviCalendarEnable()
+      && CRM_CiviMobileAPI_Utils_Calendar::isCiviCalendarCompatible()
+    );
 
     Civi::settings()->set('civimobile_auto_update', 1);
   }
@@ -90,9 +110,10 @@ class CRM_CiviMobileAPI_Upgrader extends CRM_CiviMobileAPI_Upgrader_Base {
    * @throws \CiviCRM_API3_Exception
    */
   public function uninstall() {
-    CRM_CiviMobileAPI_PushNotification_EventReminderHelper::deleteEventReminder();
+    CRM_CiviMobileAPI_Install_Install::uninstall();
     $this->uninstallPushNotificationCustomGroup();
-    CRM_CiviMobileAPI_ContactSettings_Helper::deleteGroup();
+    CRM_CiviMobileAPI_Utils_CustomGroup::delete(CRM_CiviMobileAPI_Install_Entity_CustomGroup::CONTACT_SETTINGS);
+    Civi::settings()->set('civimobile_is_allow_public_info_api', 0);
   }
 
   /**
@@ -102,7 +123,6 @@ class CRM_CiviMobileAPI_Upgrader extends CRM_CiviMobileAPI_Upgrader_Base {
    */
   public function enable() {
     CRM_CiviMobileAPI_Install_Install::enable();
-    CRM_CiviMobileAPI_PushNotification_EventReminderHelper::setEventReminderActive(1);
   }
 
   /**
@@ -112,7 +132,6 @@ class CRM_CiviMobileAPI_Upgrader extends CRM_CiviMobileAPI_Upgrader_Base {
    */
   public function disable() {
     CRM_CiviMobileAPI_Install_Install::disable();
-    CRM_CiviMobileAPI_PushNotification_EventReminderHelper::setEventReminderActive(0);
   }
 
   /**

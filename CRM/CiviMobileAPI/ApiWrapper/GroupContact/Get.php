@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * @deprecated will be deleted in version 7.0.0
+ */
 class CRM_CiviMobileAPI_ApiWrapper_GroupContact_Get implements API_Wrapper {
 
   /**
@@ -38,14 +41,14 @@ class CRM_CiviMobileAPI_ApiWrapper_GroupContact_Get implements API_Wrapper {
 
       return civicrm_api3_create_success(!empty($contactGroups['group']) ? $contactGroups['group'] : []);
     }
-    else {
+
+    if (!empty($result['values']) && is_array($result['values'])) {
       foreach ($result['values'] as &$value) {
         $value['group_contact_status'] = !empty($apiRequest['params']['status']) ? $apiRequest['params']['status'] : '';
       }
-
-      return $result;
     }
 
+    return $result;
   }
 
 }
