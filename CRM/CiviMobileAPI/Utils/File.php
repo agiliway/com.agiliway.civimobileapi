@@ -59,4 +59,47 @@ class CRM_CiviMobileAPI_Utils_File {
     return false;
   }
 
+  /**
+   * Gets file url
+   *
+   * @param $entityId
+   * @param $entityTable
+   * @param $filename
+   *
+   * @return string
+   */
+  public static function getFileUrl($entityId, $entityTable, $filename) {
+    $url = '';
+    $files = CRM_Core_BAO_File::getEntityFile($entityTable, $entityId);
+
+    foreach ($files as $file) {
+      if ((!empty($file['fileName']) && $file['fileName'] == $filename)
+        || (!empty($file['cleanName']) && $file['cleanName'] == $filename)) {
+        $url = $file['url'];
+      }
+    }
+
+    if (substr($url, 0, 1) == '/') {
+      $url = substr($url, 1);
+    }
+
+    $url = urldecode($url);
+
+    $currentCMS = CRM_CiviMobileAPI_Utils_CmsUser::getInstance()->getSystem();
+    if ($currentCMS == CRM_CiviMobileAPI_Utils_CmsUser::CMS_WORDPRESS ) {
+      $url = str_replace("wp-admin/admin.php", "index.php", $url);
+    }
+
+    if ($currentCMS == CRM_CiviMobileAPI_Utils_CmsUser::CMS_JOOMLA ) {
+      $url = str_replace("administrator/", "", CIVICRM_UF_BASEURL) . $url;
+      $url = str_replace("administrator/", "index.php", $url);
+    } else {
+      $url = CIVICRM_UF_BASEURL . $url;
+    }
+
+    $url = htmlspecialchars_decode($url);
+
+    return $url;
+  }
+
 }

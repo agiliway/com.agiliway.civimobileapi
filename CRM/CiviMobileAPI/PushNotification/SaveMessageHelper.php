@@ -10,13 +10,15 @@ class CRM_CiviMobileAPI_PushNotification_SaveMessageHelper {
    * @param $objType
    * @param $text
    * @param $title
+   * @param $data
    *
    * @return bool
    */
-  public static function saveMessages($listOfContactsID, $objID, $objType, $title = NULL, $text = NULL) {
+  public static function saveMessages($listOfContactsID, $objID, $objType, $title = NULL, $text = NULL, $data = NULL) {
     foreach ($listOfContactsID as $contactId) {
       $paramsForInsert = [
         'contact_id' => $contactId,
+        'data' => $data,
         'message' => $text,
         'message_title' => $title,
         'entity_table' => $objType,

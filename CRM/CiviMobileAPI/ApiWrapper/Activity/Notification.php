@@ -1,6 +1,8 @@
 <?php
 
-
+/**
+ * @deprecated will be deleted in version 7.0.0
+ */
 class CRM_CiviMobileAPI_ApiWrapper_Activity_Notification implements API_Wrapper {
 
   /**

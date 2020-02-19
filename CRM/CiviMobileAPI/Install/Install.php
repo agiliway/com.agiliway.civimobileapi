@@ -9,6 +9,7 @@ class CRM_CiviMobileAPI_Install_Install {
     (new CRM_CiviMobileAPI_Install_Entity_CustomGroup())->install();
     (new CRM_CiviMobileAPI_Install_Entity_CustomField())->install();
     (new CRM_CiviMobileAPI_Install_Entity_UpdateMessageTemplate())->install();
+    (new CRM_CiviMobileAPI_Install_Entity_ApplicationQrCode())->install();
     (new CRM_CiviMobileAPI_Install_Entity_Job())->install();
   }
 
@@ -26,6 +27,13 @@ class CRM_CiviMobileAPI_Install_Install {
   public static function enable() {
     (new CRM_CiviMobileAPI_Install_Entity_CustomGroup())->enableAll();
     (new CRM_CiviMobileAPI_Install_Entity_Job())->enableAll();
+  }
+
+  /**
+   * Uninstall extension's Entities
+   */
+  public static function uninstall() {
+    (new CRM_CiviMobileAPI_Install_Entity_Job())->deleteAll();
   }
 
 }

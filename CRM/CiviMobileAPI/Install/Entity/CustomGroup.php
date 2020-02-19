@@ -10,6 +10,7 @@ class CRM_CiviMobileAPI_Install_Entity_CustomGroup extends CRM_CiviMobileAPI_Ins
   const QR_USES = 'civi_mobile_qr_uses';
   const QR_CODES = 'civi_mobile_qr_codes';
   const CONTACT_SETTINGS = 'contact_settings';
+  const PUBLIC_INFO = 'civi_mobile_public_info';
 
   /**
    * Entity name
@@ -43,18 +44,11 @@ class CRM_CiviMobileAPI_Install_Entity_CustomGroup extends CRM_CiviMobileAPI_Ins
         'is_public' => 0,
       ],
       [
-        'name' => self::CONTACT_SETTINGS,
-        'title' => ts('Contact Settings'),
-        'extends' => 'Contact',
-        'is_public' => 1,
-        'table_name' => 'civicrm_contact_settings',
-        'style' => 'Inline',
-        'is_active' => 1,
-        'collapse_display' => 1,
-        'collapse_adv_display' => 1,
-        'is_reserved' => 0,
-        'is_multiple' => 0
-      ]
+        'name' => self::PUBLIC_INFO,
+        'title' => ts('Public Info'),
+        'extends' => 'Participant',
+        'is_public' => 0,
+      ],
     ];
   }
 

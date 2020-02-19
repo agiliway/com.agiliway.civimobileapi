@@ -29,7 +29,7 @@ class CRM_CiviMobileAPI_Utils_Participant {
       return $contactIds;
     }
 
-    if (empty($result))  {
+    if (empty($result)) {
       return $contactIds;
     }
 
@@ -87,6 +87,25 @@ class CRM_CiviMobileAPI_Utils_Participant {
     }
 
     return $contribution;
+  }
+
+  /**
+   * Generate public key with random value
+   *
+   * @param $participantId
+   *
+   * @return bool|string
+   */
+  public static function generatePublicKey($participantId) {
+    $salt = 'e7872a418810db83ac32ff9904a4cac735ce23a67a312df3db8bb15fa2c28ea9bcff42cfc15742ad3sdf3ac3sdf3a67a2a';
+    $publicKey = md5($participantId . $salt . time()) . md5(rand(0, 10000) . $participantId . time()) . time();
+
+    $length = strlen($publicKey);
+    if ($length > 255) {
+      return substr($publicKey, $length - 255);
+    }
+
+    return $publicKey;
   }
 
 }

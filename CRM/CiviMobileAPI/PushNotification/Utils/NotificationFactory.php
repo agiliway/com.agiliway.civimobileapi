@@ -176,7 +176,7 @@ class CRM_CiviMobileAPI_PushNotification_Utils_NotificationFactory {
         $notificationManager->setObjectRef($this->objectRef);
       }
     }
-    
+
     return $notificationManager;
   }
 
@@ -230,8 +230,14 @@ class CRM_CiviMobileAPI_PushNotification_Utils_NotificationFactory {
     $notificationManager = NULL;
 
     if ($this->hookContext === "post") {
-    $objName = 'Case';
+      $objName = 'Case';
       $notificationManager = new CRM_CiviMobileAPI_PushNotification_Utils_Hook_PostProcess_CasePushNotification($objName, $this->action, array_shift($this->objectRef->_caseId));
+    } elseif ($this->hookContext === "postProcess" && $this->action === 'delete') {
+      $notificationManager = new CRM_CiviMobileAPI_PushNotification_Utils_Hook_PostProcess_CasePushNotification($this->objectName, $this->action, $this->objectId);
+    }
+
+    if ($this->hookContext === "postProcess") {
+      $notificationManager = new CRM_CiviMobileAPI_PushNotification_Utils_Hook_PostProcess_CasePushNotification($this->objectName, $this->action, array_shift($this->objectRef->_caseId));
     }
 
     return $notificationManager;

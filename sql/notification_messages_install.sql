@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS `civicrm_contact_push_notification_messages` (
   `is_read` tinyint(4) DEFAULT '0',
   `invoke_contact_id` INT(10) UNSIGNED NULL,
   `message_title` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `data` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `FK_civicrm_contact_push_notification_message` (`contact_id`),
   KEY `INDEX_message` (`message`),

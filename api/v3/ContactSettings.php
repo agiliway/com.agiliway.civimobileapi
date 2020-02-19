@@ -9,32 +9,7 @@
  * @throws \CiviCRM_API3_Exception
  */
 function civicrm_api3_contact_settings_get($params) {
-  $result = [];
-  $listCustomFieldsID = CRM_CiviMobileAPI_ContactSettings_Helper::getCustomFieldsID();
-  
-  if (!empty($listCustomFieldsID)) {
-    foreach ($listCustomFieldsID as $customFieldName => $customFieldID) {
-      $fieldsReturn[] = 'custom_' . $customFieldID;
-      $fieldsNames['custom_' . $customFieldID] = $customFieldName;
-    }
-    
-    $contactSettings = civicrm_api3('Contact', 'get', [
-      'return' => $fieldsReturn,
-      'id' => $params['contact_id'],
-    ]);
-
-    $outValues = [];
-    if ($contactSettings["is_error"] == 0) {
-      $outValues['contact_id'] = $params['contact_id'];
-      
-      foreach ($contactSettings['values'][$params['contact_id']] as $settingName => $setting) {
-        if (isset($fieldsNames[$settingName])) {
-          $outValues[$fieldsNames[$settingName]] = $setting;
-        }
-      }
-    }
-    $result[] = $outValues;
-  }
+  $result = (new CRM_CiviMobileAPI_Api_ContactSettings_Get($params))->getResult();
   
   return civicrm_api3_create_success($result, $params);
 }

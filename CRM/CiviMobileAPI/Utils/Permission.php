@@ -143,4 +143,28 @@ class CRM_CiviMobileAPI_Utils_Permission {
     return false;
   }
 
+  /**
+   * Gets anonymous permissions
+   */
+  public static function getAnonymous() {
+    try {
+      $accessToCiviCrm = CRM_Core_Permission::check('access CiviCRM');
+      $accessCiviEvent = CRM_Core_Permission::check('access CiviEvent');
+      $viewAllEvent = CRM_Core_Permission::check('view event info');
+      $viewEventParticipants = CRM_Core_Permission::check('view event participants');
+      $registerForEvents = CRM_Core_Permission::check('register for events');
+      $accessToProfileListings = CRM_Core_Permission::check('profile listings and forms');
+      $editEventParticipants = CRM_Core_Permission::check('edit event participants');
+    } catch (Exception $e) {
+      return [];
+    }
+
+    return [
+      'view_public_event' => $accessToCiviCrm && $accessCiviEvent && $viewAllEvent ? 1 : 0,
+      'register_for_public_event' => $accessToCiviCrm && $accessCiviEvent && $registerForEvents && $viewAllEvent && $accessToProfileListings ? 1 : 0,
+      'view_public_participant' => $accessToCiviCrm && $accessCiviEvent && $viewAllEvent && $viewEventParticipants ? 1 : 0,
+      'edit_public_participant' => $accessToCiviCrm && $accessCiviEvent  && $viewEventParticipants && $viewAllEvent && $editEventParticipants ? 1 : 0,
+    ];
+  }
+
 }

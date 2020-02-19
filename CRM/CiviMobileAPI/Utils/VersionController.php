@@ -41,18 +41,40 @@ class CRM_CiviMobileAPI_Utils_VersionController {
   private $latestPatchVersion = 0;
 
   /**
+   * Is sets version from repository
+   */
+  private $isSetVersionFromRepository = false;
+
+  /**
    * CRM_CiviMobileAPI_Utils_VersionController constructor.
    */
   private function __construct() {
-    $latestVersion = $this->parseVersion($this->getLatestVersion());
-    $this->latestMajorVersion = $latestVersion['major'];
-    $this->latestMinorVersion = $latestVersion['minor'];
-    $this->latestPatchVersion = $latestVersion['patch'];
+    $this->setVersionFromExtension();
+  }
 
+  /**
+   * Sets version from current extension
+   */
+  public function setVersionFromExtension() {
     $currentVersion = $this->parseVersion($this->getCurrentVersion());
     $this->currentMajorVersion = $currentVersion['major'];
     $this->currentMinorVersion = $currentVersion['minor'];
     $this->currentPatchVersion = $currentVersion['patch'];
+  }
+
+  /**
+   * Sets version from repository
+   */
+  public function setVersionFromRepository() {
+    if ($this->isSetVersionFromRepository) {
+      return;
+    }
+
+    $latestVersion = $this->parseVersion($this->getLatestVersion());
+    $this->latestMajorVersion = $latestVersion['major'];
+    $this->latestMinorVersion = $latestVersion['minor'];
+    $this->latestPatchVersion = $latestVersion['patch'];
+    $this->isSetVersionFromRepository = true;
   }
 
   /**
@@ -117,22 +139,19 @@ class CRM_CiviMobileAPI_Utils_VersionController {
    * @return string
    */
   private function getLatestVersion() {
-    if (function_exists('curl_init')) {
-      $ch = curl_init();
-
-      curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-      curl_setopt($ch, CURLOPT_URL, 'https://api.github.com/repos/agiliway/' . CRM_CiviMobileAPI_ExtensionUtil::LONG_NAME . '/releases/latest');
-      curl_setopt($ch, CURLOPT_HTTPHEADER, [
-        'User-Agent: Awesome-Octocat-App'
-      ]);
-
-      $response = json_decode(curl_exec($ch), TRUE);
-
-      return (string) $response['tag_name'];
-    }
-    else {
+    if (!function_exists('curl_init')) {
       return '';
     }
+    $ch = curl_init();
+
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_URL, 'https://lab.civicrm.org/api/v4/projects/460/releases/');
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+      'User-Agent: Awesome-Octocat-App',
+    ]);
+    $response = json_decode(curl_exec($ch), TRUE);
+
+    return (string) $response[0]['tag_name'];
   }
 
   /**
@@ -142,6 +161,8 @@ class CRM_CiviMobileAPI_Utils_VersionController {
    * @return bool
    */
   public function isCurrentVersionLowerThanRepositoryVersion() {
+    $this->setVersionFromRepository();
+
     if ($this->getCurrentMajorVersion() < $this->getLatestMajorVersion()) {
       return true;
     }
@@ -178,6 +199,7 @@ class CRM_CiviMobileAPI_Utils_VersionController {
    * @return string
    */
   public function getLatestFullVersion() {
+    $this->setVersionFromRepository();
     return $this->getLatestMajorVersion() . '.' . $this->getLatestMinorVersion() . '.' . $this->getLatestPatchVersion();
   }
 
@@ -215,6 +237,7 @@ class CRM_CiviMobileAPI_Utils_VersionController {
    * @return int
    */
   public function getLatestMajorVersion() {
+    $this->setVersionFromRepository();
     return $this->latestMajorVersion;
   }
 
@@ -222,6 +245,7 @@ class CRM_CiviMobileAPI_Utils_VersionController {
    * @return int
    */
   public function getLatestMinorVersion() {
+    $this->setVersionFromRepository();
     return $this->latestMinorVersion;
   }
 
@@ -229,6 +253,7 @@ class CRM_CiviMobileAPI_Utils_VersionController {
    * @return mixed
    */
   public function getLatestPatchVersion() {
+    $this->setVersionFromRepository();
     return $this->latestPatchVersion;
   }
 

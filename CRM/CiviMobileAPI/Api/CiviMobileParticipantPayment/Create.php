@@ -75,7 +75,7 @@ class CRM_CiviMobileAPI_Api_CiviMobileParticipantPayment_Create {
         CRM_CiviMobileAPI_Utils_Emails_EventConfirmationReceipt::send($participant['id'], 'event_offline_receipt');
       }
     }
-    
+
     return $result;
   }
 
@@ -164,7 +164,7 @@ class CRM_CiviMobileAPI_Api_CiviMobileParticipantPayment_Create {
 
         $priceSetField = $this->findPriceSetFiled($priceSetFields, $selectedValue['field_id']);
         if (empty($priceSetField)) {
-          throw new api_Exception('Field id=(' . $selectedValue['field_id'] . ') does not exist for Even\'s perice set', 'field_id_does_not_exist');
+          throw new api_Exception('Field id=(' . $selectedValue['field_id'] . ') does not exist for Event\'s perice set', 'field_id_does_not_exist');
         }
 
         if ($priceSetField['html_type'] != 'Text' && $selectedValue['filed_value_count'] != 1) {

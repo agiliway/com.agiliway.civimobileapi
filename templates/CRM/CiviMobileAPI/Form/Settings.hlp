@@ -1,20 +1,41 @@
 {htxt id="push-notifications-help-title"}
-  <p>{ts}Push Notifications{/ts}</p>
+  {ts}Push Notifications{/ts}
 {/htxt}
 {htxt id="push-notifications-help"}
     <p>{ts}Push Notifications are small messages that can reach audiences anywhere and anytime. It is "pushed" from the backend server to user mobile applications. The system will "push" reminders and notifications during some activity in your CiviCRM.{/ts}</p>
 {/htxt}
 
 {htxt id="server-key-help-title"}
-  <p>{ts}Server Key{/ts}</p>
+  {ts}Server Key{/ts}
 {/htxt}
 {htxt id="server-key-help"}
     <p>{ts}Server Key is used for security purposes for Push Notifications{/ts}</p>
 {/htxt}
 
 {htxt id="software-update-help-title"}
-  <p>{ts}Software update{/ts}</p>
+  {ts}Software update{/ts}
 {/htxt}
 {htxt id="software-update-help"}
     <p>{ts}We recommend enabling automatically extension update to be sure that you are using the most secure and powerful extension version and avoid desynchronization between mobile application and extension.{/ts}</p>
+{/htxt}
+
+{htxt id="is-allow-public-api-help-title"}
+  {ts}Access to public information in the application{/ts}
+{/htxt}
+{htxt id="is-allow-public-api-help"}
+    <p>{ts}By checking the checkbox you will allow access to public information by the anonymous users in the mobile application.{/ts}</p>
+{/htxt}
+
+{htxt id="site-name-help-title"}
+  {ts}Site name for CiviMobile{/ts}
+{/htxt}
+{htxt id="site-name-help"}
+    <p>{ts}You can use default CMS site name or you can create your custom name.{/ts}</p>
+{/htxt}
+
+{htxt id="is-allow-public-website-url-qrcode-help-title"}
+  {ts}Show a Website URL QR-code for Anonymous users{/ts}
+{/htxt}
+{htxt id="is-allow-public-website-url-qrcode-help"}
+    <p>{ts}Show QR code on CiviCRM website for unauthorised users if checkbox is checked.{/ts}</p>
 {/htxt}

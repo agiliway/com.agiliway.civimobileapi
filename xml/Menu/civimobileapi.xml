@@ -7,6 +7,18 @@
     <access_callback>1</access_callback>
   </item>
   <item>
+    <path>civicrm/civimobile/public/api</path>
+    <page_callback>CRM_CiviMobileAPI_Page_PublicApi_Api</page_callback>
+    <title>Core</title>
+    <access_callback>1</access_callback>
+  </item>
+  <item>
+    <path>civicrm/civimobile/public/settings</path>
+    <page_callback>CRM_CiviMobileAPI_Page_PublicSettings</page_callback>
+    <title>Core</title>
+    <access_callback>1</access_callback>
+  </item>
+  <item>
     <path>civicrm/civimobile/disable_push_token</path>
     <page_callback>CRM_CiviMobileAPI_Page_DisablePushToken</page_callback>
     <title>Core</title>
@@ -20,8 +32,14 @@
   </item>
   <item>
     <path>civicrm/civimobile/settings</path>
-    <title>CiviMobile Settings</title>
+    <title>CiviMobileAPI Settings</title>
     <page_callback>CRM_CiviMobileAPI_Form_Settings</page_callback>
+    <access_arguments>administer CiviCRM</access_arguments>
+  </item>
+  <item>
+    <path>civicrm/civimobile/calendar/settings</path>
+    <title>CiviMobile Calendar Settings</title>
+    <page_callback>CRM_CiviMobileAPI_Form_CalendarSettings</page_callback>
     <access_arguments>administer CiviCRM</access_arguments>
   </item>
   <item>

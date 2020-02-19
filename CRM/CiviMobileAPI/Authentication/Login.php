@@ -83,6 +83,7 @@ class CRM_CiviMobileAPI_Authentication_Login {
       'display_name' => $this->civiContact->display_name,
       'cms' => CRM_CiviMobileAPI_Utils_CmsUser::getInstance()->getSystem(),
       'rest_path' => (new CRM_CiviMobileAPI_Utils_RestPath())->get(),
+      'site_name' => CRM_CiviMobileAPI_Utils_Extension::getSiteName(),
     ];
 
     JsonResponse::sendSuccessResponse($this->responseData);

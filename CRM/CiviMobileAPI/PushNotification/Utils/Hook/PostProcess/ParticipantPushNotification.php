@@ -8,8 +8,8 @@ class CRM_CiviMobileAPI_PushNotification_Utils_Hook_PostProcess_ParticipantPushN
    * @var array
    */
   private $actionText = [
-    CRM_Core_Action::ADD => '%display_name has created participant.',
-    CRM_Core_Action::UPDATE => '%display_name has edited participant.',
+    'create' => '%display_name has created participant.',
+    'edit' => '%display_name has edited participant.',
   ];
 
   /**
@@ -46,18 +46,16 @@ class CRM_CiviMobileAPI_PushNotification_Utils_Hook_PostProcess_ParticipantPushN
       } catch (Exception $e) {
         $eventTitle = NULL;
       }
-
-      return $eventTitle;
     }
 
-    return NULL;
+    return (!empty($eventTitle)) ? $eventTitle : ts('Participant');
   }
-  
+
   /**
    * @inheritdoc
    */
   protected function getText() {
-    return isset($this->actionText[$this->action]) ? ts($this->actionText[$this->action]) : '';
+    return isset($this->actionText[$this->action]) ? ts($this->actionText[$this->action]) : $this->action;
   }
 
 }

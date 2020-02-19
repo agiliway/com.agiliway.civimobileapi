@@ -24,6 +24,7 @@ class CRM_CiviMobileAPI_PushNotification_Utils_Hook_Post_RelationshipPushNotific
   private $actionText = [
     'create' => '%display_name has created relationship.',
     'edit' => '%display_name has edited relationship.',
+    'delete' => '%display_name has deleted relationship.'
   ];
 
   /**
@@ -39,7 +40,6 @@ class CRM_CiviMobileAPI_PushNotification_Utils_Hook_Post_RelationshipPushNotific
    * @inheritdoc
    */
   protected function getContact() {
-
     $contacts = [];
     $this->setCaseId();
 
@@ -47,12 +47,18 @@ class CRM_CiviMobileAPI_PushNotification_Utils_Hook_Post_RelationshipPushNotific
       $contacts = CRM_CiviMobileAPI_PushNotification_Helper::getCaseRelationshipContacts($this->caseID);
     }
 
-    if (isset($objectRef->contact_id_a) && isset($objectRef->contact_id_b)) {
+    if (isset($this->objectRef->contact_id_a) && isset($this->objectRef->contact_id_b)) {
       $contacts[] = $this->objectRef->contact_id_a;
       $contacts[] = $this->objectRef->contact_id_b;
     }
 
-    return array_unique($contacts);
+    $contacts = array_unique($contacts);
+    $contactId = CRM_Core_Session::singleton()->getLoggedInContactID();
+    if ($key = array_search($contactId, $contacts)) {
+      unset($contacts[$key]);
+    }
+
+    return $contacts;
   }
 
   /**
@@ -87,18 +93,16 @@ class CRM_CiviMobileAPI_PushNotification_Utils_Hook_Post_RelationshipPushNotific
       } catch (Exception $e) {
         $caseTitle = NULL;
       }
-
-      return $caseTitle;
     }
 
-    return NULL;
+    return (!empty($caseTitle)) ?  $caseTitle : ts('Relationship');
   }
 
   /**
    * @inheritdoc
    */
   protected function getText() {
-    return isset($this->actionText[$this->action]) ? ts($this->actionText[$this->action]) : '';
+    return isset($this->actionText[$this->action]) ? ts($this->actionText[$this->action]) : $this->action;
   }
-  
+
 }

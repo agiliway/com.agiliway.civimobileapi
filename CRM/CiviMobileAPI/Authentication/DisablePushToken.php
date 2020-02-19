@@ -2,6 +2,9 @@
 
 use CRM_CiviMobileAPI_Utils_JsonResponse as JsonResponse;
 
+/**
+ * @deprecated will be deleted in version 6.0.0
+ */
 class CRM_CiviMobileAPI_Authentication_DisablePushToken {
 
   /**

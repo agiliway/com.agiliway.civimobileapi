@@ -43,6 +43,12 @@ abstract class CRM_CiviMobileAPI_PushNotification_Utils_BasePushNotificationMana
     $contact = $this->getContact();
     $text = $this->getText();
     $title = $this->getTitle();
+    $data = [
+      'entity' => $this->objectName,
+      'id' => $this->id,
+      'body' => $text
+    ];
+
     $isContactExist = isset($contact) && !empty($contact) && !empty($title);
 
     CRM_Utils_Hook::singleton()
@@ -50,9 +56,9 @@ abstract class CRM_CiviMobileAPI_PushNotification_Utils_BasePushNotificationMana
 
     if ($isContactExist) {
       CRM_CiviMobileAPI_PushNotification_SaveMessageHelper::saveMessages(
-        $contact, $this->id, $this->objectName, $title, $text);
+        $contact, $this->id, $this->objectName, $title, $text, $data);
       CRM_CiviMobileAPI_PushNotification_Helper::sendPushNotification(
-        $contact, $title, $text);
+        $contact, $title, $text, $data);
     }
   }
 
@@ -71,7 +77,7 @@ abstract class CRM_CiviMobileAPI_PushNotification_Utils_BasePushNotificationMana
   protected abstract function getText();
 
   /**
-   * Gets name of entity
+   * Gets title of entity
    *
    * @return string
    */

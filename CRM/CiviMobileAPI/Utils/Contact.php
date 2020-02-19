@@ -54,7 +54,7 @@ class CRM_CiviMobileAPI_Utils_Contact {
       return $emailList;
     }
 
-    if (empty($result))  {
+    if (empty($result)) {
       return $emailList;
     }
 
@@ -143,6 +143,16 @@ class CRM_CiviMobileAPI_Utils_Contact {
     $apiKey = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact', (int) $contactId, 'api_key');
 
     return !empty($apiKey);
+  }
+
+  /**
+   * Checks is blocked application for user
+   *
+   * @param $contactId
+   * @return int
+   */
+  public static function isBlockedApp($contactId) {
+    return 0;
   }
 
 }
