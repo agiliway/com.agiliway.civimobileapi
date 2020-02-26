@@ -27,9 +27,12 @@ class CRM_CiviMobileAPI_ApiWrapper_EntityTag_Get implements API_Wrapper {
    */
   public function toApiOutput($apiRequest, $result) {
     foreach ($result['values'] as &$value) {
+      if (empty($value['tag_id'])) {
+       continue;
+      }
+
       try {
         $tagInfo = civicrm_api3('Tag', 'getsingle', [
-          'sequential' => 1,
           'id' => $value['tag_id'],
         ]);
       } catch (CiviCRM_API3_Exception $e) {
