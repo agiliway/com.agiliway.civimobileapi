@@ -1,27 +1,4 @@
 <?php
-/*--------------------------------------------------------------------+
- | CiviCRM version 4.7                                                |
-+--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2017                                |
-+--------------------------------------------------------------------+
- | This file is a part of CiviCRM.                                    |
- |                                                                    |
- | CiviCRM is free software; you can copy, modify, and distribute it  |
- | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
- |                                                                    |
- | CiviCRM is distributed in the hope that it will be useful, but     |
- | WITHOUT ANY WARRANTY; without even the implied warranty of         |
- | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
- | See the GNU Affero General Public License for more details.        |
- |                                                                    |
- | You should have received a copy of the GNU Affero General Public   |
- | License and the CiviCRM Licensing Exception along                  |
- | with this program; if not, contact CiviCRM LLC                     |
- | at info[AT]civicrm[DOT]org. If you have questions about the        |
- | GNU Affero General Public License or the licensing of CiviCRM,     |
- | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
- +-------------------------------------------------------------------*/
 
 class CRM_CiviMobileAPI_Form_Settings extends CRM_Core_Form {
 
@@ -168,16 +145,9 @@ class CRM_CiviMobileAPI_Form_Settings extends CRM_Core_Form {
     $params = $this->exportValues();
 
     if (!empty($params['_qf_Settings_submit'])) {
-      if (!empty($params['civimobile_auto_update'])) {
-        Civi::settings()->set('civimobile_auto_update', 1);
-      }
-      else {
-        Civi::settings()->set('civimobile_auto_update', 0);
-      }
-
       if (empty($params['_qf_Settings_next'])) {
         Civi::settings()->set('civimobile_server_key', $params['civimobile_server_key']);
-        CRM_Core_Session::setStatus(ts('Server key updated'));
+        CRM_Core_Session::singleton()->setStatus(ts('Server key updated'), ts('CiviMobile Settings'), 'success');
       }
     }
     elseif (!empty($params['_qf_Settings_next'])) {
@@ -186,7 +156,7 @@ class CRM_CiviMobileAPI_Form_Settings extends CRM_Core_Form {
           $this->controller->setDestination(CRM_Utils_System::url('civicrm/civimobile/settings', http_build_query([])));
           CRM_CiviMobileAPI_Utils_Extension::update();
 
-          CRM_Core_Session::setStatus(ts('CiviMobile updated'));
+          CRM_Core_Session::singleton()->setStatus(ts('CiviMobile updated'), ts('CiviMobile Settings'), 'success');
         }
       }
       catch (Exception $e) {
@@ -195,6 +165,12 @@ class CRM_CiviMobileAPI_Form_Settings extends CRM_Core_Form {
     }
     elseif (!empty($params['_qf_Settings_upload'])) {
       $this->controller->setDestination(CRM_Utils_System::url('civicrm/civimobile/settings', http_build_query([])));
+      if (!empty($params['civimobile_auto_update'])) {
+        Civi::settings()->set('civimobile_auto_update', 1);
+      }
+      else {
+        Civi::settings()->set('civimobile_auto_update', 0);
+      }
       if (!isset($params['civimobile_is_allow_public_info_api'])) {
         $params['civimobile_is_allow_public_info_api'] = 0;
       }
@@ -208,7 +184,7 @@ class CRM_CiviMobileAPI_Form_Settings extends CRM_Core_Form {
       Civi::settings()->set('civimobile_is_allow_public_website_url_qrcode', $params['civimobile_is_allow_public_website_url_qrcode']);
       Civi::settings()->set('civimobile_site_name_to_use', $params['civimobile_site_name_to_use']);
       Civi::settings()->set('civimobile_custom_site_name', $params['civimobile_custom_site_name']);
-      CRM_Core_Session::setStatus(ts('CiviMobile settings updated'));
+      CRM_Core_Session::singleton()->setStatus(ts('CiviMobile settings updated'), ts('CiviMobile Settings'), 'success');
     }
   }
 

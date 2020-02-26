@@ -168,8 +168,10 @@ function civimobileapi_civicrm_apiWrappers(&$wrappers, $apiRequest) {
       $wrappers[] = new CRM_CiviMobileAPI_ApiWrapper_Membership_Create();
     }
 
-    if ($apiRequest['action'] == 'getsingle' || $apiRequest['action'] == 'get') {
-      $wrappers[] = new CRM_CiviMobileAPI_ApiWrapper_Membership_Get();
+    if (is_mobile_request()) {
+      if ($apiRequest['action'] == 'getsingle' || $apiRequest['action'] == 'get') {
+        $wrappers[] = new CRM_CiviMobileAPI_ApiWrapper_Membership_Get();
+      }
     }
   }
   elseif ($apiRequest['entity'] == 'Relationship' && $apiRequest['action'] == 'get') {
