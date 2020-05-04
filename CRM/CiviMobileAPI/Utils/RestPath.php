@@ -39,16 +39,10 @@ class CRM_CiviMobileAPI_Utils_RestPath {
    */
   private function getWordpressRestPath() {
     $restPath = $this->getStandardRestPath();
+    $endpoint = $this->getWordpressApiEndpoint();
 
-    if ($this->isWpRestPluginActive()) {
-      $restPath =  '/wp-json/civicrm/v3/rest';
-    }
-
-    if (class_exists('CiviCRM_WP_REST\Controller\Rest')) {
-      $restController = new CiviCRM_WP_REST\Controller\Rest();
-      if (method_exists($restController, 'get_endpoint')) {
-        $restPath = '/wp-json' . (string) (new CiviCRM_WP_REST\Controller\Rest)->get_endpoint();
-      }
+    if (!empty($endpoint) && function_exists('get_rest_url')) {
+      $restPath = str_replace(home_url(), '', get_rest_url()) . $endpoint;
     }
 
     return $restPath;
@@ -88,6 +82,85 @@ class CRM_CiviMobileAPI_Utils_RestPath {
    */
   private function getJoomlaRestPath() {
     return '/administrator' . Civi::paths()->getUrl("[civicrm.root]/extern/rest.php");
+  }
+
+  /**
+   * Returns absolute rest URL
+   *
+   * @return string
+   */
+  public function getAbsoluteUrl() {
+    $currentCMS = CRM_CiviMobileAPI_Utils_CmsUser::getInstance()->getSystem();
+    $restPath = $this->getStandardAbsoluteUrl();
+
+    if ($currentCMS == CRM_CiviMobileAPI_Utils_CmsUser::CMS_WORDPRESS ) {
+      $restPath = $this->getWordpressAbsoluteUrl();
+    }
+
+    if ($currentCMS == CRM_CiviMobileAPI_Utils_CmsUser::CMS_JOOMLA ) {
+      $restPath = $this->getJoomlaAbsoluteUrl();
+    }
+
+    return $restPath;
+  }
+
+  /**
+   * Returns standard absolute rest URL
+   *
+   * @return string
+   */
+  private function getStandardAbsoluteUrl() {
+    $config = CRM_Core_Config::singleton();
+    return $config->userFrameworkResourceURL . 'extern/rest.php';
+  }
+
+  /**
+   * Returns Wordpress absolute rest URL
+   *
+   * @return string
+   */
+  private function getWordpressAbsoluteUrl() {
+    $restUrl = $this->getStandardAbsoluteUrl();
+    $endpoint = $this->getWordpressApiEndpoint();
+
+    if (!empty($endpoint)) {
+      if (function_exists('get_rest_url')) {
+        $restUrl = get_rest_url() . $endpoint;
+      }
+    }
+
+    return $restUrl;
+  }
+
+  /**
+   * Returns Joomla absolute rest URL
+   *
+   * @return string
+   */
+  private function getJoomlaAbsoluteUrl() {
+    return JUri::root() . substr($this->getJoomlaRestPath(), 1);
+  }
+
+  /**
+   * Returns endpoint for Wordpress
+   *
+   * @return string
+   */
+  private function getWordpressApiEndpoint() {
+    $endpoint = '';
+
+    if ($this->isWpRestPluginActive()) {
+      $endpoint =  'civicrm/v3/rest';
+    }
+
+    if (class_exists('CiviCRM_WP_REST\Controller\Rest')) {
+      $restController = new CiviCRM_WP_REST\Controller\Rest();
+      if (method_exists($restController, 'get_endpoint')) {
+        $endpoint = substr((string) $restController->get_endpoint(), 1);
+      }
+    }
+
+    return $endpoint;
   }
 
 }

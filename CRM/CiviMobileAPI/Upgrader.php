@@ -113,7 +113,6 @@ class CRM_CiviMobileAPI_Upgrader extends CRM_CiviMobileAPI_Upgrader_Base {
     CRM_CiviMobileAPI_Install_Install::uninstall();
     $this->uninstallPushNotificationCustomGroup();
     CRM_CiviMobileAPI_Utils_CustomGroup::delete(CRM_CiviMobileAPI_Install_Entity_CustomGroup::CONTACT_SETTINGS);
-    Civi::settings()->set('civimobile_is_allow_public_info_api', 0);
   }
 
   /**

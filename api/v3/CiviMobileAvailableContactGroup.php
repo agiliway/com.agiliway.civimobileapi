@@ -30,4 +30,11 @@ function _civicrm_api3_civi_mobile_available_contact_group_get_spec(&$params) {
     'api.required' => 1,
     'type' => CRM_Utils_Type::T_INT,
   ];
+
+  $params['is_hidden'] = [
+    'title' => 'Is group hidden?',
+    'description' => ts('Is group hidden?'),
+    'api.required' => 0,
+    'type' => CRM_Utils_Type::T_BOOLEAN,
+  ];
 }

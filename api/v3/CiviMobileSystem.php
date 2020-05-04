@@ -16,6 +16,8 @@ function civicrm_api3_civi_mobile_system_get($params) {
     'crm_version' => CRM_Utils_System::version(),
     'ext_version' => CRM_CiviMobileAPI_Utils_VersionController::getInstance()->getCurrentFullVersion(),
     'site_name' => CRM_CiviMobileAPI_Utils_Extension::getSiteName(),
+    'is_showed_news' => CRM_CiviMobileAPI_Utils_Extension::isShowedNews(),
+    'news_rss_feed_url' => CRM_CiviMobileAPI_Utils_Extension::newsRssFeedUrl()
   ];
 
   return civicrm_api3_create_success($result, $params);

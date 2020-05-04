@@ -6,6 +6,7 @@ class CRM_CiviMobileAPI_PushNotification_Helper {
    * Url to Firebase Cloud Massaging
    */
   const FCM_URL = 'https://push.civimobile.org/rest.php';
+  const FIREBASE_URL = 'https://fcm.googleapis.com/fcm/send';
 
   /**
    * Sends push notification
@@ -18,11 +19,13 @@ class CRM_CiviMobileAPI_PushNotification_Helper {
    * @return bool|mixed
    */
   public static function sendPushNotification(array $contactsIDs, $title, $text, $data) {
+    $isCustomApp = Civi::settings()->get('civimobile_is_custom_app');
     $contactsTokens = self::getContactsToken($contactsIDs);
 
     if (empty($contactsTokens) || empty($contactsIDs)) {
       return FALSE;
     }
+
     $config = &CRM_Core_Config::singleton();
     $baseUrl = $config->userFrameworkBaseURL;
 
@@ -42,7 +45,7 @@ class CRM_CiviMobileAPI_PushNotification_Helper {
     $requestHeader = [
       'Content-Type:application/json',
       'Site-Name:' . $baseUrl,
-      'Authorization:' . Civi::settings()->get('civimobile_server_key'),
+      'Authorization:' . (($isCustomApp) ? 'key=' . Civi::settings()->get('civimobile_firebase_key') : Civi::settings()->get('civimobile_server_key')),
     ];
 
     $nullObject = CRM_Utils_Hook::$_nullObject;
@@ -50,7 +53,7 @@ class CRM_CiviMobileAPI_PushNotification_Helper {
       ->commonInvoke(2, $notificationBody, $requestHeader, $nullObject, $nullObject, $nullObject, $nullObject, 'civimobile_send_push', '');
 
     $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, self::FCM_URL);
+    curl_setopt($ch, CURLOPT_URL, (($isCustomApp) ? self::FIREBASE_URL : self::FCM_URL));
     curl_setopt($ch, CURLOPT_POST, TRUE);
     curl_setopt($ch, CURLOPT_HTTPHEADER, $requestHeader);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);

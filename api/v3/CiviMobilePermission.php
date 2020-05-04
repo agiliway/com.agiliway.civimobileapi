@@ -38,6 +38,7 @@ function civicrm_api3_civi_mobile_permission_get() {
     $deleteInCiviContribute = CRM_Core_Permission::check('delete in CiviContribute');
     $accessToProfileListings = CRM_Core_Permission::check('profile listings and forms');
     $accessAllCustomData = CRM_Core_Permission::check('access all custom data');
+    $profileCreate = CRM_Core_Permission::check('profile create');
     $canCheckInOnEvent = CRM_Core_Permission::check(CRM_CiviMobileAPI_Utils_Permission::CAN_CHECK_IN_ON_EVENT);
 
     $permissions['access'] = [
@@ -111,7 +112,7 @@ function civicrm_api3_civi_mobile_permission_get() {
         'all' => $accessToCiviCrm && $viewMyContact && $accessCiviEvent && $viewAllEvent && $editAllEvents ? 1 : 0,
         'my' => $accessToCiviCrm && $viewMyContact && $accessCiviEvent && $viewAllEvent && $editAllEvents ? 1 : 0,
       ],
-      'register' => $accessToCiviCrm && $viewMyContact && $accessCiviEvent && $registerForEvents && $viewAllEvent && $accessToProfileListings ? 1 : 0,
+      'register' => $accessToCiviCrm && $viewMyContact && $accessCiviEvent && $registerForEvents && $viewAllEvent && ($accessToProfileListings || $profileCreate) ? 1 : 0,
       'view_my_tickets' => CRM_CiviMobileAPI_Utils_Permission::isEnoughPermissionForViewMyTickets() ? 1 : 0,
       'is_enough_permission_for_changing_participant_statuses' => CRM_CiviMobileAPI_Utils_Permission::isEnoughPermissionForChangingParticipantStatuses() ? 1 : 0,
     ];

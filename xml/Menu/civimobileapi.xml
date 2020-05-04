@@ -48,4 +48,10 @@
     <page_callback>CRM_CiviMobileAPI_Form_Dashboard</page_callback>
     <access_arguments>access CiviCRM</access_arguments>
   </item>
+  <item>
+    <path>civicrm/civimobile/checklist</path>
+    <title>CiviMobile Checklist</title>
+    <page_callback>CRM_CiviMobileAPI_Page_Checklist</page_callback>
+    <access_arguments>administer CiviCRM</access_arguments>
+  </item>
 </menu>

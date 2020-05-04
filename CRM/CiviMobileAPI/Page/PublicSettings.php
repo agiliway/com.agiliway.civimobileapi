@@ -15,6 +15,13 @@ class CRM_CiviMobileAPI_Page_PublicSettings extends CRM_Core_Page {
 
   public function run() {
     if (CRM_CiviMobileAPI_Authentication_AuthenticationHelper::isRequestValid()) {
+
+      $currentCMS = CRM_CiviMobileAPI_Utils_CmsUser::getInstance()->getSystem();
+      if ($currentCMS == CRM_CiviMobileAPI_Utils_CmsUser::CMS_DRUPAL7) {
+        module_load_include('pages.inc', 'user');
+        user_logout_current_user();
+      }
+
       $settings = [
         'is_allow_public_info_api' => CRM_CiviMobileAPI_Utils_Extension::isAllowPublicInfoApi(),
         'is_allow_public_website_url_qrcode' => CRM_CiviMobileAPI_Utils_Extension::isAllowPublicWebisteURLQRCode(),
@@ -24,8 +31,11 @@ class CRM_CiviMobileAPI_Page_PublicSettings extends CRM_Core_Page {
         'crm_version' => CRM_Utils_System::version(),
         'civicrm_enable_components' => CRM_CiviMobileAPI_Utils_CiviCRM::getEnabledComponents(),
         'ext_version' => CRM_CiviMobileAPI_Utils_VersionController::getInstance()->getCurrentFullVersion(),
-        'is_allow_cms_registration' => CRM_CiviMobileAPI_Utils_Extension::isAllowCmsRegistration(),
         'is_civimobile_ext_has_right_folder_name' => (int) CRM_CiviMobileAPI_Utils_Extension::hasExtensionRightFolderName(),
+        'is_allow_cms_registration' => CRM_CiviMobileAPI_Utils_Extension::isAllowCmsRegistration(),
+        'is_showed_events_in_public_area' => CRM_CiviMobileAPI_Utils_Extension::isShowedEventsInPublicArea(),
+        'is_showed_news_in_public_area' => CRM_CiviMobileAPI_Utils_Extension::isShowedNewsInPublicArea(),
+        'news_rss_feed_url' => CRM_CiviMobileAPI_Utils_Extension::newsRssFeedUrl(),
         'cms_registration_requirements' => [
           'min_password_length' => CMSRegistration::minPasswordLength(),
           'max_password_length' => CMSRegistration::maxPasswordLength(),

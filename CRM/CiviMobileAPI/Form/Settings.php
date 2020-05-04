@@ -35,6 +35,16 @@ class CRM_CiviMobileAPI_Form_Settings extends CRM_Core_Form {
       $serverKeyInValidMessage =  ts('Your Server Key is invalid. Please enter valid Server Key.');
     }
 
+    $enabledComponents = CRM_CiviMobileAPI_Utils_CiviCRM::getEnabledComponents();
+    $possibleItemsToDisplayInPublicArea = [];
+
+    if (Civi::settings()->get('civimobile_is_showed_news')) {
+      $possibleItemsToDisplayInPublicArea[] = 'News';
+    }
+    if (in_array('CiviEvent', $enabledComponents)) {
+      $possibleItemsToDisplayInPublicArea[] = 'Events';
+    }
+
     $this->assign('isWritable', CRM_CiviMobileAPI_Utils_Extension::directoryIsWritable());
     $this->assign('serverKeyValidMessage', $serverKeyValidMessage);
     $this->assign('serverKeyInValidMessage', $serverKeyInValidMessage);
@@ -46,6 +56,10 @@ class CRM_CiviMobileAPI_Form_Settings extends CRM_Core_Form {
     $this->assign('currentExtensionPath', $currentExtensionPath);
     $this->assign('isCorrectExtensionName', $isCorrectExtensionName);
     $this->assign('correctExtensionName', CRM_CiviMobileAPI_ExtensionUtil::LONG_NAME);
+    $this->assign('defaultRssFeedUrl', CRM_CiviMobileAPI_Utils_Cms::getCmsRssUrl());
+    $this->assign('possibleItemsToDisplayInPublicArea', implode(', ', $possibleItemsToDisplayInPublicArea));
+
+    CRM_Core_Resources::singleton()->addStyleFile('com.agiliway.civimobileapi', 'css/civimobileapiSettings.css', 200, 'html-header');
   }
 
   /**
@@ -56,7 +70,28 @@ class CRM_CiviMobileAPI_Form_Settings extends CRM_Core_Form {
 
     if (!empty($params['_qf_Settings_submit'])) {
       $this->addFormRule([CRM_CiviMobileAPI_Form_Settings::class, 'validateToken']);
+    } elseif (!empty($params['_qf_Settings_upload'])) {
+      $this->addFormRule([CRM_CiviMobileAPI_Form_Settings::class, 'validateNewsSettings']);
     }
+  }
+
+  /**
+   * Validate news settings
+   * Uses on form validation
+   *
+   * @param $values
+   * @return array|bool
+   */
+  public static function validateNewsSettings($values) {
+    $errors = [];
+    if (isset($values['civimobile_is_showed_news'])
+      && $values['civimobile_is_showed_news'] == 1
+      && empty($values['civimobile_news_rss_feed_url'])
+    ) {
+      $errors['civimobile_news_rss_feed_url'] = ts('Field can not be empty.');
+    }
+
+    return empty($errors) ? TRUE : $errors;
   }
 
   /**
@@ -108,11 +143,15 @@ class CRM_CiviMobileAPI_Form_Settings extends CRM_Core_Form {
 
     $this->addElement('text', 'civimobile_server_key', ts('Server key'));
     $this->addElement('checkbox', 'civimobile_auto_update', ts('Automatically keep the extension up to date'));
-    $this->addElement('checkbox', 'civimobile_is_allow_public_info_api', ts('Enable CiviMobile for Anonymous users'));
     $this->addElement('checkbox', 'civimobile_is_allow_public_website_url_qrcode', ts('Show a Website URL QR-code for Anonymous users'));
     $this->addElement('radio', 'civimobile_site_name_to_use', NULL, ts('Use CMS site name'), 'cms_site_name');
     $this->addElement('radio', 'civimobile_site_name_to_use', NULL, ts('Use custom site name'), 'custom_site_name');
     $this->addElement('text', 'civimobile_custom_site_name', ts('Site name'));
+    $this->addElement('checkbox', 'civimobile_is_allow_public_info_api', ts('Show Public area'));
+    $this->addElement('checkbox', 'civimobile_is_showed_news', ts('Show News'));
+    $this->addElement('text', 'civimobile_news_rss_feed_url', ts('News RSS feed URL'));
+    $this->addElement('text', 'civimobile_firebase_key', ts('Firebase key'));
+    $this->addElement('checkbox', 'civimobile_is_custom_app', ts('Do you have custom application?'));
 
     $buttons = [
       [
@@ -171,19 +210,30 @@ class CRM_CiviMobileAPI_Form_Settings extends CRM_Core_Form {
       else {
         Civi::settings()->set('civimobile_auto_update', 0);
       }
-      if (!isset($params['civimobile_is_allow_public_info_api'])) {
-        $params['civimobile_is_allow_public_info_api'] = 0;
-      }
       if (!isset($params['civimobile_is_allow_public_website_url_qrcode'])) {
         $params['civimobile_is_allow_public_website_url_qrcode'] = 0;
       }
       if (!isset($params['civimobile_custom_site_name'])) {
         $params['civimobile_custom_site_name'] = '';
       }
-      Civi::settings()->set('civimobile_is_allow_public_info_api', $params['civimobile_is_allow_public_info_api']);
+      if(!isset($params['civimobile_is_showed_news'])) {
+        $params['civimobile_is_showed_news'] = 0;
+      }
+      if (!isset($params['civimobile_is_custom_app'])) {
+        $params['civimobile_is_custom_app'] = 0;
+      }
+      if (!isset($params['civimobile_is_allow_public_info_api'])) {
+        $params['civimobile_is_allow_public_info_api'] = 0;
+      }
+
+      Civi::settings()->set('civimobile_is_custom_app', $params['civimobile_is_custom_app']);
+      Civi::settings()->set('civimobile_firebase_key', $params['civimobile_firebase_key']);
       Civi::settings()->set('civimobile_is_allow_public_website_url_qrcode', $params['civimobile_is_allow_public_website_url_qrcode']);
       Civi::settings()->set('civimobile_site_name_to_use', $params['civimobile_site_name_to_use']);
       Civi::settings()->set('civimobile_custom_site_name', $params['civimobile_custom_site_name']);
+      Civi::settings()->set('civimobile_is_allow_public_info_api', $params['civimobile_is_allow_public_info_api']);
+      Civi::settings()->set('civimobile_is_showed_news', $params['civimobile_is_showed_news']);
+      Civi::settings()->set('civimobile_news_rss_feed_url', $params['civimobile_news_rss_feed_url']);
       CRM_Core_Session::singleton()->setStatus(ts('CiviMobile settings updated'), ts('CiviMobile Settings'), 'success');
     }
   }
@@ -196,10 +246,14 @@ class CRM_CiviMobileAPI_Form_Settings extends CRM_Core_Form {
 
     $defaults['civimobile_auto_update'] = Civi::settings()->get('civimobile_auto_update');
     $defaults['civimobile_server_key'] = Civi::settings()->get('civimobile_server_key');
-    $defaults['civimobile_is_allow_public_info_api'] = CRM_CiviMobileAPI_Utils_Extension::isAllowPublicInfoApi();
     $defaults['civimobile_is_allow_public_website_url_qrcode'] = CRM_CiviMobileAPI_Utils_Extension::isAllowPublicWebisteURLQRCode();
     $defaults['civimobile_site_name_to_use'] = (!empty(Civi::settings()->get('civimobile_site_name_to_use'))) ? Civi::settings()->get('civimobile_site_name_to_use') : 'cms_site_name' ;
     $defaults['civimobile_custom_site_name'] = Civi::settings()->get('civimobile_custom_site_name');
+    $defaults['civimobile_is_allow_public_info_api'] = Civi::settings()->get('civimobile_is_allow_public_info_api');
+    $defaults['civimobile_is_showed_news'] = Civi::settings()->get('civimobile_is_showed_news');
+    $defaults['civimobile_news_rss_feed_url'] = CRM_CiviMobileAPI_Utils_Extension::newsRssFeedUrl();
+    $defaults['civimobile_firebase_key'] = Civi::settings()->get('civimobile_firebase_key');
+    $defaults['civimobile_is_custom_app'] = CRM_CiviMobileAPI_Utils_Extension::isCustomApp();
 
     return $defaults;
   }

@@ -252,22 +252,34 @@ function civimobileapi_civicrm_pageRun(&$page) {
   if(empty($_COOKIE["civimobile_popup_close"])) {
     if (empty($_GET['snippet'])) {
       if (Civi::settings()->get('civimobile_is_allow_public_website_url_qrcode') == 1 || CRM_Core_Permission::check('administer CiviCRM')) {
-          $param = [
-            'apple_link' => 'https://itunes.apple.com/us/app/civimobile/id1404824793?mt=8',
-            'google_link' => 'https://play.google.com/store/apps/details?id=com.agiliway.civimobile',
-            'civimobile_logo' => CRM_CiviMobileAPI_ExtensionUtil::url('/img/civimobile_logo.svg'),
-            'app_store_img' => CRM_CiviMobileAPI_ExtensionUtil::url('/img/app-store.png'),
-            'google_play_img' => CRM_CiviMobileAPI_ExtensionUtil::url('/img/google-play.png'),
-            'civimobile_phone_img' => CRM_CiviMobileAPI_ExtensionUtil::url('/img/civimobile-phone.png'),
-            'font_directory' => CRM_CiviMobileAPI_ExtensionUtil::url('/font'),
-            'qr_code_link' => CRM_CiviMobileAPI_Install_Entity_ApplicationQrCode::getPath(),
-          ];
 
-          CRM_Core_Smarty::singleton()->assign($param);
+        $params = [
+          'apple_link' => 'https://itunes.apple.com/us/app/civimobile/id1404824793?mt=8',
+          'google_link' => 'https://play.google.com/store/apps/details?id=com.agiliway.civimobile',
+          'civimobile_logo' => CRM_CiviMobileAPI_ExtensionUtil::url('/img/civimobile_logo.svg'),
+          'app_store_img' => CRM_CiviMobileAPI_ExtensionUtil::url('/img/app-store.png'),
+          'google_play_img' => CRM_CiviMobileAPI_ExtensionUtil::url('/img/google-play.png'),
+          'civimobile_phone_img' => CRM_CiviMobileAPI_ExtensionUtil::url('/img/civimobile-phone.png'),
+          'font_directory' => CRM_CiviMobileAPI_ExtensionUtil::url('/font'),
+          'qr_code_link' => CRM_CiviMobileAPI_Install_Entity_ApplicationQrCode::getPath(),
+          'small_popup_background_color' => '#e8ecf0',
+          'advanced_popup_background_color' => '#e8ecf0',
+          'button_background_color' => '#5589b7',
+          'button_text_color' => 'white',
+          'description_text' => 'Congratulations, your CiviCRM supports <b>CiviMobile</b> application now. You can download the mobile application at AppStore or Google PlayMarket.',
+          'description_text_color' => '#3b3b3b',
+          'is_showed_popup' => TRUE,
+        ];
+
+        CRM_CiviMobileAPI_Utils_HookInvoker::qrCodeBlockParams($params);
+
+        if ($params['is_showed_popup']) {
+          CRM_Core_Smarty::singleton()->assign($params);
           CRM_Core_Region::instance('page-body')->add([
             'template' => CRM_CiviMobileAPI_ExtensionUtil::path() . '/templates/CRM/CiviMobileAPI/popup.tpl',
           ]);
         }
+      }
     }
   }
 }

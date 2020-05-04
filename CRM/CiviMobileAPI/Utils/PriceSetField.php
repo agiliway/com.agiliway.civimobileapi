@@ -13,7 +13,7 @@ class CRM_CiviMobileAPI_Utils_PriceSetField {
     try {
       $priceFieldValue = civicrm_api3('PriceFieldValue', 'get', [
         'sequential' => 1,
-        'return' => ['id', 'name', 'price_field_id', 'amount', 'label'],
+        'return' => ['id', 'name', 'price_field_id', 'amount', 'label', 'is_default'],
         'price_field_id' => $priceSetFieldId,
         'is_active' => 1
       ]);

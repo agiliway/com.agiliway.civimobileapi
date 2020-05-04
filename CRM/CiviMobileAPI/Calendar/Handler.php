@@ -117,14 +117,14 @@ class CRM_CiviMobileAPI_Calendar_Handler {
       FROM civicrm_event
       LEFT JOIN civicrm_participant ON civicrm_participant.event_id = civicrm_event.id
       LEFT JOIN `civicrm_option_group` AS event_type_group ON event_type_group.name = \'event_type\'
-      LEFT JOIN `civicrm_option_value` AS event_type_value ON (event_type_value.option_group_id = event_type_group.id 
+      LEFT JOIN `civicrm_option_value` AS event_type_value ON (event_type_value.option_group_id = event_type_group.id
         AND civicrm_event.event_type_id = event_type_value.value )
-      WHERE civicrm_event.is_active = 1 
+      WHERE civicrm_event.is_active = 1
         AND civicrm_event.is_template = 0
         AND ( civicrm_event.created_id = %1 OR civicrm_participant.contact_id = %1)
         AND (
-          civicrm_event.start_date BETWEEN %2 AND %3 
-          OR civicrm_event.end_date BETWEEN %2 AND %3 
+          civicrm_event.start_date BETWEEN %2 AND %3
+          OR civicrm_event.end_date BETWEEN %2 AND %3
           OR "%2" BETWEEN civicrm_event.start_date AND civicrm_event.end_date
         )
     ';
@@ -177,7 +177,7 @@ class CRM_CiviMobileAPI_Calendar_Handler {
   public function getCases() {
     $result = [];
     $query = '
-      SELECT 
+      SELECT
         civicrm_case.id AS id,
         civicrm_case_activity.activity_id AS activity_id,
         civicrm_case.subject AS case_title,
@@ -187,26 +187,26 @@ class CRM_CiviMobileAPI_Calendar_Handler {
         CONCAT(COALESCE(civicrm_activity.subject,civicrm_case.subject,"")," (",civicrm_option_value.name,")") AS title,
         civicrm_activity.activity_date_time AS start,
         DATE_ADD(civicrm_activity.activity_date_time, INTERVAL COALESCE (civicrm_activity.duration, 30) MINUTE) AS end
-      
-      FROM civicrm_case      
+
+      FROM civicrm_case
       JOIN civicrm_case_contact ON civicrm_case_contact.case_id = civicrm_case.id
       JOIN civicrm_case_activity ON civicrm_case_activity.case_id = civicrm_case.id
       JOIN civicrm_activity ON civicrm_activity.id = civicrm_case_activity.activity_id
       JOIN civicrm_option_value ON civicrm_activity.activity_type_id = civicrm_option_value.value
-      JOIN civicrm_option_group ON civicrm_option_group.id = civicrm_option_value.option_group_id 
-        AND civicrm_option_group.name = "activity_type" AND civicrm_option_value.component_id IS NOT NULL
+      JOIN civicrm_option_group ON civicrm_option_group.id = civicrm_option_value.option_group_id
+        AND civicrm_option_group.name = "activity_type"
       JOIN civicrm_case_type ON civicrm_case_type.id = civicrm_case.case_type_id
 
       WHERE civicrm_case_contact.contact_id = %1
       AND civicrm_case.is_deleted=0 AND civicrm_activity.is_deleted=0
       AND (
         (
-          civicrm_activity.activity_date_time >= %2 
-          AND COALESCE (DATE_ADD(civicrm_activity.activity_date_time, INTERVAL COALESCE (civicrm_activity.duration, 30) MINUTE), civicrm_activity.activity_date_time) <= %3 
+          civicrm_activity.activity_date_time >= %2
+          AND COALESCE (DATE_ADD(civicrm_activity.activity_date_time, INTERVAL COALESCE (civicrm_activity.duration, 30) MINUTE), civicrm_activity.activity_date_time) <= %3
         )
-        OR 
+        OR
         (
-          %2 BETWEEN civicrm_activity.activity_date_time 
+          %2 BETWEEN civicrm_activity.activity_date_time
           AND COALESCE (DATE_ADD(civicrm_activity.activity_date_time, INTERVAL COALESCE (civicrm_activity.duration, 30) MINUTE),civicrm_activity.activity_date_time)
         )
       )
@@ -275,23 +275,23 @@ class CRM_CiviMobileAPI_Calendar_Handler {
         activity_type_value.label AS activity_type_label,
         civicrm_activity.activity_date_time AS start,
         DATE_ADD(civicrm_activity.activity_date_time, INTERVAL COALESCE (civicrm_activity.duration, 30) MINUTE) AS end
-      
+
       FROM civicrm_activity
       JOIN civicrm_activity_contact ON civicrm_activity_contact.activity_id = civicrm_activity.id
       LEFT JOIN civicrm_case_activity ON civicrm_case_activity.activity_id = civicrm_activity.id
-      
+
       LEFT JOIN `civicrm_option_group` AS activity_type_group ON activity_type_group.name = "activity_type"
-      LEFT JOIN `civicrm_option_value` AS activity_type_value 
+      LEFT JOIN `civicrm_option_value` AS activity_type_value
         ON (activity_type_value.option_group_id = activity_type_group.id AND civicrm_activity.activity_type_id = activity_type_value.value )
-      
-      WHERE civicrm_activity_contact.contact_id = %1 
-      AND (civicrm_activity.activity_date_time > %2 
+
+      WHERE civicrm_activity_contact.contact_id = %1
+      AND (civicrm_activity.activity_date_time > %2
       AND civicrm_activity.activity_date_time < %3) AND civicrm_case_activity.activity_id IS NULL
-        AND civicrm_activity.is_deleted = 0      
+        AND civicrm_activity.is_deleted = 0
         AND activity_type_id IN (
           SELECT civicrm_option_value.value FROM civicrm_option_value
           JOIN civicrm_option_group ON civicrm_option_group.id = civicrm_option_value.option_group_id
-          WHERE civicrm_option_group.name = "activity_type" 
+          WHERE civicrm_option_group.name = "activity_type"
             AND civicrm_option_value.component_id IS NULL
         )
     ';
