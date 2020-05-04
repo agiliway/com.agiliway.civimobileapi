@@ -76,13 +76,15 @@ class CRM_CiviMobileAPI_Authentication_Login {
    *  Sends response to user
    */
   private function sendResponse() {
+    $restPath = new CRM_CiviMobileAPI_Utils_RestPath();
     $this->responseData['values'] = [
       'api_key' => $this->getUserApiKey(),
       'key' => $this->getSiteKey(),
       'id' => $this->civiContact->id,
       'display_name' => $this->civiContact->display_name,
       'cms' => CRM_CiviMobileAPI_Utils_CmsUser::getInstance()->getSystem(),
-      'rest_path' => (new CRM_CiviMobileAPI_Utils_RestPath())->get(),
+      'rest_path' => $restPath->get(),
+      'absolute_rest_url' => $restPath->getAbsoluteUrl(),
       'site_name' => CRM_CiviMobileAPI_Utils_Extension::getSiteName(),
     ];
 
@@ -110,7 +112,7 @@ class CRM_CiviMobileAPI_Authentication_Login {
    *
    * @return bool|string
    */
-  private function setApiKey($uid) {
+  public static function setApiKey($uid) {
     try {
       $bytes = openssl_random_pseudo_bytes(10);
       $api_key = bin2hex($bytes);

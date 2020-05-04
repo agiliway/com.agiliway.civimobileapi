@@ -146,6 +146,12 @@ class CRM_CiviMobileAPI_Utils_CaseRole {
    *  Sets clients and unassigned role
    */
   private function setClientAndUnsignedRoles() {
+    foreach ($this->caseRelationships as $rel) {
+      if (isset($this->caseRoles[$rel['relation_type'] . '_' . $rel['relationship_direction']])) {
+        unset($this->caseRoles[$rel['relation_type'] . '_' . $rel['relationship_direction']]);
+      }
+    }
+
     foreach ($this->caseRoles as $id => $value) {
 
       if ($id != "client") {

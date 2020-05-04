@@ -8,8 +8,9 @@ class CRM_CiviMobileAPI_Utils_CiviCRM {
    * @return array
    */
   public static function getEnabledComponents() {
+    $enableComponents = [];
     try {
-      $enableComponents = civicrm_api3('Setting', 'get', [
+      $result = civicrm_api3('Setting', 'get', [
         'sequential' => 1,
         'return' => ["enable_components"],
       ]);
@@ -17,7 +18,13 @@ class CRM_CiviMobileAPI_Utils_CiviCRM {
       return [];
     }
 
-    return (!empty($enableComponents['values'][0]['enable_components'])) ? $enableComponents['values'][0]['enable_components'] : [];
+    if (isset($result['values'][0]['enable_components'])) {
+      foreach ($result['values'][0]['enable_components'] as $component) {
+        $enableComponents[] = $component;
+      }
+    }
+
+    return $enableComponents;
   }
 
 }

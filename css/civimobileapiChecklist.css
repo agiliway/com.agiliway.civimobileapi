@@ -1,0 +1,52 @@
+.crm-page-civimobile-checklist-block {
+  padding: 15px;
+  font-size: 16px;
+}
+
+.checklist-table-row {
+  display: flex;
+  border-bottom: 1px solid black;
+  align-items: center;
+}
+
+.checklist-table-row:first-child {
+  border-top: 1px solid black;
+}
+
+.checklist-table-row.success-row {
+  background: rgba(55, 128, 8, 0.3);
+}
+
+.checklist-table-row.warning-row {
+  background: rgba(255, 165, 0, 0.3);
+}
+
+.checklist-table-row.error-row {
+  background: rgba(255, 0, 0, 0.3);
+}
+
+.checklist-table-cell {
+  width: calc((100% - 20px) / 2);
+  padding: 10px;
+}
+
+.checklist-table-cell.full-cell {
+  width: 50%;
+}
+
+.checklist-table-cell.status-icon {
+  width: 20px;
+}
+
+.checklist-table-cell.status-icon .fa-check {
+  color: green;
+}
+
+.checklist-table-cell.status-icon .fa-times {
+  content: '\f00c';
+  color: red;
+}
+
+.checklist-table-cell.status-icon .fa-exclamation-triangle {
+  color: orange;
+}

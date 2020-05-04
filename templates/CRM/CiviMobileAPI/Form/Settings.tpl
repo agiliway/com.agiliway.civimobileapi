@@ -20,8 +20,8 @@
             {$form.civimobile_site_name_to_use.custom_site_name.html}
             <br />
             {$form.civimobile_custom_site_name.html}
-            {if $form.civimobile_is_allow_public_info_api.description}
-              <br /><span class="description">{$form.civimobile_is_allow_public_info_api.description}</span>
+            {if $form.civimobile_custom_site_name.description}
+              <br /><span class="description">{$form.civimobile_custom_site_name.description}</span>
             {/if}
           </div>
 
@@ -110,16 +110,20 @@
       <tbody>
 
       <tr class="crm-group-form-block-isReserved">
-        <td class="label">{$form.civimobile_is_allow_public_info_api.label} {help id="is-allow-public-api-help"}</td>
+        <td class="label">{$form.civimobile_is_allow_public_info_api.label} {help id="is-allow-public-area-help"}</td>
         <td>
-
           <div>
+            <div>
               {$form.civimobile_is_allow_public_info_api.html}
-              {if $form.civimobile_is_allow_public_info_api.description}
-                <br /><span class="description">{$form.civimobile_is_allow_public_info_api.description}</span>
-              {/if}
+            </div>
+            <div id="itemsToShowMessage" class="status">
+              Public Area will show pages:
+              <span class="itemsToShow"></span>
+            </div>
+            <div>
+              <span class="description spec-event-note" style="display: none;"><span class="crm-marker">*</span>Note that the all required permissions for Anonymous user should be enabled.</span>
+            </div>
           </div>
-
         </td>
       </tr>
 
@@ -142,7 +146,71 @@
   </div>
 
   <div>
+    <h3>{ts}News{/ts}</h3>
+  </div>
+
+  <div>
+    <table class="form-layout-compressed">
+      <tbody>
+
+      <tr class="crm-group-form-block-isReserved">
+        <td class="label">{$form.civimobile_is_showed_news.label} {help id="show-news-help"}</td>
+        <td>
+
+          <div>
+            {$form.civimobile_is_showed_news.html}
+            {if $form.civimobile_is_showed_news.description}
+              <br /><span class="description">{$form.civimobile_is_showed_news.description}</span>
+            {/if}
+          </div>
+
+        </td>
+      </tr>
+
+      <tr class="crm-group-form-block-isReserved">
+        <td class="label">{$form.civimobile_news_rss_feed_url.label} {help id="news-rss-feed-url-help"}</td>
+        <td>
+
+          <div>
+            {$form.civimobile_news_rss_feed_url.html}
+            {if $defaultRssFeedUrl}
+              <br /><span class="description">
+                <button class="crm-button default-rss-feed-url-btn" data-default-rss-feed-url="{$defaultRssFeedUrl}" type="button">{ts}Set default RSS feed on CMS{/ts}</button>
+              </span>
+            {/if}
+          </div>
+
+        </td>
+      </tr>
+
+      </tbody>
+    </table>
+  </div>
+
+  <div>
     <h3>{ts}Push Notifications{/ts} {help id="push-notifications-help"}</h3>
+  </div>
+
+  <div>
+    <table class="form-layout-compressed">
+      <tbody>
+
+      <tr class="crm-group-form-block-isReserved">
+        <td class="label">{$form.civimobile_is_custom_app.label} {help id="is-custom-app-help"}</td>
+        <td>
+
+          <div>
+            {$form.civimobile_is_custom_app.html}
+            {if $form.civimobile_is_custom_app.description}
+              <br /><span class="description">{$form.civimobile_is_custom_app.description}</span>
+            {/if}
+          </div>
+
+        </td>
+      </tr>
+
+      </tbody>
+    </table>
   </div>
 
   <div>
@@ -181,6 +249,18 @@
         </td>
       </tr>
 
+      <tr class="crm-group-form-block-isReserved">
+        <td class="label">{$form.civimobile_firebase_key.label} {help id="firebase-key-help"}</td>
+        <td>
+          <div>
+            {$form.civimobile_firebase_key.html}
+            {if $form.civimobile_firebase_key.description}
+              <br /><span class="description">{$form.civimobile_firebase_key.description}</span>
+            {/if}
+          </div>
+        </td>
+      </tr>
+
       </tbody>
     </table>
   </div>
@@ -192,11 +272,20 @@
 
 {literal}
   <script>
+    var possibleItemsToDisplayInPublicArea = "{/literal}{$possibleItemsToDisplayInPublicArea}{literal}".split(', ');
     CRM.$(function ($) {
       handleSiteName();
-      handleIsAllowPublicInfoApi();
+      handleFirebaseKey();
+      handleShowNews();
+      changeShownItemsOnPublicArea();
       $("input[name='civimobile_site_name_to_use']").change(handleSiteName);
-      $("input[name='civimobile_is_allow_public_info_api']").change(handleIsAllowPublicInfoApi);
+      $("input[name='civimobile_is_custom_app']").change(handleFirebaseKey);
+      $("input[name='civimobile_is_showed_news']").change(handleShowNews);
+      $("input[name='civimobile_is_allow_public_info_api']").change(changeShownItemsOnPublicArea);
+
+      $(".default-rss-feed-url-btn").click(function () {
+        $("input[name='civimobile_news_rss_feed_url']").val($(".default-rss-feed-url-btn").data('default-rss-feed-url'));
+      });
 
       function handleSiteName() {
         if ($("input[name='civimobile_site_name_to_use']:checked").val() == 'cms_site_name') {
@@ -206,15 +295,52 @@
         }
       }
 
-      function handleIsAllowPublicInfoApi() {
-        var isAllowPublicWebsiteUrlQrCodeCheckbox = $("input[name='civimobile_is_allow_public_website_url_qrcode']");
-        if ($("input[name='civimobile_is_allow_public_info_api']:checked").val() != 1) {
-          isAllowPublicWebsiteUrlQrCodeCheckbox.attr("disabled", "disabled");
-          isAllowPublicWebsiteUrlQrCodeCheckbox.removeAttr("checked");
+      function handleFirebaseKey() {
+        var firebaseKey = $("input[name='civimobile_firebase_key']");
+        var serverKey = $("input[name='civimobile_server_key']");
+        if ($("input[name='civimobile_is_custom_app']:checked").val() != 1) {
+          firebaseKey.closest('tr').hide();
+          serverKey.closest('tr').show();
         } else {
-          isAllowPublicWebsiteUrlQrCodeCheckbox.removeAttr("disabled");
+          serverKey.closest('tr').hide();
+          firebaseKey.closest('tr').show();
         }
       }
+
+      function handleShowNews() {
+        if ($("input[name='civimobile_is_showed_news']:checked").val() != 1) {
+          $("input[name='civimobile_news_rss_feed_url']").attr("disabled", "disabled");
+          $(".default-rss-feed-url-btn").attr("disabled", "disabled");
+        } else {
+          $("input[name='civimobile_news_rss_feed_url']").removeAttr("disabled");
+          $(".default-rss-feed-url-btn").removeAttr("disabled");
+        }
+        changeShownItemsOnPublicArea();
+      }
+
+      function changeShownItemsOnPublicArea() {
+        let shownItems = [];
+        $(".spec-event-note").hide();
+        if ($("input[name='civimobile_is_allow_public_info_api']:checked").val() == 1) {
+          if ($("input[name='civimobile_is_showed_news']:checked").val() == 1) {
+            shownItems.push("News");
+          }
+          if (possibleItemsToDisplayInPublicArea.indexOf('Events') !== -1) {
+            shownItems.push("Events<span class=\"crm-marker\">*</span>");
+            $(".spec-event-note").show();
+          }
+        }
+
+        if (shownItems.length === 0) {
+          shownItems.push("none");
+          $("#itemsToShowMessage").removeClass('help');
+        } else {
+          $("#itemsToShowMessage").addClass('help');
+        }
+
+        $(".itemsToShow").html(shownItems.join(", "));
+      }
+
     });
   </script>
 {/literal}

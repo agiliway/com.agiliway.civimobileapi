@@ -12,18 +12,25 @@
     <p>{ts}Server Key is used for security purposes for Push Notifications{/ts}</p>
 {/htxt}
 
+{htxt id="firebase-key-help-title"}
+  {ts}Firebase Key{/ts}
+{/htxt}
+{htxt id="firebase-key-help"}
+    <p>{ts}Firebase Key is used for Push Notifications{/ts}</p>
+{/htxt}
+
+{htxt id="is-custom-app-help-title"}
+  {ts}Do you have custom application?{/ts}
+{/htxt}
+{htxt id="is-custom-app-help"}
+    <p>{ts}If the application is custom you can use your own Firebase Key for security purposes for Push Notifications{/ts}</p>
+{/htxt}
+
 {htxt id="software-update-help-title"}
   {ts}Software update{/ts}
 {/htxt}
 {htxt id="software-update-help"}
     <p>{ts}We recommend enabling automatically extension update to be sure that you are using the most secure and powerful extension version and avoid desynchronization between mobile application and extension.{/ts}</p>
-{/htxt}
-
-{htxt id="is-allow-public-api-help-title"}
-  {ts}Access to public information in the application{/ts}
-{/htxt}
-{htxt id="is-allow-public-api-help"}
-    <p>{ts}By checking the checkbox you will allow access to public information by the anonymous users in the mobile application.{/ts}</p>
 {/htxt}
 
 {htxt id="site-name-help-title"}
@@ -38,4 +45,27 @@
 {/htxt}
 {htxt id="is-allow-public-website-url-qrcode-help"}
     <p>{ts}Show QR code on CiviCRM website for unauthorised users if checkbox is checked.{/ts}</p>
+{/htxt}
+
+{htxt id="show-news-help-title"}
+  {ts}Show News{/ts}
+{/htxt}
+{htxt id="show-news-help"}
+    <p>{ts}News will be displayed in CiviMobile and may be available in Public Area. You can also configure the default news source directly from the server.{/ts}</p>
+{/htxt}
+
+{htxt id="news-rss-feed-url-help-title"}
+  {ts}News RSS feed URL{/ts}
+{/htxt}
+{htxt id="news-rss-feed-url-help"}
+    <p>{ts}Enter the RSS feed link.{/ts}</p>
+{/htxt}
+
+{htxt id="is-allow-public-area-help-title"}
+  {ts}Access to public information in the application{/ts}
+{/htxt}
+{htxt id="is-allow-public-area-help"}
+    <p>{ts}By checking the checkbox you will allow anonymous users access to public information in the mobile application.</p>
+    <p>Events are displayed in Public Area if all required permissions for Anonymous user are distributed and if CiviEvent component is enabled. Note that if you want a specific event to be made available in the Public Area-please enable 'Public Event' checkbox in Event Info and Settings section.</p>
+    <p>News may also be present in the Public Area if Show News checkbox is enabled.{/ts}</p>
 {/htxt}

@@ -161,6 +161,21 @@ class CRM_CiviMobileAPI_Utils_CmsUser {
         if (user_check_password($password, $account)) {
           $uid = $account->uid;
         }
+
+        if (!$uid && module_exists('ldap_authentication')) {
+          module_load_include('inc', 'ldap_authentication');
+
+          $form_state = [
+            'values' => [
+              'name' => $email,
+              'pass' => $password,
+            ]
+          ];
+
+          _ldap_authentication_user_login_authenticate_validate($form_state, []);
+
+          $uid = !empty($form_state['uid']) ? $form_state['uid'] : FALSE;
+        }
         break;
       case self::CMS_WORDPRESS:
         $account = $this->getWordPressAccount($email);

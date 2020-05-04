@@ -12,7 +12,7 @@ class CRM_CiviMobileAPI_Api_CiviMobileAvailableContactGroup_Get extends CRM_Civi
    */
   public function getResult() {
     $availableGroups = [];
-    $groups = $this->getGroups();
+    $groups = $this->getGroups($this->validParams['is_hidden']);
     $contactGroupIds = $this->getContactGroups($this->validParams['contact_id']);
 
     foreach ($groups as $group) {
@@ -40,22 +40,35 @@ class CRM_CiviMobileAPI_Api_CiviMobileAvailableContactGroup_Get extends CRM_Civi
       throw new api_Exception('Contact(id=' . $params['contact_id'] . ') does not exist.', 'contact_does_not_exist');
     }
 
-    return ['contact_id' => $params['contact_id']];
+    if (!isset($params['is_hidden'])) {
+      $params['is_hidden'] = NULL;
+    }
+
+    return [
+      'contact_id' => $params['contact_id'],
+      'is_hidden' => $params['is_hidden']
+    ];
   }
 
   /**
    * Gets active simple groups
    */
-  private function getGroups() {
+  private function getGroups($isHidden) {
+    $groupsParams = [
+      'sequential' => 1,
+      'is_active' => 1,
+      'saved_search_id' => ['IS NULL' => 1],
+      'options' => ['limit' => 0],
+      'return' => ['name', 'title', 'id'],
+    ];
+
+    if (!is_null($isHidden)) {
+      $groupsParams['is_hidden'] = $isHidden;
+    }
+
     $groups = [];
     try {
-      $groupsData = civicrm_api3('Group', 'get', [
-        'sequential' => 1,
-        'is_active' => 1,
-        'saved_search_id' => ['IS NULL' => 1],
-        'options' => ['limit' => 0],
-        'return' => ['name', 'title', 'id'],
-      ]);
+      $groupsData = civicrm_api3('Group', 'get', $groupsParams);
     } catch (CiviCRM_API3_Exception $e) {
       return $groups;
     }

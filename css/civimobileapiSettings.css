@@ -1,0 +1,17 @@
+.crm-form-civimobilesettings-block input,
+.crm-form-civimobilesettings-block label {
+  margin: 5px 0;
+}
+
+.crm-form-civimobilesettings-block input[type=radio] {
+  margin-right: 10px;
+}
+
+#itemsToShowMessage {
+  margin: 0.5em 0;
+  padding: 0.25em 0.5em;
+}
+
+.crm-container table.form-layout-compressed {
+  width: 100%;
+}

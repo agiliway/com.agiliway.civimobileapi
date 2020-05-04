@@ -5,6 +5,8 @@
  */
 class CRM_CiviMobileAPI_Utils_Extension {
 
+  const LATEST_SUPPORTED_CIVICRM_VERSION = 4.7;
+
   /**
    * Update extension to latest
    *
@@ -120,7 +122,16 @@ class CRM_CiviMobileAPI_Utils_Extension {
    * @return int
    */
   public static function isAllowPublicInfoApi() {
-    return (Civi::settings()->get('civimobile_is_allow_public_info_api') == 1) ? 1 : 0;
+    return Civi::settings()->get('civimobile_is_allow_public_info_api') == 1 ? 1 : 0;
+  }
+
+  /**
+   * Is a Custom Application
+   *
+   * @return int
+   */
+  public static function isCustomApp() {
+    return (Civi::settings()->get('civimobile_is_custom_app') == 1) ? 1 : 0;
   }
 
   /**
@@ -167,6 +178,43 @@ class CRM_CiviMobileAPI_Utils_Extension {
       return TRUE;
     }
     return FALSE;
+  }
+
+  /**
+   * Is showed events in public area
+   *
+   * @return int
+   */
+  public static function isShowedEventsInPublicArea() {
+    $enabledComponents = CRM_CiviMobileAPI_Utils_CiviCRM::getEnabledComponents();
+    return (Civi::settings()->get('civimobile_is_allow_public_info_api') == 1 && in_array('CiviEvent', $enabledComponents)) ? 1 : 0;
+  }
+
+  /**
+   * Is showed news
+   *
+   * @return int
+   */
+  public static function isShowedNews() {
+    return (Civi::settings()->get('civimobile_is_showed_news') == 1) ? 1 : 0;
+  }
+
+  /**
+   * Returns news RSS feed url
+   *
+   * @return int
+   */
+  public static function newsRssFeedUrl() {
+    return empty(Civi::settings()->get('civimobile_news_rss_feed_url')) ? '' : Civi::settings()->get('civimobile_news_rss_feed_url');
+  }
+
+  /**
+   * Is allow public info api
+   *
+   * @return int
+   */
+  public static function isShowedNewsInPublicArea() {
+    return (Civi::settings()->get('civimobile_is_allow_public_info_api') == 1 && Civi::settings()->get('civimobile_is_showed_news') == 1) ? 1 : 0;
   }
 
 }

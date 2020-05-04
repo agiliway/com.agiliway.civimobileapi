@@ -13,7 +13,7 @@ class CRM_CiviMobileAPI_Page_PublicApi_Api extends CRM_CiviMobileAPI_Page_Public
       'availableActions' => [
         [
           'actionName' => 'get',
-          'actionPermissions' => ['access CiviCRM', 'access CiviEvent', 'view event info'],
+          'actionPermissions' => ['view event info'],
           'availableParams' => [
             'id',
             'event_start_date',
@@ -48,6 +48,26 @@ class CRM_CiviMobileAPI_Page_PublicApi_Api extends CRM_CiviMobileAPI_Page_Public
             'is_show_location',
             'currency_symbol',
             'currency',
+            'max_participants',
+            'is_share',
+            'registration_start_date',
+            'registration_end_date',
+            'is_map',
+            'loc_block_id',
+            'loc_block_id.email_id.email',
+            'loc_block_id.email_2_id.email',
+            'loc_block_id.phone_id.phone',
+            'loc_block_id.phone_2_id.phone',
+            'loc_block_id.phone_id.phone_type_id.label',
+            'loc_block_id.phone_2_id.phone_type_id.label',
+            'loc_block_id.address_id.country_id.name',
+            'loc_block_id.address_id.state_province_id.name',
+            'loc_block_id.address_id.city',
+            'loc_block_id.address_id.street_address',
+            'loc_block_id.address_id.postal_code',
+            'loc_block_id.address_id.geo_code_1',
+            'loc_block_id.address_id.geo_code_2',
+            'url'
           ],
           'middleware' => [
             [
@@ -63,7 +83,12 @@ class CRM_CiviMobileAPI_Page_PublicApi_Api extends CRM_CiviMobileAPI_Page_Public
               'method' => 'showOnlyPublicEvents',
             ]
           ],
-          'transforms' => []
+          'transforms' => [
+            [
+              'class' => 'CRM_CiviMobileAPI_Page_PublicApi_Transform',
+              'method' => 'addEventUrl',
+            ]
+          ]
         ]
       ]
     ],
@@ -72,7 +97,7 @@ class CRM_CiviMobileAPI_Page_PublicApi_Api extends CRM_CiviMobileAPI_Page_Public
       'availableActions' => [
         [
           'actionName' => 'get',
-          'actionPermissions' => [],
+          'actionPermissions' => ['view event info'],
           'availableParams' => [
             'option_group_id',
             'return',
@@ -108,7 +133,7 @@ class CRM_CiviMobileAPI_Page_PublicApi_Api extends CRM_CiviMobileAPI_Page_Public
       'availableActions' => [
         [
           'actionName' => 'get',
-          'actionPermissions' => ['access CiviCRM', 'access CiviEvent', 'view event info'],
+          'actionPermissions' => ['view event info'],
           'availableParams' => [
             'event_id',
             'return',
@@ -137,7 +162,7 @@ class CRM_CiviMobileAPI_Page_PublicApi_Api extends CRM_CiviMobileAPI_Page_Public
       'availableActions' => [
         [
           'actionName' => 'get',
-          'actionPermissions' => ['access CiviCRM', 'access CiviEvent', 'view event info', 'view event participants'],
+          'actionPermissions' => ['view event info', 'view event participants'],
           'availableParams' => [
             'event_id',
             'return',
@@ -172,7 +197,7 @@ class CRM_CiviMobileAPI_Page_PublicApi_Api extends CRM_CiviMobileAPI_Page_Public
       'availableActions' => [
         [
           'actionName' => 'get',
-          'actionPermissions' => ['access CiviCRM', 'access CiviEvent', 'view event info', 'view event participants'],
+          'actionPermissions' => ['view event info', 'view event participants'],
           'availableParams' => [
             'id',
             'return',
@@ -203,7 +228,7 @@ class CRM_CiviMobileAPI_Page_PublicApi_Api extends CRM_CiviMobileAPI_Page_Public
       'availableActions' => [
         [
           'actionName' => 'create',
-          'actionPermissions' => ['access CiviCRM', 'access CiviEvent', 'view event info', 'register for events', 'profile listings and forms'],
+          'actionPermissions' => ['view event info', 'register for events', 'profile create'],
           'availableParams' => [
             'last_name',
             'first_name',
@@ -232,7 +257,7 @@ class CRM_CiviMobileAPI_Page_PublicApi_Api extends CRM_CiviMobileAPI_Page_Public
         ],
         [
           'actionName' => 'get_ticket',
-          'actionPermissions' => ['access CiviCRM', 'access CiviEvent', 'view event info'],
+          'actionPermissions' => ['view event info'],
           'availableParams' => [
             'public_key',
           ],
@@ -289,7 +314,7 @@ class CRM_CiviMobileAPI_Page_PublicApi_Api extends CRM_CiviMobileAPI_Page_Public
       'availableActions' => [
         [
           'actionName' => 'get',
-          'actionPermissions' => ['access CiviCRM', 'access CiviEvent', 'view event info', 'register for events'],
+          'actionPermissions' => ['view event info', 'register for events'],
           'availableParams' => [
             'event_id',
             'contact_id',
