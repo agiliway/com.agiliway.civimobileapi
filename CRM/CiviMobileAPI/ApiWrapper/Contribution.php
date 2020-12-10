@@ -38,7 +38,7 @@ class CRM_CiviMobileAPI_ApiWrapper_Contribution implements API_Wrapper {
    * @return mixed
    */
   private function fillFinancialTypeName($apiRequest, $result) {
-    if (empty($apiRequest['params']['return']) || array_search('financial_type_name', $apiRequest['params']['return']) !== FALSE) {
+    if (empty($apiRequest['params']['return']) || (!is_array($apiRequest['params']['return']) && stristr($apiRequest['params']['return'], 'financial_type_name') !== FALSE || in_array('financial_type_name', $apiRequest['params']['return']))) {
       if ($apiRequest['action'] == 'getsingle') {
         $result['financial_type_name'] = $this->getFinancialTypeName($result);
       }
@@ -59,7 +59,7 @@ class CRM_CiviMobileAPI_ApiWrapper_Contribution implements API_Wrapper {
    * @return mixed
    */
   private function fillFormatTotalAmount($apiRequest, $result) {
-    if (empty($apiRequest['params']['return']) || array_search('total_amount', $apiRequest['params']['return']) !== FALSE) {
+    if (empty($apiRequest['params']['return']) || (!is_array($apiRequest['params']['return']) && stristr($apiRequest['params']['return'], 'total_amount') !== FALSE || in_array('total_amount', $apiRequest['params']['return']))) {
       if ($apiRequest['action'] == 'getsingle') {
         $result['format_total_amount'] = CRM_Utils_Money::format($result['total_amount'], $result['currency']);
       }
